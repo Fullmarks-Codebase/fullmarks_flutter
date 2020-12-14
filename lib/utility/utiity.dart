@@ -169,7 +169,7 @@ class Utility {
                 ),
               )
             : assetName != null
-                ? Image.asset(
+                ? SvgPicture.asset(
                     assetName,
                   )
                 : Container(),

@@ -63,7 +63,10 @@ class _SplashScreenState extends State<SplashScreen> {
             Spacer(),
             SafeArea(
               child: Text("App Version " + version),
-            )
+            ),
+            SizedBox(
+              height: 16,
+            ),
           ],
         )
       ],

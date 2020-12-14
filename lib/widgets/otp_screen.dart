@@ -145,7 +145,7 @@ class _OtpScreenState extends State<OtpScreen>
             ),
             SvgPicture.asset(
               AppAssets.otpImage,
-              height: MediaQuery.of(context).size.height / 3.5,
+              height: MediaQuery.of(context).size.height / 4,
             ),
             Spacer(),
             Padding(

@@ -112,7 +112,10 @@ class _LoginScreenState extends State<LoginScreen> {
               text: "Skip This Step",
             ),
           ),
-        )
+        ),
+        SizedBox(
+          height: 16,
+        ),
       ],
     );
   }

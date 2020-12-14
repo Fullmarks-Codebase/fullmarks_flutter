@@ -10,8 +10,8 @@ class AppAssets {
   static String topbarBg1 = "assets/topbarBg1.svg";
   static String backArrow = "assets/backArrow.svg";
   static String loginLogo = "assets/loginLogo.svg";
-  static String facebook = "assets/facebook.png";
-  static String google = "assets/google.png";
+  static String facebook = "assets/facebook.svg";
+  static String google = "assets/google.svg";
   static String introImage1 = "assets/introImage1.png";
   static String introImage2 = "assets/introImage2.png";
   static String introImage3 = "assets/introImage3.png";
