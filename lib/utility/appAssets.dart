@@ -49,4 +49,6 @@ class AppAssets {
   static String star = "assets/star.svg";
   static String home = "assets/home.svg";
   static String calculator = "assets/calculator.svg";
+  static String check = "assets/check.svg";
+  static String uncheck = "assets/uncheck.svg";
 }
