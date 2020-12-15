@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17.138" height="17.138" viewBox="0 0 17.138 17.138">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#76b5ff"/>
+      <stop offset="1" stop-color="#49f"/>
+    </linearGradient>
+  </defs>
+  <path id="Icon_metro-spinner4" data-name="Icon metro-spinner4" d="M10,1.071A8.569,8.569,0,0,0,1.431,9.439a7.228,7.228,0,0,1,6.96-7.3,7.245,7.245,0,0,1,6.962,7.5,1.607,1.607,0,0,0,3.213,0A8.569,8.569,0,0,0,10,1.071Zm0,17.138a8.569,8.569,0,0,0,8.566-8.368,7.228,7.228,0,0,1-6.96,7.3,7.245,7.245,0,0,1-6.962-7.5,1.607,1.607,0,0,0-3.213,0A8.569,8.569,0,0,0,10,18.209Z" transform="translate(-1.428 -1.071)" fill="url(#linear-gradient)"/>
+</svg>

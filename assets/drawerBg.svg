@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="283" height="810" viewBox="0 0 283 810">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#76b5ff"/>
+      <stop offset="1" stop-color="#49f"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" y1="1" y2="0" xlink:href="#linear-gradient"/>
+    <clipPath id="clip-Main_Screen_Open_Sidebar_1">
+      <rect width="283" height="810"/>
+    </clipPath>
+  </defs>
+  <g id="Main_Screen_Open_Sidebar_1" data-name="Main Screen – Open Sidebar – 1" clip-path="url(#clip-Main_Screen_Open_Sidebar_1)">
+    <rect width="283" height="810" fill="#fff"/>
+    <g id="SideBar">
+      <g id="Shape1" transform="translate(66.879 -109.745) rotate(110)" opacity="0.4">
+        <path id="blob" d="M89.675-57.475C102.727-42.9,108.95-23.781,117.449-6.631s19.427,32.176,18.516,46.746C135.055,54.533,122.458,68.5,111.834,82,101.058,95.36,92.407,108.26,80.265,124.8S52.642,161.684,35.34,164.872C18.19,167.907-.933,153.64-22.333,142.409c-21.248-11.231-45.076-19.579-48.871-35.97C-75,89.9-58.91,65.309-55.571,42.391c3.187-22.766-6.374-43.559-.455-56.611,5.767-13.052,27.015-18.061,45.076-29.6S22.136-73.259,39.59-77.357C56.892-81.607,76.774-71.893,89.675-57.475Z" transform="translate(-26.855 -119.788)" opacity="0.954" fill="url(#linear-gradient)"/>
+      </g>
+      <g id="Shape1-2" data-name="Shape1" transform="translate(38.743 684.008) rotate(70)" opacity="0.4">
+        <path id="blob-2" data-name="blob" d="M161.454,222.761c13.052-14.57,19.275-33.693,27.774-50.844s19.427-32.176,18.516-46.746c-.911-14.418-13.508-28.381-24.132-41.889-10.776-13.356-19.427-26.257-31.569-42.8S124.422,3.6,107.12.414C89.969-2.621,70.846,11.645,49.446,22.877,28.2,34.108,4.37,42.455.575,58.847c-3.794,16.543,12.294,41.13,15.633,64.048,3.187,22.766-6.374,43.559-.455,56.611,5.767,13.052,27.015,18.061,45.076,29.6s33.086,29.444,50.54,33.542C128.671,246.893,148.553,237.179,161.454,222.761Z" transform="translate(0 0)" opacity="0.954" fill="url(#linear-gradient-2)"/>
+      </g>
+    </g>
+  </g>
+</svg>

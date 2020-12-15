@@ -176,8 +176,9 @@ class _OtpScreenState extends State<OtpScreen>
             _getOtpKeyboard
           ],
         ),
-        Utility.backButton(
+        Utility.roundShadowButton(
           context: context,
+          assetName: AppAssets.backArrow,
           onPressed: () {
             Navigator.pop(context);
           },

@@ -32,4 +32,11 @@ class AppColors {
   static Color introColor2 = Color(0xff38C172);
   static Color introColor3 = Color(0xff6C5CE7);
   static Color introColor4 = Color(0xffE17055);
+
+  //home color
+  static Color chartBgColor = Color(0xff0984E3);
+  static Color myProgressCorrectcolor = Color(0xff00CEC9);
+  static Color myProgressIncorrectcolor = Color(0xffFDCB6E);
+  static Color mockTestColor = Color(0xffF0932B);
+  static Color discussionForumColor = Color(0xff6AB04C);
 }

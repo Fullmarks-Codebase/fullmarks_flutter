@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18.011" height="18.011" viewBox="0 0 18.011 18.011">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#76b5ff"/>
+      <stop offset="1" stop-color="#49f"/>
+    </linearGradient>
+  </defs>
+  <g id="Icon_ionic-md-chatbubbles" data-name="Icon ionic-md-chatbubbles" transform="translate(-3.375 -3.375)">
+    <path id="Path_1000" data-name="Path 1000" d="M7.047,20.256a2.26,2.26,0,0,1-1.94-1.94V11.25H4.691a1.321,1.321,0,0,0-1.316,1.316V24.412L5.908,21.9h9.313a1.337,1.337,0,0,0,1.316-1.338v-.307Z" transform="translate(0 -3.026)" fill="url(#linear-gradient)"/>
+    <path id="Path_1001" data-name="Path 1001" d="M21.685,3.375H9.6A1.515,1.515,0,0,0,8.086,4.886v9.789A1.519,1.519,0,0,0,9.6,16.191H19.91L23.2,18.485V4.886A1.515,1.515,0,0,0,21.685,3.375Z" transform="translate(-1.81)" fill="url(#linear-gradient)"/>
+  </g>
+</svg>

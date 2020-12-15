@@ -101,8 +101,9 @@ class Utility {
     return _packageInfo;
   }
 
-  static Widget backButton({
+  static Widget roundShadowButton({
     @required BuildContext context,
+    @required String assetName,
     @required Function() onPressed,
   }) {
     return SafeArea(
@@ -120,9 +121,7 @@ class Utility {
             ],
             shape: BoxShape.circle,
           ),
-          child: SvgPicture.asset(
-            AppAssets.backArrow,
-          ),
+          child: SvgPicture.asset(assetName),
         ),
         tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         onPressed: onPressed,
@@ -142,6 +141,8 @@ class Utility {
     double fontSize = 16,
     String text,
     String assetName,
+    AlignmentGeometry begin = Alignment.centerLeft,
+    AlignmentGeometry end = Alignment.centerRight,
   }) {
     return InkWell(
       onTap: onPressed,
@@ -154,6 +155,8 @@ class Utility {
           gradient: gradientColor1 == null || gradientColor2 == null
               ? null
               : LinearGradient(
+                  begin: begin,
+                  end: end,
                   colors: [gradientColor1, gradientColor2],
                   stops: [0.25, 0.75],
                 ),

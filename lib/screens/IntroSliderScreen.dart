@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
 
@@ -87,7 +88,14 @@ class _IntroSliderScreenState extends State<IntroSliderScreen> {
               margin: EdgeInsets.only(right: 16, bottom: 16),
               child: FloatingActionButton(
                 backgroundColor: AppColors.appColor,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeScreen(),
+                    ),
+                  );
+                },
                 shape: BeveledRectangleBorder(
                   borderRadius: BorderRadius.all(
                     Radius.circular(26),

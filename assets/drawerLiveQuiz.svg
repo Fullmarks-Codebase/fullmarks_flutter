@@ -1,0 +1,12 @@
+<svg id="puzzle-piece" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18.027" height="18.027" viewBox="0 0 18.027 18.027">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#76b5ff"/>
+      <stop offset="1" stop-color="#49f"/>
+    </linearGradient>
+  </defs>
+  <path id="Path_168" data-name="Path 168" d="M243.112,0V2.676h-1.056a1.056,1.056,0,0,0,0,2.112h1.056V7.429h3.169V5.845a.528.528,0,1,1,1.056,0V7.429h3.2V0Z" transform="translate(-232.515)" fill="url(#linear-gradient)"/>
+  <path id="Path_169" data-name="Path 169" d="M2.394,98.922a1.056,1.056,0,1,0,2.112,0V97.866H6.9V95.225H5.845a.528.528,0,1,1,0-1.056H6.9V91H0v6.866H2.394Z" transform="translate(0 -87.796)" fill="url(#linear-gradient)"/>
+  <path id="Path_170" data-name="Path 170" d="M230.507,258.112v-1.056a1.056,1.056,0,0,0-2.112,0v1.056H226v1.338a2.112,2.112,0,1,1,0,4.225v1.338h6.866v-6.9Z" transform="translate(-218.043 -246.987)" fill="url(#linear-gradient)"/>
+  <path id="Path_171" data-name="Path 171" d="M7.957,320.507a1.056,1.056,0,0,0,0-2.113H6.9V316H5.563a2.112,2.112,0,0,1-4.225,0H0v6.9H6.9v-2.394Z" transform="translate(0 -304.874)" fill="url(#linear-gradient)"/>
+</svg>
