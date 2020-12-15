@@ -1,6 +1,8 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:package_info/package_info.dart';
 
 import 'appAssets.dart';
@@ -178,5 +180,161 @@ class Utility {
                 : Container(),
       ),
     );
+  }
+
+  static Widget appbar(
+    BuildContext context, {
+    @required String text,
+    @required Function() onBackPressed,
+  }) {
+    return Row(
+      children: [
+        Utility.roundShadowButton(
+          context: context,
+          assetName: AppAssets.backArrow,
+          onPressed: onBackPressed,
+        ),
+        Spacer(),
+        Text(
+          text,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Spacer(),
+        Utility.roundShadowButton(
+          context: context,
+          assetName: AppAssets.home,
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => HomeScreen(),
+                ),
+                (Route<dynamic> route) => false);
+          },
+        ),
+      ],
+    );
+  }
+
+  static Widget averageView({
+    @required String assetName,
+    @required String title,
+  }) {
+    return Row(
+      children: [
+        SvgPicture.asset(assetName),
+        SizedBox(
+          width: 8,
+        ),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+            maxLines: 2,
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Widget correctIncorrectView({
+    @required Color color,
+    @required String title,
+  }) {
+    return Row(
+      children: [
+        Container(
+          height: 20,
+          width: 20,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+          ),
+        ),
+      ],
+    );
+  }
+
+  static List<PieChartSectionData> showingSections() {
+    return List.generate(
+      2,
+      (i) {
+        // final isTouched = i == touchedIndex;
+        // final double opacity = isTouched ? 1 : 0.6;
+        switch (i) {
+          case 0:
+            return PieChartSectionData(
+              color: AppColors.myProgressCorrectcolor,
+              value: 75,
+              showTitle: false,
+            );
+          case 1:
+            return PieChartSectionData(
+              color: AppColors.myProgressIncorrectcolor,
+              value: 25,
+              showTitle: false,
+            );
+          default:
+            return null;
+        }
+      },
+    );
+  }
+
+  static List<Subject> getsubjects() {
+    return [
+      Subject(
+        AppAssets.maths,
+        "Mathmatics",
+        "7% Completed",
+      ),
+      Subject(
+        AppAssets.physics,
+        "Physics",
+        "100% Completed",
+      ),
+      Subject(
+        AppAssets.chemistry,
+        "Chemistry",
+        "20% Completed",
+      ),
+      Subject(
+        AppAssets.biology,
+        "Biology",
+        "20% Completed",
+      ),
+      Subject(
+        AppAssets.english,
+        "English",
+        "20% Completed",
+      ),
+    ];
+  }
+}
+
+class Subject {
+  String assetName;
+  String title;
+  String subtitle;
+
+  Subject(String assetName, String title, String subtitle) {
+    this.assetName = assetName;
+    this.title = title;
+    this.subtitle = subtitle;
   }
 }

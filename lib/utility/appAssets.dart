@@ -47,4 +47,6 @@ class AppAssets {
   static String shareApp = "assets/shareApp.svg";
   static String upArrow = "assets/upArrow.svg";
   static String star = "assets/star.svg";
+  static String home = "assets/home.svg";
+  static String calculator = "assets/calculator.svg";
 }

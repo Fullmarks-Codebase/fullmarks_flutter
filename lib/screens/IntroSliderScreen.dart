@@ -89,12 +89,11 @@ class _IntroSliderScreenState extends State<IntroSliderScreen> {
               child: FloatingActionButton(
                 backgroundColor: AppColors.appColor,
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomeScreen(),
-                    ),
-                  );
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => HomeScreen(),
+                      ),
+                      (Route<dynamic> route) => false);
                 },
                 shape: BeveledRectangleBorder(
                   borderRadius: BorderRadius.all(

@@ -39,4 +39,12 @@ class AppColors {
   static Color myProgressIncorrectcolor = Color(0xffFDCB6E);
   static Color mockTestColor = Color(0xffF0932B);
   static Color discussionForumColor = Color(0xff6AB04C);
+
+  //subtopic
+  static Color subtopicItemColor = Color(0xffCCEDF7);
+  static Color subtopicItemBorderColor = Color(0xff04A3D4);
+
+  //sets color
+  static Color setsItemGradientColor1 = Color(0xff76B5FF);
+  static Color setsItemGradientColor2 = Color(0xff4499FF);
 }

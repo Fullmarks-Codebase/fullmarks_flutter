@@ -29,11 +29,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   // action to be performed after OTP validation is success
   void moveToNextScreen(context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => IntroSliderScreen(),
-      ),
-    );
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (BuildContext context) => IntroSliderScreen(),
+        ),
+        (Route<dynamic> route) => false);
   }
 }
