@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/ChangeGrade.dart';
 import 'package:fullmarks/screens/MyProgress.dart';
+import 'package:fullmarks/screens/NotificationListScreen.dart';
 import 'package:fullmarks/screens/SubTopicScreen.dart';
 import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
@@ -106,7 +107,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       IconButton(
                         icon: SvgPicture.asset(AppAssets.notification),
                         onPressed: () {
-                          print("notification");
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                NotificationListScreen(),
+                          ));
                         },
                       ),
                     ],

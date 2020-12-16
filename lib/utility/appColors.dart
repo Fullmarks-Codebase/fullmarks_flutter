@@ -59,4 +59,6 @@ class AppColors {
   static Color scienceColor = Color(0xffCBF5F4);
   static Color ssColor = Color(0xffB2EADF);
   static Color enColor = Color(0xffE1DEFA);
+
+  static Color unreadColor = Color(0xffFCEED3);
 }

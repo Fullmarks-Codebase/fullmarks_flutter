@@ -21,6 +21,8 @@ void main() {
 
 Home (subject) -> SubTopicScreen -> SetsScreen -> InstructionsScreen -> TestScreen -> TestResultScreen -> QuizResult
 
+NotificationListScreen -> 
+
 Drawer
 1. My Progress
 MyProgress -> MyProgressSubject

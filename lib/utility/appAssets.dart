@@ -82,4 +82,5 @@ class AppAssets {
   static String class12science = "assets/class12science.svg";
   static String class12commerce = "assets/class12commerce.svg";
   static String grageItemBg = "assets/grageItemBg.svg";
+  static String notificationBg = "assets/notificationBg.svg";
 }
