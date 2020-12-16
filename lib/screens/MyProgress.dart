@@ -1,0 +1,154 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/screens/MyProgressSubject.dart';
+import 'package:fullmarks/utility/appAssets.dart';
+import 'package:fullmarks/utility/appColors.dart';
+import 'package:fullmarks/utility/utiity.dart';
+
+class MyProgress extends StatefulWidget {
+  @override
+  _MyProgressState createState() => _MyProgressState();
+}
+
+class _MyProgressState extends State<MyProgress> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Utility.setSvgFullScreen(context, AppAssets.commonBg),
+          body(),
+        ],
+      ),
+    );
+  }
+
+  Widget body() {
+    return Column(
+      children: [
+        Utility.appbar(
+          context,
+          text: "My Progress",
+          onBackPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        myProgressList(),
+      ],
+    );
+  }
+
+  Widget myProgressList() {
+    return Expanded(
+      child: ListView.builder(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+        ),
+        itemCount: 4,
+        itemBuilder: (BuildContext context, int index) {
+          return myProgressItemView(index);
+        },
+      ),
+    );
+  }
+
+  Widget myProgressItemView(int index) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (BuildContext context) => MyProgressSubject(
+            title: index == 0
+                ? "Math"
+                : index == 1
+                    ? "Science"
+                    : index == 2
+                        ? "Social Science"
+                        : "English",
+          ),
+        ));
+      },
+      child: Container(
+        padding: EdgeInsets.all(16),
+        margin: EdgeInsets.only(
+          bottom: 16,
+        ),
+        decoration: BoxDecoration(
+          color: index == 0
+              ? AppColors.mathsColor
+              : index == 1
+                  ? AppColors.scienceColor
+                  : index == 2
+                      ? AppColors.ssColor
+                      : AppColors.enColor,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: index == 0
+                ? AppColors.subtopicItemBorderColor
+                : index == 1
+                    ? AppColors.strongCyan
+                    : index == 2
+                        ? AppColors.strongCyan
+                        : AppColors.introColor3,
+            width: 2,
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    index == 0
+                        ? AppAssets.math
+                        : index == 1
+                            ? AppAssets.sci
+                            : index == 2
+                                ? AppAssets.ss
+                                : AppAssets.en,
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  Text(
+                    index == 0
+                        ? "Math"
+                        : index == 1
+                            ? "Science"
+                            : index == 2
+                                ? "Social Science"
+                                : "English",
+                    style: TextStyle(
+                      color: index == 0
+                          ? AppColors.subtopicItemBorderColor
+                          : index == 1
+                              ? AppColors.strongCyan
+                              : index == 2
+                                  ? AppColors.strongCyan
+                                  : AppColors.introColor3,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: (MediaQuery.of(context).size.width / 4.5),
+              width: (MediaQuery.of(context).size.width / 4.5),
+              child: Utility.pieChart(
+                values: index == 0
+                    ? [75, 25]
+                    : index == 1
+                        ? [25, 75]
+                        : index == 2
+                            ? [50, 50]
+                            : [10, 90],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

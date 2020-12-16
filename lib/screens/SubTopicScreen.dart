@@ -194,28 +194,7 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
               alignment: Alignment.center,
               children: [
                 SvgPicture.asset(AppAssets.calculatorWhite),
-                PieChart(
-                  PieChartData(
-                    pieTouchData:
-                        PieTouchData(touchCallback: (pieTouchResponse) {
-                      // click on pie
-                      // setState(() {
-                      //   if (pieTouchResponse.touchInput is FlLongPressEnd ||
-                      //       pieTouchResponse.touchInput is FlPanEnd) {
-                      //     touchedIndex = -1;
-                      //   } else {
-                      //     touchedIndex = pieTouchResponse.touchedSectionIndex;
-                      //   }
-                      // });
-                    }),
-                    startDegreeOffset: 0,
-                    borderData: FlBorderData(
-                      show: false,
-                    ),
-                    sectionsSpace: 10,
-                    sections: Utility.showingSections(),
-                  ),
-                ),
+                Utility.pieChart(),
               ],
             ),
           ),

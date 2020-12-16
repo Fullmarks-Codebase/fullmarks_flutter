@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/screens/ChangeGrade.dart';
+import 'package:fullmarks/screens/MyProgress.dart';
 import 'package:fullmarks/screens/SubTopicScreen.dart';
 import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
@@ -116,6 +118,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "My Progress",
                 onTap: () {
                   Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyProgress(),
+                    ),
+                  );
                 },
               ),
               drawerItemView(
@@ -130,6 +138,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "Change Grade",
                 onTap: () {
                   Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChangeGrade(),
+                    ),
+                  );
                 },
               ),
               drawerItemView(
@@ -526,27 +540,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           child: Container(
             height: (MediaQuery.of(context).size.width / 2),
-            child: PieChart(
-              PieChartData(
-                pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
-                  // click on pie
-                  // setState(() {
-                  //   if (pieTouchResponse.touchInput is FlLongPressEnd ||
-                  //       pieTouchResponse.touchInput is FlPanEnd) {
-                  //     touchedIndex = -1;
-                  //   } else {
-                  //     touchedIndex = pieTouchResponse.touchedSectionIndex;
-                  //   }
-                  // });
-                }),
-                startDegreeOffset: 0,
-                borderData: FlBorderData(
-                  show: false,
-                ),
-                sectionsSpace: 10,
-                sections: Utility.showingSections(),
-              ),
-            ),
+            child: Utility.pieChart(),
           ),
         ),
         SizedBox(

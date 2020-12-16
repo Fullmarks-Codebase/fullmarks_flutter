@@ -17,7 +17,20 @@ void main() {
   });
 }
 
-//Home (subject) -> SubTopicScreen -> SetsScreen -> InstructionsScreen -> TestScreen -> TestResultScreen -> QuizResult
+/*
+
+Home (subject) -> SubTopicScreen -> SetsScreen -> InstructionsScreen -> TestScreen -> TestResultScreen -> QuizResult
+
+Drawer
+1. My Progress
+MyProgress -> MyProgressSubject
+
+2. My Profile
+
+3. Change Grade
+ChangeGrade
+
+*****/
 
 class MyApp extends StatelessWidget {
   @override

@@ -66,4 +66,20 @@ class AppAssets {
   static String answerImage2 = "assets/answerImage2.png";
   static String answerImage3 = "assets/answerImage3.png";
   static String answerImage4 = "assets/answerImage4.png";
+  static String math = "assets/math.svg";
+  static String en = "assets/en.svg";
+  static String sci = "assets/sci.svg";
+  static String ss = "assets/ss.svg";
+  static String class4 = "assets/class4.svg";
+  static String class5 = "assets/class5.svg";
+  static String class6 = "assets/class6.svg";
+  static String class7 = "assets/class7.svg";
+  static String class8 = "assets/class8.svg";
+  static String class9 = "assets/class9.svg";
+  static String class10 = "assets/class10.svg";
+  static String class11science = "assets/class11science.svg";
+  static String class11commerce = "assets/class11commerce.svg";
+  static String class12science = "assets/class12science.svg";
+  static String class12commerce = "assets/class12commerce.svg";
+  static String grageItemBg = "assets/grageItemBg.svg";
 }

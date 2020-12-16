@@ -53,4 +53,10 @@ class AppColors {
   static Color instructionsColor2 = Color(0x3300CEC9);
   static Color instructionsColor3 = Color(0x33FAB1A0);
   static Color wrongBorderColor = Color(0xffFF7675);
+
+  //my progress
+  static Color mathsColor = Color(0xffB3E3F2);
+  static Color scienceColor = Color(0xffCBF5F4);
+  static Color ssColor = Color(0xffB2EADF);
+  static Color enColor = Color(0xffE1DEFA);
 }

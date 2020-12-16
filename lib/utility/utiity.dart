@@ -282,12 +282,13 @@ class Utility {
   static Widget correctIncorrectView({
     @required Color color,
     @required String title,
+    double fontSize = 20,
   }) {
     return Row(
       children: [
         Container(
-          height: 20,
-          width: 20,
+          height: fontSize,
+          width: fontSize,
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(4),
@@ -300,14 +301,14 @@ class Utility {
           title,
           style: TextStyle(
             color: Colors.white,
-            fontSize: 20,
+            fontSize: fontSize,
           ),
         ),
       ],
     );
   }
 
-  static List<PieChartSectionData> showingSections() {
+  static List<PieChartSectionData> showingSections(List<double> values) {
     return List.generate(
       2,
       (i) {
@@ -317,13 +318,13 @@ class Utility {
           case 0:
             return PieChartSectionData(
               color: AppColors.myProgressCorrectcolor,
-              value: 75,
+              value: values[0],
               showTitle: false,
             );
           case 1:
             return PieChartSectionData(
               color: AppColors.myProgressIncorrectcolor,
-              value: 25,
+              value: values[1],
               showTitle: false,
             );
           default:
@@ -462,6 +463,32 @@ class Utility {
           color: Colors.black38,
         ),
       ],
+    );
+  }
+
+  static Widget pieChart({
+    List<double> values = const [75, 25],
+  }) {
+    return PieChart(
+      PieChartData(
+        pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
+          // click on pie
+          // setState(() {
+          //   if (pieTouchResponse.touchInput is FlLongPressEnd ||
+          //       pieTouchResponse.touchInput is FlPanEnd) {
+          //     touchedIndex = -1;
+          //   } else {
+          //     touchedIndex = pieTouchResponse.touchedSectionIndex;
+          //   }
+          // });
+        }),
+        startDegreeOffset: 0,
+        borderData: FlBorderData(
+          show: false,
+        ),
+        sectionsSpace: 10,
+        sections: showingSections(values),
+      ),
     );
   }
 }
