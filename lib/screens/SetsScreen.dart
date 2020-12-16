@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/screens/InstructionsScreen.dart';
 import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
 import 'package:fullmarks/utility/utiity.dart';
 
 class SetsScreen extends StatefulWidget {
   String subtopicName;
+  String subjectName;
   SetsScreen({
     @required this.subtopicName,
+    @required this.subjectName,
   });
   @override
   _SetsScreenState createState() => _SetsScreenState();
 }
 
 class _SetsScreenState extends State<SetsScreen> {
-  List<int> selectedIndex = [1, 2];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,14 +54,13 @@ class _SetsScreenState extends State<SetsScreen> {
   Widget setsItemView(int index) {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            if (selectedIndex.contains(index)) {
-              selectedIndex.remove(index);
-            } else {
-              selectedIndex.add(index);
-            }
-          });
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (BuildContext context) => InstructionsScreen(
+            subtopicName: widget.subtopicName,
+            subjectName: widget.subjectName,
+            setName: "Set " + index.toString(),
+          ),
+        ));
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 8),
@@ -94,7 +94,7 @@ class _SetsScreenState extends State<SetsScreen> {
               ),
             ),
             IconButton(
-              icon: SvgPicture.asset(selectedIndex.contains(index)
+              icon: SvgPicture.asset(index == 1 || index == 2
                   ? AppAssets.check
                   : AppAssets.uncheck),
               onPressed: null,

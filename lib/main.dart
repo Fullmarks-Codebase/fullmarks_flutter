@@ -17,7 +17,7 @@ void main() {
   });
 }
 
-//Home (subject) -> SubTopicScreen -> SetsScreen
+//Home (subject) -> SubTopicScreen -> SetsScreen -> InstructionsScreen -> TestScreen -> TestResultScreen -> QuizResult
 
 class MyApp extends StatelessWidget {
   @override

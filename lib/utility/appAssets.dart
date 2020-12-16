@@ -8,6 +8,7 @@ class AppAssets {
   static String splashBg = "assets/splashBg.svg";
   static String otpImage = "assets/otpImage.svg";
   static String topbarBg1 = "assets/topbarBg1.svg";
+  static String bottomBarbg = "assets/bottomBarbg.svg";
   static String backArrow = "assets/backArrow.svg";
   static String loginLogo = "assets/loginLogo.svg";
   static String facebook = "assets/facebook.svg";
@@ -51,4 +52,18 @@ class AppAssets {
   static String calculator = "assets/calculator.svg";
   static String check = "assets/check.svg";
   static String uncheck = "assets/uncheck.svg";
+  static String journeyLine = "assets/journeyLine.svg";
+  static String instruction1 = "assets/instruction1.png";
+  static String instruction2 = "assets/instruction2.png";
+  static String instruction3 = "assets/instruction3.png";
+  static String play = "assets/play.svg";
+  static String dummyQuestionImage = "assets/dummyQuestionImage.png";
+  static String submit = "assets/submit.svg";
+  static String previousArrow = "assets/rightArrow.svg";
+  static String nextArrow = "assets/leftArrow.svg";
+  static String calculatorWhite = "assets/calculatorWhite.svg";
+  static String answerImage1 = "assets/answerImage1.png";
+  static String answerImage2 = "assets/answerImage2.png";
+  static String answerImage3 = "assets/answerImage3.png";
+  static String answerImage4 = "assets/answerImage4.png";
 }

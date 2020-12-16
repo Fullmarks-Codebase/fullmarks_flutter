@@ -47,4 +47,10 @@ class AppColors {
   //sets color
   static Color setsItemGradientColor1 = Color(0xff76B5FF);
   static Color setsItemGradientColor2 = Color(0xff4499FF);
+
+  //instructions colors
+  static Color instructionsColor1 = Color(0xffEBF1FC);
+  static Color instructionsColor2 = Color(0x3300CEC9);
+  static Color instructionsColor3 = Color(0x33FAB1A0);
+  static Color wrongBorderColor = Color(0xffFF7675);
 }

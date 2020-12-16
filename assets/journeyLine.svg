@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="358.22" height="608.556" viewBox="0 0 358.22 608.556">
+  <g id="Journey_Line" data-name="Journey Line" transform="translate(-5.926 -85.272)">
+    <path id="Path_271" data-name="Path 271" d="M-326.29-10.776s.752-8.809,9.573-8.847c59.687-.254,296.174-.652,312.286,8.847C14.025.1,24.708,126.941-35.744,160.156c-78.92,43.361-243.474-12.715-284.682,24.593S-345.413,330.656-298.6,358.837s284.72-42.95,303.1,28,7.674,124-33.667,163.452-98.773-13.564-131.7,0-14.971,37.743-14.971,37.743" transform="translate(350.5 105.5)" fill="none" stroke="#acd2fe" stroke-width="1" stroke-dasharray="20"/>
+    <path id="Icon_ionic-ios-arrow-down" data-name="Icon ionic-ios-arrow-down" d="M12.9,16.607l5.075-5.079a.955.955,0,0,1,1.355,0,.967.967,0,0,1,0,1.359l-5.75,5.754a.957.957,0,0,1-1.323.028l-5.79-5.778a.959.959,0,0,1,1.355-1.359Z" transform="translate(156.891 668.12)" fill="rgba(66,118,227,0.49)"/>
+    <circle id="Ellipse_16" data-name="Ellipse 16" cx="2.5" cy="2.5" r="2.5" transform="translate(22 92)" fill="#acd2fe"/>
+  </g>
+</svg>

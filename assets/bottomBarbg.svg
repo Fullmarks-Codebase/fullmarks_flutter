@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="375" height="52.552" viewBox="0 0 375 52.552">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#76b5ff"/>
+      <stop offset="1" stop-color="#49f"/>
+    </linearGradient>
+  </defs>
+  <g id="Shape_Topbar" data-name="Shape Topbar" transform="translate(375 52.552) rotate(-180)">
+    <g id="Shape_Topbar-2" data-name="Shape Topbar" transform="translate(0 -70.561)" opacity="0.3">
+      <path id="Vector_16" data-name="Vector 16" d="M0,24.513V0H375V24.513C312.375,8.274,286.959,51.419,185.153,52.156S60.449,26.834,0,24.513Z" transform="translate(0 70.561)" fill="#86bdfe"/>
+      <path id="Vector_15" data-name="Vector 15" d="M0,24.749V0H374.478V24.749c-47.386-12.447-87.343-16.975-121.339,0s-29.414,19.405-61.716,26.363c-29.95-1.042-42.887-10.431-81.59-26.363S47.338,9.749,0,24.749Z" transform="translate(0 72)" fill="url(#linear-gradient)"/>
+    </g>
+  </g>
+</svg>

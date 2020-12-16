@@ -145,6 +145,9 @@ class Utility {
     String assetName,
     AlignmentGeometry begin = Alignment.centerLeft,
     AlignmentGeometry end = Alignment.centerRight,
+    Color borderColor,
+    bool isPrefix = false,
+    bool isSufix = false,
   }) {
     return InkWell(
       onTap: onPressed,
@@ -163,15 +166,43 @@ class Utility {
                   stops: [0.25, 0.75],
                 ),
           borderRadius: BorderRadius.circular(radius),
+          border: Border.all(
+            color: borderColor == null ? Colors.transparent : borderColor,
+          ),
         ),
         child: text != null
-            ? Text(
-                text,
-                style: TextStyle(
-                  color: textcolor,
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
-                ),
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  isPrefix
+                      ? Container(
+                          margin: EdgeInsets.only(
+                            right: 8,
+                          ),
+                          child: SvgPicture.asset(
+                            assetName,
+                          ),
+                        )
+                      : Container(),
+                  Text(
+                    text,
+                    style: TextStyle(
+                      color: textcolor,
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  isSufix
+                      ? Container(
+                          margin: EdgeInsets.only(
+                            left: 8,
+                          ),
+                          child: SvgPicture.asset(
+                            assetName,
+                          ),
+                        )
+                      : Container(),
+                ],
               )
             : assetName != null
                 ? SvgPicture.asset(
@@ -186,14 +217,18 @@ class Utility {
     BuildContext context, {
     @required String text,
     @required Function() onBackPressed,
+    bool isHome = true,
+    bool isBack = true,
   }) {
     return Row(
       children: [
-        Utility.roundShadowButton(
-          context: context,
-          assetName: AppAssets.backArrow,
-          onPressed: onBackPressed,
-        ),
+        isBack
+            ? Utility.roundShadowButton(
+                context: context,
+                assetName: AppAssets.backArrow,
+                onPressed: onBackPressed,
+              )
+            : Container(),
         Spacer(),
         Text(
           text,
@@ -204,17 +239,19 @@ class Utility {
           ),
         ),
         Spacer(),
-        Utility.roundShadowButton(
-          context: context,
-          assetName: AppAssets.home,
-          onPressed: () {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (BuildContext context) => HomeScreen(),
-                ),
-                (Route<dynamic> route) => false);
-          },
-        ),
+        isHome
+            ? Utility.roundShadowButton(
+                context: context,
+                assetName: AppAssets.home,
+                onPressed: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => HomeScreen(),
+                      ),
+                      (Route<dynamic> route) => false);
+                },
+              )
+            : Container(),
       ],
     );
   }
@@ -324,6 +361,108 @@ class Utility {
         "20% Completed",
       ),
     ];
+  }
+
+  static BoxDecoration selectedAnswerDecoration() {
+    return BoxDecoration(
+      color: AppColors.myProgressIncorrectcolor,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
+        color: AppColors.myProgressIncorrectcolor,
+      ),
+      boxShadow: [
+        BoxShadow(
+          offset: Offset(0, 1),
+          blurRadius: 1,
+          color: Colors.black38,
+        ),
+      ],
+    );
+  }
+
+  static BoxDecoration defaultAnswerDecoration() {
+    return BoxDecoration(
+      color: AppColors.whiteColor,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
+        color: AppColors.blackColor,
+      ),
+      boxShadow: [
+        BoxShadow(
+          offset: Offset(0, 1),
+          blurRadius: 1,
+          color: Colors.black38,
+        ),
+      ],
+    );
+  }
+
+  static BoxDecoration defaultDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      shape: BoxShape.circle,
+      border: Border.all(
+        color: Colors.black,
+      ),
+      boxShadow: [
+        BoxShadow(
+          offset: Offset(0, 1),
+          blurRadius: 1,
+          color: Colors.black38,
+        ),
+      ],
+    );
+  }
+
+  static BoxDecoration getSubmitedDecoration() {
+    return BoxDecoration(
+      color: AppColors.strongCyan,
+      shape: BoxShape.circle,
+      border: Border.all(
+        color: AppColors.strongCyan,
+      ),
+      boxShadow: [
+        BoxShadow(
+          offset: Offset(0, 1),
+          blurRadius: 1,
+          color: Colors.black38,
+        ),
+      ],
+    );
+  }
+
+  static BoxDecoration getCurrentDecoration() {
+    return BoxDecoration(
+      color: AppColors.appColor,
+      shape: BoxShape.circle,
+      border: Border.all(
+        color: AppColors.appColor,
+      ),
+      boxShadow: [
+        BoxShadow(
+          offset: Offset(0, 1),
+          blurRadius: 1,
+          color: Colors.black38,
+        ),
+      ],
+    );
+  }
+
+  static BoxDecoration resultAnswerDecoration(Color color) {
+    return BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
+        color: color,
+      ),
+      boxShadow: [
+        BoxShadow(
+          offset: Offset(0, 1),
+          blurRadius: 1,
+          color: Colors.black38,
+        ),
+      ],
+    );
   }
 }
 

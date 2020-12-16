@@ -74,6 +74,7 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (BuildContext context) => SetsScreen(
             subtopicName: "Subtopic " + index.toString(),
+            subjectName: widget.subjectName,
           ),
         ));
       },
@@ -189,26 +190,33 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
         Expanded(
           child: Container(
             height: (MediaQuery.of(context).size.width / 2),
-            child: PieChart(
-              PieChartData(
-                pieTouchData: PieTouchData(touchCallback: (pieTouchResponse) {
-                  // click on pie
-                  // setState(() {
-                  //   if (pieTouchResponse.touchInput is FlLongPressEnd ||
-                  //       pieTouchResponse.touchInput is FlPanEnd) {
-                  //     touchedIndex = -1;
-                  //   } else {
-                  //     touchedIndex = pieTouchResponse.touchedSectionIndex;
-                  //   }
-                  // });
-                }),
-                startDegreeOffset: 0,
-                borderData: FlBorderData(
-                  show: false,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SvgPicture.asset(AppAssets.calculatorWhite),
+                PieChart(
+                  PieChartData(
+                    pieTouchData:
+                        PieTouchData(touchCallback: (pieTouchResponse) {
+                      // click on pie
+                      // setState(() {
+                      //   if (pieTouchResponse.touchInput is FlLongPressEnd ||
+                      //       pieTouchResponse.touchInput is FlPanEnd) {
+                      //     touchedIndex = -1;
+                      //   } else {
+                      //     touchedIndex = pieTouchResponse.touchedSectionIndex;
+                      //   }
+                      // });
+                    }),
+                    startDegreeOffset: 0,
+                    borderData: FlBorderData(
+                      show: false,
+                    ),
+                    sectionsSpace: 10,
+                    sections: Utility.showingSections(),
+                  ),
                 ),
-                sectionsSpace: 10,
-                sections: Utility.showingSections(),
-              ),
+              ],
             ),
           ),
         ),
