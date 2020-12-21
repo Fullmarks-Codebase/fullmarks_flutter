@@ -272,7 +272,24 @@ class _TestScreenState extends State<TestScreen> {
               gradientColor2: AppColors.buttonGradient2,
               onPressed: () {
                 if (currentQuestion == (totalQuestion - 1)) {
-                  showSubmitQuizDialog();
+                  Utility.showSubmitQuizDialog(
+                    context: context,
+                    onSubmitPress: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => TestResultScreen(
+                            title: widget.subjectName +
+                                " / " +
+                                widget.subtopicName +
+                                " / " +
+                                widget.setName,
+                          ),
+                        ),
+                        (Route<dynamic> route) => false,
+                      );
+                    },
+                  );
                 } else {
                   questionAnimateTo(currentQuestion + 1);
                 }
@@ -302,67 +319,6 @@ class _TestScreenState extends State<TestScreen> {
     );
 
     questionController.jumpToPage(currentQuestion);
-  }
-
-  showSubmitQuizDialog() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Do you want to Submit Quiz?",
-                style: TextStyle(
-                  color: AppColors.appColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Utility.button(
-                context,
-                gradientColor1: AppColors.buttonGradient1,
-                gradientColor2: AppColors.buttonGradient2,
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => TestResultScreen(
-                        title: widget.subjectName +
-                            " / " +
-                            widget.subtopicName +
-                            " / " +
-                            widget.setName,
-                      ),
-                    ),
-                    (Route<dynamic> route) => false,
-                  );
-                },
-                text: "Submit",
-                assetName: AppAssets.submit,
-                isPrefix: true,
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Utility.button(
-                context,
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                text: "Back to Quiz",
-                textcolor: AppColors.appColor,
-                borderColor: AppColors.appColor,
-              )
-            ],
-          ),
-        );
-      },
-    );
   }
 
   Widget questionText() {

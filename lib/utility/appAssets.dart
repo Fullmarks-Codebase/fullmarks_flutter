@@ -93,6 +93,14 @@ class AppAssets {
   static String profileTopBg = "assets/profileTopBg.svg";
   static String profileBg2 = "assets/profileBg2.svg";
   static String trophy = "assets/trophy.svg";
+  static String cyanCheck = "assets/cyanCheck.svg";
+  static String whiteClock = "assets/whiteClock.svg";
+  static String mockTestItemBg = "assets/mockTestItemBg.svg";
+  static String whiteNext = "assets/whiteNext.svg";
+  static String mockTestGrid = "assets/mockTestGrid.svg";
+  static String mockTestBg = "assets/mockTestBg.svg";
+  static String arrowDown = "assets/down.svg";
+  static String grid = "assets/grid.svg";
   static String intro1 = "assets/intro1.json";
   static String intro2 = "assets/intro2.json";
   static String intro3 = "assets/intro3.json";

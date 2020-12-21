@@ -37,13 +37,14 @@ MyProfileScreen
 ChangeGradeScreen
 
 4. Mock Test
+MockTestScreen -> MockTestQuizScreen
 
 5. Live Quizzes
 
 6. Discussion
 
 7. My Buddies
-MyFriendsScreen
+MyFriendsScreen -> OtherProfileScreen
 
 *****/
 

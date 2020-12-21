@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/ChangeGradeScreen.dart';
+import 'package:fullmarks/screens/MockTestScreen.dart';
 import 'package:fullmarks/screens/MyFriendsScreen.dart';
 import 'package:fullmarks/screens/MyProfileScreen.dart';
 import 'package:fullmarks/screens/MyProgressScreen.dart';
@@ -164,6 +165,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "Mock Test",
                 onTap: () {
                   Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MockTestScreen(),
+                    ),
+                  );
                 },
               ),
               drawerItemView(
@@ -624,6 +631,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget toolbarView() {
     return Row(
       children: [
+        SizedBox(
+          width: 8,
+        ),
         Utility.roundShadowButton(
           context: context,
           assetName: AppAssets.drawer,

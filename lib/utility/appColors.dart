@@ -61,4 +61,9 @@ class AppColors {
   static Color enColor = Color(0xffE1DEFA);
 
   static Color unreadColor = Color(0xffFCEED3);
+  static Color greenColor = Color(0xff03BE75);
+  static Color redColor = Color(0xffE34300);
+  static Color greyColor2 = Color(0xff939393);
+  static Color greyColor3 = Color(0xff9F9F9F);
+  static Color greyColor4 = Color(0xffDEDEDE);
 }

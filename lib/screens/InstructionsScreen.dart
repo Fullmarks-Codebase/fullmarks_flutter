@@ -240,68 +240,26 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
             gradientColor1: AppColors.buttonGradient1,
             gradientColor2: AppColors.buttonGradient2,
             onPressed: () {
-              showStartQuizDialog();
+              Utility.showStartQuizDialog(
+                context: context,
+                onStartPress: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => TestScreen(
+                        subtopicName: widget.subtopicName,
+                        subjectName: widget.subjectName,
+                        setName: widget.setName,
+                      ),
+                    ),
+                  );
+                },
+              );
             },
             text: "Start Quiz",
           ),
         )
       ],
-    );
-  }
-
-  showStartQuizDialog() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Do you want to start Quiz?",
-                style: TextStyle(
-                  color: AppColors.appColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Utility.button(
-                context,
-                gradientColor1: AppColors.buttonGradient1,
-                gradientColor2: AppColors.buttonGradient2,
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => TestScreen(
-                      subtopicName: widget.subtopicName,
-                      subjectName: widget.subjectName,
-                      setName: widget.setName,
-                    ),
-                  ));
-                },
-                text: "Start",
-                assetName: AppAssets.play,
-                isPrefix: true,
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Utility.button(
-                context,
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                text: "Cancel",
-                textcolor: AppColors.appColor,
-                borderColor: AppColors.appColor,
-              )
-            ],
-          ),
-        );
-      },
     );
   }
 

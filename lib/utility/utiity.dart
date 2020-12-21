@@ -228,11 +228,15 @@ class Utility {
     @required Function() onBackPressed,
     bool isHome = true,
     bool isBack = true,
+    Color textColor = Colors.black,
   }) {
     return SafeArea(
       bottom: false,
       child: Row(
         children: [
+          SizedBox(
+            width: 8,
+          ),
           Utility.roundShadowButton(
             context: context,
             assetName: isBack ? AppAssets.backArrow : null,
@@ -247,7 +251,7 @@ class Utility {
             child: Text(
               text,
               style: TextStyle(
-                color: Colors.black,
+                color: textColor,
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),
@@ -266,6 +270,9 @@ class Utility {
                         (Route<dynamic> route) => false);
                   }
                 : null,
+          ),
+          SizedBox(
+            width: 8,
           ),
         ],
       ),
@@ -299,6 +306,7 @@ class Utility {
     @required Color color,
     @required String title,
     double fontSize = 20,
+    Color textColor = Colors.white,
   }) {
     return Row(
       children: [
@@ -316,7 +324,7 @@ class Utility {
         Text(
           title,
           style: TextStyle(
-            color: Colors.white,
+            color: textColor,
             fontSize: fontSize,
           ),
           maxLines: 2,
@@ -382,12 +390,17 @@ class Utility {
     ];
   }
 
-  static BoxDecoration selectedAnswerDecoration() {
+  static BoxDecoration selectedAnswerDecoration({
+    Color color,
+  }) {
+    if (color == null) {
+      color = AppColors.myProgressIncorrectcolor;
+    }
     return BoxDecoration(
-      color: AppColors.myProgressIncorrectcolor,
+      color: color,
       borderRadius: BorderRadius.circular(8),
       border: Border.all(
-        color: AppColors.myProgressIncorrectcolor,
+        color: color,
       ),
       boxShadow: [
         BoxShadow(
@@ -696,6 +709,106 @@ class Utility {
           )
         ],
       ),
+    );
+  }
+
+  static showStartQuizDialog({
+    @required BuildContext context,
+    @required Function onStartPress,
+  }) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Do you want to start Quiz?",
+                style: TextStyle(
+                  color: AppColors.appColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Utility.button(
+                context,
+                gradientColor1: AppColors.buttonGradient1,
+                gradientColor2: AppColors.buttonGradient2,
+                onPressed: onStartPress,
+                text: "Start",
+                assetName: AppAssets.play,
+                isPrefix: true,
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Utility.button(
+                context,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                text: "Cancel",
+                textcolor: AppColors.appColor,
+                borderColor: AppColors.appColor,
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static showSubmitQuizDialog({
+    @required BuildContext context,
+    @required Function onSubmitPress,
+  }) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Do you want to Submit Quiz?",
+                style: TextStyle(
+                  color: AppColors.appColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Utility.button(
+                context,
+                gradientColor1: AppColors.buttonGradient1,
+                gradientColor2: AppColors.buttonGradient2,
+                onPressed: onSubmitPress,
+                text: "Submit",
+                assetName: AppAssets.submit,
+                isPrefix: true,
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Utility.button(
+                context,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                text: "Back to Quiz",
+                textcolor: AppColors.appColor,
+                borderColor: AppColors.appColor,
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }
