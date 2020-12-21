@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15.061" height="12.049" viewBox="0 0 15.061 12.049">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#76b5ff"/>
+      <stop offset="1" stop-color="#49f"/>
+    </linearGradient>
+  </defs>
+  <path id="Icon_material-email" data-name="Icon material-email" d="M14.638,2.167H2.589a1.5,1.5,0,0,0-1.5,1.506l-.008,9.036a1.511,1.511,0,0,0,1.506,1.506H14.638a1.511,1.511,0,0,0,1.506-1.506V3.673a1.511,1.511,0,0,0-1.506-1.506Zm0,3.012L8.614,8.944,2.589,5.179V3.673L8.614,7.438l6.024-3.765V5.179Z" transform="translate(-1.083 -2.167)" fill="url(#linear-gradient)"/>
+</svg>

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fullmarks/screens/HomeScreen.dart';
+import 'package:fullmarks/screens/InstructionsScreen.dart';
+import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/screens/SplashScreen.dart';
 import 'package:fullmarks/utility/appColors.dart';
 
@@ -10,8 +12,9 @@ void main() {
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
   ]).then((value) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top])
-        .then((value) {
+    SystemChrome.setEnabledSystemUIOverlays([
+      SystemUiOverlay.top,
+    ]).then((value) {
       runApp(MyApp());
     });
   });
@@ -19,18 +22,28 @@ void main() {
 
 /*
 
-Home (subject) -> SubTopicScreen -> SetsScreen -> InstructionsScreen -> TestScreen -> TestResultScreen -> QuizResult
+Home (subject) -> SubTopicScreen -> SetsScreen -> InstructionsScreen -> TestScreen -> TestResultScreen -> QuizResultScreen
 
-NotificationListScreen -> 
+NotificationListScreen -> NotificationDetailsScreen
 
 Drawer
-1. My Progress
-MyProgress -> MyProgressSubject
+1. My ProgressScreen
+MyProgressScreen -> MyProgressSubjectScreen
 
 2. My Profile
+MyProfileScreen
 
 3. Change Grade
-ChangeGrade
+ChangeGradeScreen
+
+4. Mock Test
+
+5. Live Quizzes
+
+6. Discussion
+
+7. My Buddies
+MyFriendsScreen
 
 *****/
 
