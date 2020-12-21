@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
+import 'package:lottie/lottie.dart';
 
 class IntroSliderScreen extends StatefulWidget {
   @override
@@ -43,22 +44,22 @@ class _IntroSliderScreenState extends State<IntroSliderScreen> {
           children: [
             introItemView(
               AppColors.introColor1,
-              AppAssets.introImage1,
+              AppAssets.intro1,
               "Practice with short quizzes on each topic and track your performance",
             ),
             introItemView(
               AppColors.introColor2,
-              AppAssets.introImage2,
+              AppAssets.intro2,
               "Clear your doubts and discuss with friends and coaches",
             ),
             introItemView(
               AppColors.introColor3,
-              AppAssets.introImage3,
+              AppAssets.intro3,
               "Track your performance and prepare  to get fullmarks !",
             ),
             introItemView(
               AppColors.introColor4,
-              AppAssets.introImage4,
+              AppAssets.intro4,
               "Live challenge your friends and flaunt won badges among friends !",
             ),
           ],
@@ -118,7 +119,8 @@ class _IntroSliderScreenState extends State<IntroSliderScreen> {
       child: Column(
         children: [
           Spacer(),
-          Image.asset(assetName),
+          // Image.asset(assetName),
+          LottieBuilder.asset(assetName),
           SizedBox(
             height: 16,
           ),

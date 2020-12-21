@@ -4,6 +4,7 @@ import 'package:fullmarks/screens/TestScreen.dart';
 import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
 import 'package:fullmarks/utility/utiity.dart';
+import 'package:lottie/lottie.dart';
 
 class InstructionsScreen extends StatefulWidget {
   String subtopicName;
@@ -96,7 +97,8 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
           children: [
             Expanded(
               flex: 10,
-              child: Image.asset(AppAssets.instruction3),
+              // child: Image.asset(AppAssets.instruction3),
+              child: LottieBuilder.asset(AppAssets.instructions3),
             ),
             Spacer(),
             Expanded(
@@ -143,6 +145,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
         child: Row(
           children: [
             Expanded(
+              flex: 2,
               child: Row(
                 children: [
                   roundedView(AppColors.strongCyan, "No time"),
@@ -161,7 +164,8 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
               ),
             ),
             Expanded(
-              child: Image.asset(AppAssets.instruction2),
+              child: LottieBuilder.asset(AppAssets.instructions2),
+              // child: Image.asset(AppAssets.instruction2),
             ),
           ],
         ),
@@ -186,7 +190,8 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
         child: Row(
           children: [
             Expanded(
-              child: Image.asset(AppAssets.instruction1),
+              child: LottieBuilder.asset(AppAssets.instructions1),
+              // child: Image.asset(AppAssets.instruction1),
             ),
             Expanded(
               child: Row(
