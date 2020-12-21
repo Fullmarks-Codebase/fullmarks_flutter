@@ -83,4 +83,21 @@ class AppAssets {
   static String class12commerce = "assets/class12commerce.svg";
   static String grageItemBg = "assets/grageItemBg.svg";
   static String notificationBg = "assets/notificationBg.svg";
+  static String profileBg = "assets/profileBg.svg";
+  static String birthday = "assets/birthday.svg";
+  static String email = "assets/email.svg";
+  static String gender = "assets/gender.svg";
+  static String like = "assets/like.svg";
+  static String mobile = "assets/mobile.svg";
+  static String pencil = "assets/pencil.svg";
+  static String profileTopBg = "assets/profileTopBg.svg";
+  static String profileBg2 = "assets/profileBg2.svg";
+  static String trophy = "assets/trophy.svg";
+  static String intro1 = "assets/intro1.json";
+  static String intro2 = "assets/intro2.json";
+  static String intro3 = "assets/intro3.json";
+  static String intro4 = "assets/intro4.json";
+  static String instructions1 = "assets/instructions1.json";
+  static String instructions2 = "assets/instructions2.json";
+  static String instructions3 = "assets/instructions3.json";
 }

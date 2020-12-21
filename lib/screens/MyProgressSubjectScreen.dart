@@ -3,16 +3,17 @@ import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
 import 'package:fullmarks/utility/utiity.dart';
 
-class MyProgressSubject extends StatefulWidget {
+class MyProgressSubjectScreen extends StatefulWidget {
   String title;
-  MyProgressSubject({
+  MyProgressSubjectScreen({
     @required this.title,
   });
   @override
-  _MyProgressSubjectState createState() => _MyProgressSubjectState();
+  _MyProgressSubjectScreenState createState() =>
+      _MyProgressSubjectScreenState();
 }
 
-class _MyProgressSubjectState extends State<MyProgressSubject> {
+class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +79,7 @@ class _MyProgressSubjectState extends State<MyProgressSubject> {
                     "Algebra",
                     style: TextStyle(
                       color: AppColors.whiteColor,
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -86,7 +87,7 @@ class _MyProgressSubjectState extends State<MyProgressSubject> {
                     "Set " + (index + 1).toString(),
                     style: TextStyle(
                       color: AppColors.whiteColor,
-                      fontSize: 20,
+                      fontSize: 18,
                     ),
                   ),
                 ],
@@ -119,7 +120,7 @@ class _MyProgressSubjectState extends State<MyProgressSubject> {
                             Utility.correctIncorrectView(
                               color: AppColors.myProgressCorrectcolor,
                               title: "Incorrect: 5",
-                              fontSize: 16,
+                              fontSize: 14,
                             ),
                             SizedBox(
                               height: 8,
@@ -127,7 +128,7 @@ class _MyProgressSubjectState extends State<MyProgressSubject> {
                             Utility.correctIncorrectView(
                               color: AppColors.myProgressIncorrectcolor,
                               title: "Correct: 120",
-                              fontSize: 16,
+                              fontSize: 14,
                             ),
                           ],
                         )

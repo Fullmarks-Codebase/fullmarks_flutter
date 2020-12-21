@@ -3,12 +3,12 @@ import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
 import 'package:fullmarks/utility/utiity.dart';
 
-class QuizResult extends StatefulWidget {
+class QuizResultScreen extends StatefulWidget {
   @override
-  _QuizResultState createState() => _QuizResultState();
+  _QuizResultScreenState createState() => _QuizResultScreenState();
 }
 
-class _QuizResultState extends State<QuizResult> {
+class _QuizResultScreenState extends State<QuizResultScreen> {
   ScrollController controller;
 
   @override

@@ -2,8 +2,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fullmarks/screens/ChangeGrade.dart';
-import 'package:fullmarks/screens/MyProgress.dart';
+import 'package:fullmarks/screens/ChangeGradeScreen.dart';
+import 'package:fullmarks/screens/MyFriendsScreen.dart';
+import 'package:fullmarks/screens/MyProfileScreen.dart';
+import 'package:fullmarks/screens/MyProgressScreen.dart';
 import 'package:fullmarks/screens/NotificationListScreen.dart';
 import 'package:fullmarks/screens/SubTopicScreen.dart';
 import 'package:fullmarks/utility/appAssets.dart';
@@ -107,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       IconButton(
                         icon: SvgPicture.asset(AppAssets.notification),
                         onPressed: () {
+                          Navigator.pop(context);
                           Navigator.of(context).push(MaterialPageRoute(
                             builder: (BuildContext context) =>
                                 NotificationListScreen(),
@@ -125,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MyProgress(),
+                      builder: (context) => MyProgressScreen(),
                     ),
                   );
                 },
@@ -135,6 +138,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "My Profile",
                 onTap: () {
                   Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyProfileScreen(),
+                    ),
+                  );
                 },
               ),
               drawerItemView(
@@ -145,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ChangeGrade(),
+                      builder: (context) => ChangeGradeScreen(),
                     ),
                   );
                 },
@@ -176,6 +185,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "My Buddies",
                 onTap: () {
                   Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyFriendsScreen(),
+                    ),
+                  );
                 },
               ),
               drawerItemView(
@@ -217,12 +232,13 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: EdgeInsets.symmetric(vertical: 16),
         child: Row(
           children: [
-            SizedBox(
-              width: 20,
-            ),
-            SvgPicture.asset(assetName),
-            SizedBox(
-              width: 20,
+            Container(
+              width: 55,
+              child: SvgPicture.asset(
+                assetName,
+                height: 15,
+                width: 15,
+              ),
             ),
             Text(
               text,
@@ -616,32 +632,38 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         Spacer(),
-        Row(
-          children: [
-            Text(
-              'Amitstcetet',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.all(16),
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppColors.appColor,
-                  width: 2,
-                ),
-                image: DecorationImage(
-                  image: AssetImage(AppAssets.dummyUser),
+        Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.only(
+            top: 16,
+          ),
+          child: Row(
+            children: [
+              Text(
+                'Amitstcetet',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-            ),
-          ],
+              Container(
+                margin: EdgeInsets.all(16),
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.appColor,
+                    width: 2,
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage(AppAssets.dummyUser),
+                  ),
+                ),
+              ),
+            ],
+          ),
         )
       ],
     );

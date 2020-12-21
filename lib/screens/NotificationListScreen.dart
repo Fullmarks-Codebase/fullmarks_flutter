@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fullmarks/screens/NotificationDetails.dart';
+import 'package:fullmarks/screens/NotificationDetailsScreen.dart';
 import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
 import 'package:fullmarks/utility/utiity.dart';
@@ -55,7 +55,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (BuildContext context) => NotificationDetails(),
+          builder: (BuildContext context) => NotificationDetailsScreen(),
         ));
       },
       child: Container(

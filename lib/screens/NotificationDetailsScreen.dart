@@ -3,12 +3,13 @@ import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
 import 'package:fullmarks/utility/utiity.dart';
 
-class NotificationDetails extends StatefulWidget {
+class NotificationDetailsScreen extends StatefulWidget {
   @override
-  _NotificationDetailsState createState() => _NotificationDetailsState();
+  _NotificationDetailsScreenState createState() =>
+      _NotificationDetailsScreenState();
 }
 
-class _NotificationDetailsState extends State<NotificationDetails> {
+class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

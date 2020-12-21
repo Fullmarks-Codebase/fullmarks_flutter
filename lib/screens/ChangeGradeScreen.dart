@@ -4,12 +4,12 @@ import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
 import 'package:fullmarks/utility/utiity.dart';
 
-class ChangeGrade extends StatefulWidget {
+class ChangeGradeScreen extends StatefulWidget {
   @override
-  _ChangeGradeState createState() => _ChangeGradeState();
+  _ChangeGradeScreenState createState() => _ChangeGradeScreenState();
 }
 
-class _ChangeGradeState extends State<ChangeGrade> {
+class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
   int selected = 0;
   List<String> gradesList = [
     AppAssets.class4,

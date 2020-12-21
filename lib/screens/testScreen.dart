@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/TestResultScreen.dart';
 import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
@@ -22,6 +21,15 @@ class _TestScreenState extends State<TestScreen> {
   int currentQuestion = 0;
   int totalQuestion = 15;
   int selectedAnswer = -1;
+  ScrollController questionsNumberController;
+  PageController questionController;
+
+  @override
+  void initState() {
+    questionsNumberController = ScrollController();
+    questionController = PageController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,19 +61,32 @@ class _TestScreenState extends State<TestScreen> {
         timeElapsedView(),
         questionNumberView(),
         Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                questionText(),
-                currentQuestion % 2 == 0 ? questionImageView() : Container(),
-                Container(
-                  padding: EdgeInsets.all(16),
-                  child: Divider(
-                    thickness: 2,
+          child: PageView(
+            controller: questionController,
+            onPageChanged: (page) {
+              questionAnimateTo(page);
+            },
+            children: List.generate(
+              totalQuestion,
+              (index) {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      questionText(),
+                      currentQuestion % 2 == 0
+                          ? questionImageView()
+                          : Container(),
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        child: Divider(
+                          thickness: 2,
+                        ),
+                      ),
+                      answersView()
+                    ],
                   ),
-                ),
-                answersView()
-              ],
+                );
+              },
             ),
           ),
         ),
@@ -234,10 +255,7 @@ class _TestScreenState extends State<TestScreen> {
                     gradientColor1: AppColors.buttonGradient1,
                     gradientColor2: AppColors.buttonGradient2,
                     onPressed: () {
-                      if (mounted)
-                        setState(() {
-                          currentQuestion--;
-                        });
+                      questionAnimateTo(currentQuestion - 1);
                     },
                     text: "Prev",
                     assetName: AppAssets.previousArrow,
@@ -256,10 +274,7 @@ class _TestScreenState extends State<TestScreen> {
                 if (currentQuestion == (totalQuestion - 1)) {
                   showSubmitQuizDialog();
                 } else {
-                  if (mounted)
-                    setState(() {
-                      currentQuestion++;
-                    });
+                  questionAnimateTo(currentQuestion + 1);
                 }
               },
               text: currentQuestion == (totalQuestion - 1) ? "Submit" : "Next",
@@ -272,6 +287,21 @@ class _TestScreenState extends State<TestScreen> {
         ],
       ),
     );
+  }
+
+  questionAnimateTo(int page) {
+    if (mounted)
+      setState(() {
+        currentQuestion = page;
+      });
+
+    questionsNumberController.animateTo(
+      (currentQuestion * 25).toDouble(),
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 300),
+    );
+
+    questionController.jumpToPage(currentQuestion);
   }
 
   showSubmitQuizDialog() {
@@ -355,6 +385,8 @@ class _TestScreenState extends State<TestScreen> {
 
   Widget questionNumberView() {
     return SingleChildScrollView(
+      physics: ClampingScrollPhysics(),
+      controller: questionsNumberController,
       scrollDirection: Axis.horizontal,
       child: Container(
         margin: EdgeInsets.only(
@@ -374,10 +406,7 @@ class _TestScreenState extends State<TestScreen> {
   Widget questionNumberItemView(int index) {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            currentQuestion = index;
-          });
+        questionAnimateTo(index);
       },
       child: Container(
         margin: EdgeInsets.only(

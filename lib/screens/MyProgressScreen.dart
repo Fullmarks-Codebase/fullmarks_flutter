@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fullmarks/screens/MyProgressSubject.dart';
+import 'package:fullmarks/screens/MyProgressSubjectScreen.dart';
 import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
 import 'package:fullmarks/utility/utiity.dart';
 
-class MyProgress extends StatefulWidget {
+class MyProgressScreen extends StatefulWidget {
   @override
-  _MyProgressState createState() => _MyProgressState();
+  _MyProgressScreenState createState() => _MyProgressScreenState();
 }
 
-class _MyProgressState extends State<MyProgress> {
+class _MyProgressScreenState extends State<MyProgressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +57,7 @@ class _MyProgressState extends State<MyProgress> {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (BuildContext context) => MyProgressSubject(
+          builder: (BuildContext context) => MyProgressSubjectScreen(
             title: index == 0
                 ? "Math"
                 : index == 1

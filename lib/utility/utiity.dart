@@ -109,24 +109,33 @@ class Utility {
     @required Function() onPressed,
   }) {
     return SafeArea(
-      child: IconButton(
-        icon: Container(
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(0, 1),
-                blurRadius: 1,
-                color: AppColors.appColor,
-              ),
-            ],
-            shape: BoxShape.circle,
-          ),
-          child: SvgPicture.asset(assetName),
+      bottom: false,
+      child: Container(
+        padding: EdgeInsets.only(
+          bottom: 16,
         ),
-        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-        onPressed: onPressed,
+        child: IconButton(
+          icon: Container(
+            padding: EdgeInsets.all(8),
+            decoration: assetName == null
+                ? BoxDecoration()
+                : BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        offset: Offset(0, 1),
+                        blurRadius: 1,
+                        color: AppColors.appColor,
+                      ),
+                    ],
+                    shape: BoxShape.circle,
+                  ),
+            child:
+                assetName == null ? Container() : SvgPicture.asset(assetName),
+          ),
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          onPressed: onPressed,
+        ),
       ),
     );
   }
@@ -220,39 +229,46 @@ class Utility {
     bool isHome = true,
     bool isBack = true,
   }) {
-    return Row(
-      children: [
-        isBack
-            ? Utility.roundShadowButton(
-                context: context,
-                assetName: AppAssets.backArrow,
-                onPressed: onBackPressed,
-              )
-            : Container(),
-        Spacer(),
-        Text(
-          text,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
+    return SafeArea(
+      bottom: false,
+      child: Row(
+        children: [
+          Utility.roundShadowButton(
+            context: context,
+            assetName: isBack ? AppAssets.backArrow : null,
+            onPressed: isBack ? onBackPressed : null,
           ),
-        ),
-        Spacer(),
-        isHome
-            ? Utility.roundShadowButton(
-                context: context,
-                assetName: AppAssets.home,
-                onPressed: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => HomeScreen(),
-                      ),
-                      (Route<dynamic> route) => false);
-                },
-              )
-            : Container(),
-      ],
+          Spacer(),
+          Container(
+            padding: EdgeInsets.only(
+              bottom: 16,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Spacer(),
+          Utility.roundShadowButton(
+            context: context,
+            assetName: isHome ? AppAssets.home : null,
+            onPressed: isHome
+                ? () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => HomeScreen(),
+                        ),
+                        (Route<dynamic> route) => false);
+                  }
+                : null,
+          ),
+        ],
+      ),
     );
   }
 
@@ -303,6 +319,8 @@ class Utility {
             color: Colors.white,
             fontSize: fontSize,
           ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -488,6 +506,195 @@ class Utility {
         ),
         sectionsSpace: 10,
         sections: showingSections(values),
+      ),
+    );
+  }
+
+  static Widget profileTopView(
+    BuildContext context, {
+    @required String assetName,
+  }) {
+    return Stack(
+      children: [
+        Container(
+          height: (MediaQuery.of(context).size.height / 3.5) + 25,
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  color: Colors.transparent,
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.setsItemGradientColor1,
+                        AppColors.setsItemGradientColor2
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(
+                          MediaQuery.of(context).size.width / 3.5),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Column(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height / 3.5,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.setsItemGradientColor1,
+                    AppColors.setsItemGradientColor2
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft:
+                      Radius.circular(MediaQuery.of(context).size.width / 3.5),
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 30,
+                    color: Colors.transparent,
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(30),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(16),
+          height: MediaQuery.of(context).size.height / 3.5,
+          child: SvgPicture.asset(
+            assetName,
+            width: MediaQuery.of(context).size.width,
+            color: AppColors.appColor.withOpacity(0.5),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Widget leaderBoardView() {
+    return Container(
+      margin: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 8,
+      ),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(0, 1),
+            blurRadius: 3,
+            color: Colors.black38,
+          ),
+        ],
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+      ),
+      child: Column(
+        children: [
+          IntrinsicHeight(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: SvgPicture.asset(AppAssets.like),
+                        onPressed: null,
+                      ),
+                      Expanded(
+                        child: Text(
+                          "Likes : 234",
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                VerticalDivider(),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: SvgPicture.asset(AppAssets.drawerMyBuddies),
+                        onPressed: null,
+                      ),
+                      Expanded(
+                        child: Text(
+                          "Buddies : 340",
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Divider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: SvgPicture.asset(AppAssets.trophy),
+                onPressed: null,
+              ),
+              Text(
+                "Leaderboard Rank : 301",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
+              )
+            ],
+          )
+        ],
       ),
     );
   }
