@@ -40,9 +40,18 @@ ChangeGradeScreen
 MockTestScreen -> MockTestQuizScreen
 
 5. Live Quizzes
+LiveQuizScreen 
+  - LeaderboardScreen
+  - AddFriendScreen
+  - JoinQuizScreen
+  - CreateNewQuizScreen
+  - RandomQuizScreen
 
 6. Discussion
-DiscussionScreen -> AddDiscussionScreen -> AddCommentScreen -> DiscussionDetailsScreen
+DiscussionScreen 
+  - DiscussionDetailsScreen
+  - AddDiscussionScreen 
+  - AddCommentScreen 
 
 7. My Buddies
 MyFriendsScreen -> OtherProfileScreen

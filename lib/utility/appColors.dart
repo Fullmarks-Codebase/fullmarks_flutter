@@ -77,4 +77,6 @@ class AppColors {
   static Color dividerColor = Color(0xffEBEBEB);
   static Color lightTextColor = Color(0xffB5B5B5);
   static Color lightAppColor = Color(0x1A4276E3);
+  static Color friendBorderColor = Color(0xffFFDEA2);
+  static Color yellowColor = Color(0xffF4B542);
 }

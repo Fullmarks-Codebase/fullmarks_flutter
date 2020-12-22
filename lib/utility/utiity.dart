@@ -157,6 +157,7 @@ class Utility {
     Color borderColor,
     bool isPrefix = false,
     bool isSufix = false,
+    bool isSpacer = false,
   }) {
     return InkWell(
       onTap: onPressed,
@@ -183,16 +184,17 @@ class Utility {
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  isPrefix
-                      ? Container(
-                          margin: EdgeInsets.only(
-                            right: 8,
-                          ),
-                          child: SvgPicture.asset(
+                  Container(
+                    margin: EdgeInsets.only(
+                      right: 8,
+                    ),
+                    child: isPrefix
+                        ? SvgPicture.asset(
                             assetName,
-                          ),
-                        )
-                      : Container(),
+                          )
+                        : Container(),
+                  ),
+                  isSpacer ? Spacer() : Container(),
                   Text(
                     text,
                     style: TextStyle(
@@ -200,17 +202,19 @@ class Utility {
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                  isSufix
-                      ? Container(
-                          margin: EdgeInsets.only(
-                            left: 8,
-                          ),
-                          child: SvgPicture.asset(
+                  isSpacer ? Spacer() : Container(),
+                  Container(
+                    margin: EdgeInsets.only(
+                      left: 8,
+                    ),
+                    child: isSufix
+                        ? SvgPicture.asset(
                             assetName,
-                          ),
-                        )
-                      : Container(),
+                          )
+                        : Container(),
+                  ),
                 ],
               )
             : assetName != null

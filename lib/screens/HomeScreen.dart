@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/ChangeGradeScreen.dart';
+import 'package:fullmarks/screens/LiveQuizScreen.dart';
 import 'package:fullmarks/screens/MockTestScreen.dart';
 import 'package:fullmarks/screens/MyFriendsScreen.dart';
 import 'package:fullmarks/screens/MyProfileScreen.dart';
@@ -180,6 +181,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "Live Quizzes",
                 onTap: () {
                   Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LiveQuizScreen(),
+                    ),
+                  );
                 },
               ),
               drawerItemView(
@@ -356,7 +363,14 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.only(
             right: 8,
           ),
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LiveQuizScreen(),
+              ),
+            );
+          },
         ),
         horizontalItemView(
           color: AppColors.mockTestColor,
