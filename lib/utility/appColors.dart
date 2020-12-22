@@ -17,6 +17,7 @@ class AppColors {
   static Color appColor = MaterialColor(0xff4276E3, color);
   static Color whiteColor = Colors.white;
   static Color blackColor = Colors.black;
+  static Color blackColor2 = Color(0xff303030);
   static Color greyColor = Colors.black45;
   static Color background = Colors.grey[200];
   static Color fbColor = Color(0xff3B5998);
@@ -35,6 +36,7 @@ class AppColors {
 
   //home color
   static Color chartBgColor = Color(0xff0984E3);
+  static Color chartBgColorLight = Color(0xffE3F1FD);
   static Color myProgressCorrectcolor = Color(0xff00CEC9);
   static Color myProgressIncorrectcolor = Color(0xffFDCB6E);
   static Color mockTestColor = Color(0xffF0932B);
@@ -63,7 +65,16 @@ class AppColors {
   static Color unreadColor = Color(0xffFCEED3);
   static Color greenColor = Color(0xff03BE75);
   static Color redColor = Color(0xffE34300);
+  static Color redColor2 = Color(0xffD63031);
   static Color greyColor2 = Color(0xff939393);
   static Color greyColor3 = Color(0xff9F9F9F);
   static Color greyColor4 = Color(0xffDEDEDE);
+  static Color greyColor5 = Color(0xffF8F8F8);
+  static Color greyColor6 = Color(0xffEDEDED);
+  static Color greyColor7 = Color(0xffEFEFEF);
+  static Color greyColor8 = Color(0xffBABABA);
+  static Color greyColor9 = Color(0xffF7F7F7);
+  static Color dividerColor = Color(0xffEBEBEB);
+  static Color lightTextColor = Color(0xffB5B5B5);
+  static Color lightAppColor = Color(0x1A4276E3);
 }

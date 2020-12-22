@@ -42,6 +42,7 @@ MockTestScreen -> MockTestQuizScreen
 5. Live Quizzes
 
 6. Discussion
+DiscussionScreen -> AddDiscussionScreen -> AddCommentScreen -> DiscussionDetailsScreen
 
 7. My Buddies
 MyFriendsScreen -> OtherProfileScreen

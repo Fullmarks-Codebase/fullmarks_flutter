@@ -13,6 +13,8 @@ import 'package:fullmarks/utility/appAssets.dart';
 import 'package:fullmarks/utility/appColors.dart';
 import 'package:fullmarks/utility/utiity.dart';
 
+import 'DiscussionScreen.dart';
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -185,6 +187,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "Discussion",
                 onTap: () {
                   Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DiscussionScreen(),
+                    ),
+                  );
                 },
               ),
               drawerItemView(
@@ -299,6 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   text: "Share this App to your friends",
                   buttonText: "Share this App",
                   margin: EdgeInsets.symmetric(horizontal: 16),
+                  onTap: () {},
                 ),
                 SizedBox(
                   height: 16,
@@ -309,19 +318,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   text: "",
                   buttonText: "Rate Us!",
                   margin: EdgeInsets.symmetric(horizontal: 16),
+                  onTap: () {},
                 ),
-                Container(
-                  child: Utility.roundShadowButton(
-                    context: context,
-                    assetName: AppAssets.upArrow,
-                    onPressed: () {
-                      controller.animateTo(
-                        0,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.ease,
-                      );
-                    },
-                  ),
+                Utility.roundShadowButton(
+                  context: context,
+                  assetName: AppAssets.upArrow,
+                  onPressed: () {
+                    controller.animateTo(
+                      0,
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.ease,
+                    );
+                  },
                 )
               ],
             ),
@@ -348,6 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.only(
             right: 8,
           ),
+          onTap: () {},
         ),
         horizontalItemView(
           color: AppColors.mockTestColor,
@@ -358,6 +367,14 @@ class _HomeScreenState extends State<HomeScreen> {
             left: 8,
             right: 8,
           ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MockTestScreen(),
+              ),
+            );
+          },
         ),
         horizontalItemView(
           color: AppColors.discussionForumColor,
@@ -367,6 +384,14 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.only(
             left: 8,
           ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DiscussionScreen(),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -378,6 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
     @required String text,
     @required String buttonText,
     EdgeInsets margin,
+    @required Function onTap,
   }) {
     return Container(
       margin: margin,
@@ -418,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Utility.button(
                   context,
-                  onPressed: () {},
+                  onPressed: onTap,
                   text: buttonText,
                   gradientColor1: Color(0xff76B5FF),
                   gradientColor2: Color(0xff4499FF),
