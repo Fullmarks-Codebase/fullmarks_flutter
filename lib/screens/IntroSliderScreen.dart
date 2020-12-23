@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fullmarks/screens/HomeScreen.dart';
-import 'package:fullmarks/utility/appAssets.dart';
-import 'package:fullmarks/utility/appColors.dart';
+import 'package:fullmarks/utility/AppAssets.dart';
+import 'package:fullmarks/utility/AppColors.dart';
 import 'package:lottie/lottie.dart';
 
 class IntroSliderScreen extends StatefulWidget {

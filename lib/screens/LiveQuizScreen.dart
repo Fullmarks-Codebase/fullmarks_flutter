@@ -6,9 +6,9 @@ import 'package:fullmarks/screens/JoinQuizScreen.dart';
 import 'package:fullmarks/screens/LeaderboardScreen.dart';
 import 'package:fullmarks/screens/MyFriendsScreen.dart';
 import 'package:fullmarks/screens/RandomQuizScreen.dart';
-import 'package:fullmarks/utility/appAssets.dart';
-import 'package:fullmarks/utility/appColors.dart';
-import 'package:fullmarks/utility/utiity.dart';
+import 'package:fullmarks/utility/AppAssets.dart';
+import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/Utiity.dart';
 
 class LiveQuizScreen extends StatefulWidget {
   @override

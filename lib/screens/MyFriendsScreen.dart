@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fullmarks/screens/OtherProfileScreen.dart';
-import 'package:fullmarks/utility/appAssets.dart';
-import 'package:fullmarks/utility/utiity.dart';
+import 'package:fullmarks/utility/AppAssets.dart';
+import 'package:fullmarks/utility/Utiity.dart';
 
 class MyFriendsScreen extends StatefulWidget {
   @override

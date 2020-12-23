@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/SetsScreen.dart';
-import 'package:fullmarks/utility/appAssets.dart';
-import 'package:fullmarks/utility/appColors.dart';
-import 'package:fullmarks/utility/utiity.dart';
+import 'package:fullmarks/utility/AppAssets.dart';
+import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/Utiity.dart';
 
 class SubTopicScreen extends StatefulWidget {
   String subjectName;

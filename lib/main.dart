@@ -4,7 +4,7 @@ import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/screens/InstructionsScreen.dart';
 import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/screens/SplashScreen.dart';
-import 'package:fullmarks/utility/appColors.dart';
+import 'package:fullmarks/utility/AppColors.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

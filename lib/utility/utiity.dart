@@ -5,8 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:package_info/package_info.dart';
 
-import 'appAssets.dart';
-import 'appColors.dart';
+import 'AppAssets.dart';
+import 'AppColors.dart';
 
 class Utility {
   static showToast(String msg) {
