@@ -61,109 +61,111 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
             children: List.generate(
               totalQuestion,
               (index) {
-                return SingleChildScrollView(
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      right: 16,
-                      left: 16,
-                      bottom: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(
-                            right: 16,
-                            left: 16,
-                            top: 16,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Question " +
-                                      (currentQuestion + 1).toString() +
-                                      " / " +
-                                      totalQuestion.toString(),
-                                  style: TextStyle(
-                                    color: AppColors.appColor,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.greenColor,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Text(
-                                  "+3.0",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.redColor,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Text(
-                                  "-1.0",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(16),
-                          child: Divider(
-                            thickness: 2,
-                          ),
-                        ),
-                        questionText(),
-                        currentQuestion % 2 == 0
-                            ? questionImageView()
-                            : Container(),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        answersView()
-                      ],
-                    ),
-                  ),
-                );
+                return questionAnswerItemView();
               },
             ),
           ),
         ),
         previousNextView(),
       ],
+    );
+  }
+
+  Widget questionAnswerItemView() {
+    return SingleChildScrollView(
+      child: Container(
+        margin: EdgeInsets.only(
+          right: 16,
+          left: 16,
+          bottom: 16,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.only(
+                right: 16,
+                left: 16,
+                top: 16,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Question " +
+                          (currentQuestion + 1).toString() +
+                          " / " +
+                          totalQuestion.toString(),
+                      style: TextStyle(
+                        color: AppColors.appColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.greenColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      "+3.0",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.redColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      "-1.0",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(16),
+              child: Divider(
+                thickness: 2,
+              ),
+            ),
+            questionText(),
+            currentQuestion % 2 == 0 ? questionImageView() : Container(),
+            SizedBox(
+              height: 16,
+            ),
+            answersView()
+          ],
+        ),
+      ),
     );
   }
 
@@ -451,7 +453,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    height: (MediaQuery.of(context).size.height),
+                    height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
                     child: GridView.builder(
                       padding: EdgeInsets.all(8),
@@ -535,20 +537,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
   Widget previousNextView() {
     return Container(
       padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(16),
-          topLeft: Radius.circular(16),
-        ),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(1, 0),
-            blurRadius: 5,
-            color: Colors.black12,
-          ),
-        ],
-      ),
+      decoration: Utility.bottomDecoration(),
       child: Row(
         children: [
           Expanded(

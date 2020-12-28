@@ -13,6 +13,32 @@ class Utility {
     Fluttertoast.showToast(msg: msg);
   }
 
+  static showAnswerToast(BuildContext context, String msg, Color textColor) {
+    FToast fToast = FToast();
+    fToast.init(context);
+    fToast.showToast(
+      child: Container(
+        child: Text(
+          msg,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 30,
+            fontWeight: FontWeight.w900,
+            shadows: [
+              BoxShadow(
+                offset: Offset(1, 0),
+                blurRadius: 5,
+                color: Colors.black38,
+              ),
+            ],
+          ),
+        ),
+      ),
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: Duration(seconds: 3),
+    );
+  }
+
   static Widget progress(BuildContext context) {
     return Container(
       alignment: Alignment.center,
@@ -1092,6 +1118,23 @@ class Utility {
       ],
     );
   }
+
+  static BoxDecoration bottomDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.only(
+        topRight: Radius.circular(16),
+        topLeft: Radius.circular(16),
+      ),
+      boxShadow: [
+        BoxShadow(
+          offset: Offset(1, 0),
+          blurRadius: 5,
+          color: Colors.black12,
+        ),
+      ],
+    );
+  }
 }
 
 class Subject {
@@ -1103,5 +1146,15 @@ class Subject {
     this.assetName = assetName;
     this.title = title;
     this.subtitle = subtitle;
+  }
+}
+
+class Friends {
+  String name;
+  bool isChecked;
+
+  Friends(String name, bool isChecked) {
+    this.name = name;
+    this.isChecked = isChecked;
   }
 }

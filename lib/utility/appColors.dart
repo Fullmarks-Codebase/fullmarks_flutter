@@ -74,9 +74,13 @@ class AppColors {
   static Color greyColor7 = Color(0xffEFEFEF);
   static Color greyColor8 = Color(0xffBABABA);
   static Color greyColor9 = Color(0xffF7F7F7);
+  static Color greyColor10 = Color(0xffE6E6E6);
+  static Color greyColor11 = Color(0xff8E8E8E);
   static Color dividerColor = Color(0xffEBEBEB);
   static Color lightTextColor = Color(0xffB5B5B5);
   static Color lightAppColor = Color(0x1A4276E3);
   static Color friendBorderColor = Color(0xffFFDEA2);
   static Color yellowColor = Color(0xffF4B542);
+  static Color correctColor = Color(0xff26EDC6);
+  static Color incorrectColor = Color(0xffFF8C8B);
 }

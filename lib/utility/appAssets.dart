@@ -141,4 +141,9 @@ class AppAssets {
   static String instructions1 = "assets/instructions1.json";
   static String instructions2 = "assets/instructions2.json";
   static String instructions3 = "assets/instructions3.json";
+  static String friendUncheck = "assets/friendUncheck.svg";
+  static String friendCheck = "assets/friendCheck.svg";
+  static String search = "assets/search.svg";
+  static String participants = "assets/participants.svg";
+  static String rankItemBg = "assets/rankItemBg.svg";
 }

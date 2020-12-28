@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="Group_9585" data-name="Group 9585" transform="translate(-359 -180)">
+    <g id="no-of-unread-msgs" transform="translate(359 180)" fill="#4276e3" stroke="#4276e3" stroke-width="2">
+      <circle cx="10" cy="10" r="10" stroke="none"/>
+      <circle cx="10" cy="10" r="9" fill="none"/>
+    </g>
+    <path id="Icon_feather-check" data-name="Icon feather-check" d="M18,9,9.75,17.25,6,13.5" transform="translate(356.946 177)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+  </g>
+</svg>

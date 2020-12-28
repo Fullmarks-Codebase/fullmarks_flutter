@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/screens/WaitingForHostScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -73,7 +74,14 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
           ),
           child: Utility.button(
             context,
-            onPressed: null,
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WaitingForHostScreen(),
+                ),
+              );
+            },
             text: "Enter",
             bgColor: AppColors.myProgressCorrectcolor,
             isSufix: true,

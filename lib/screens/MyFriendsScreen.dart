@@ -40,7 +40,9 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
   Widget myFriendsList() {
     return Expanded(
       child: ListView.separated(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.only(
+          bottom: 16,
+        ),
         itemCount: 25,
         itemBuilder: (BuildContext context, int index) {
           return myFriendsItemView(index);
@@ -53,7 +55,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
   }
 
   Widget myFriendsItemView(int index) {
-    return GestureDetector(
+    return ListTile(
       onTap: () {
         Navigator.push(
           context,
@@ -64,35 +66,25 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
           ),
         );
       },
-      child: Container(
-        color: Colors.transparent,
-        child: Row(
-          children: [
-            Container(
-              margin: EdgeInsets.only(
-                top: 8,
-                bottom: 8,
-                right: 16,
-              ),
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: AssetImage(AppAssets.dummyUser),
-                ),
-              ),
-            ),
-            Text(
-              'User Name',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            )
-          ],
+      leading: Container(
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: AssetImage(AppAssets.dummyUser),
+          ),
         ),
+      ),
+      title: Text(
+        'User Name',
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }

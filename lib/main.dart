@@ -43,7 +43,8 @@ MockTestScreen -> MockTestQuizScreen
 LiveQuizScreen 
   - LeaderboardScreen
   - AddFriendScreen
-  - JoinQuizScreen
+  - MyFriendsScreen
+  - JoinQuizScreen -> WaitingForHostScreen -> LiveQuizPlayScreen -> RankListScreen
   - CreateNewQuizScreen
   - RandomQuizScreen
 

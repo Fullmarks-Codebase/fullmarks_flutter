@@ -43,20 +43,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
   Widget addBuddyView() {
     return Container(
       padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(16),
-          topLeft: Radius.circular(16),
-        ),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(1, 0),
-            blurRadius: 5,
-            color: Colors.black12,
-          ),
-        ],
-      ),
+      decoration: Utility.bottomDecoration(),
       child: Utility.button(
         context,
         gradientColor1: AppColors.buttonGradient1,

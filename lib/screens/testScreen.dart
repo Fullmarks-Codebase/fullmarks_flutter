@@ -231,20 +231,7 @@ class _TestScreenState extends State<TestScreen> {
   Widget previousNextView() {
     return Container(
       padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(16),
-          topLeft: Radius.circular(16),
-        ),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(1, 0),
-            blurRadius: 5,
-            color: Colors.black12,
-          ),
-        ],
-      ),
+      decoration: Utility.bottomDecoration(),
       child: Row(
         children: [
           Expanded(

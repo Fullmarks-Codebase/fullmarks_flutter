@@ -464,6 +464,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   gradientColor2: Color(0xff4499FF),
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
+                  fontSize: 14,
                 ),
               ],
             ),
