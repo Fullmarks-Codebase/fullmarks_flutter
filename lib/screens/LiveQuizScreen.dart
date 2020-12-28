@@ -5,7 +5,7 @@ import 'package:fullmarks/screens/CreateNewQuizScreen.dart';
 import 'package:fullmarks/screens/JoinQuizScreen.dart';
 import 'package:fullmarks/screens/LeaderboardScreen.dart';
 import 'package:fullmarks/screens/MyFriendsScreen.dart';
-import 'package:fullmarks/screens/RandomQuizScreen.dart';
+import 'package:fullmarks/screens/SubjectSelectionScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -111,7 +111,9 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RandomQuizScreen(),
+                      builder: (context) => SubjectSelectionScreen(
+                        title: "Random Quiz",
+                      ),
                     ),
                   );
                 },

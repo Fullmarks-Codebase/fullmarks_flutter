@@ -146,4 +146,7 @@ class AppAssets {
   static String search = "assets/search.svg";
   static String participants = "assets/participants.svg";
   static String rankItemBg = "assets/rankItemBg.svg";
+  static String createQuizBg = "assets/createQuizBg.svg";
+  static String createQuizBg2 = "assets/createQuizBg2.svg";
+  static String newQuizSubjectBg = "assets/newQuizSubjectBg.svg";
 }

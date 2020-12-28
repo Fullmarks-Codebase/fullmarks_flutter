@@ -45,8 +45,8 @@ LiveQuizScreen
   - AddFriendScreen
   - MyFriendsScreen
   - JoinQuizScreen -> WaitingForHostScreen -> LiveQuizPlayScreen -> RankListScreen
-  - CreateNewQuizScreen
-  - RandomQuizScreen
+  - CreateNewQuizScreen -> SubjectSelectionScreen
+  - SubjectSelectionScreen
 
 6. Discussion
 DiscussionScreen 

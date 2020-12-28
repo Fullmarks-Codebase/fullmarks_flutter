@@ -55,9 +55,8 @@ class _RankListScreenState extends State<RankListScreen> {
           top: 0,
           right: 16,
           left: 16,
-          bottom: 64,
+          bottom: 80,
         ),
-        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -79,7 +78,10 @@ class _RankListScreenState extends State<RankListScreen> {
                 ),
                 itemCount: 27,
                 separatorBuilder: (context, index) {
-                  return Divider();
+                  return Divider(
+                    color: AppColors.lightAppColor,
+                    thickness: 1,
+                  );
                 },
                 itemBuilder: (context, index) {
                   return rankItemView(index);
