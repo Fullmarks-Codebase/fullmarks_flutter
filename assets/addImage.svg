@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="145" height="78.188" viewBox="0 0 145 78.188">
+  <g id="Group_9638" data-name="Group 9638" transform="translate(0 1.5)">
+    <g id="Icon_feather-image" data-name="Icon feather-image" transform="translate(49.543)">
+      <path id="Path_761" data-name="Path 761" d="M9.444,4.5H44.056A4.944,4.944,0,0,1,49,9.444V44.056A4.944,4.944,0,0,1,44.056,49H9.444A4.944,4.944,0,0,1,4.5,44.056V9.444A4.944,4.944,0,0,1,9.444,4.5Z" transform="translate(-4.5 -4.5)" fill="none" stroke="#bebebe" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+      <path id="Path_762" data-name="Path 762" d="M17.917,14.208A3.708,3.708,0,1,1,14.208,10.5,3.708,3.708,0,0,1,17.917,14.208Z" transform="translate(-0.611 -0.611)" fill="none" stroke="#bebebe" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+      <path id="Path_763" data-name="Path 763" d="M47.056,27.361,34.694,15,7.5,42.194" transform="translate(-2.556 2.306)" fill="none" stroke="#bebebe" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+    </g>
+    <text id="Tap_to_Add_Image" data-name="Tap to Add Image" transform="translate(0 70.688)" fill="#bebebe" font-size="16" font-family="Poppins-Medium, Poppins" font-weight="500"><tspan x="0" y="0">Tap to Add Image</tspan></text>
+  </g>
+</svg>

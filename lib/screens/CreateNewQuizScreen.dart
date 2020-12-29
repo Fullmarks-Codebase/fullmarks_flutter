@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/screens/CreateCustomQuizScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -107,7 +108,14 @@ class _CreateNewQuizScreenState extends State<CreateNewQuizScreen> {
                     ),
                     child: Utility.button(
                       context,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CreateCustomQuizScreen(),
+                          ),
+                        );
+                      },
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       gradientColor1: AppColors.buttonGradient1,

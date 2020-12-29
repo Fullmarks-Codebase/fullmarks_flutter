@@ -76,6 +76,7 @@ class AppColors {
   static Color greyColor9 = Color(0xffF7F7F7);
   static Color greyColor10 = Color(0xffE6E6E6);
   static Color greyColor11 = Color(0xff8E8E8E);
+  static Color greyColor12 = Color(0xffF9F9F9);
   static Color dividerColor = Color(0xffEBEBEB);
   static Color lightTextColor = Color(0xffB5B5B5);
   static Color lightAppColor = Color(0x1A4276E3);

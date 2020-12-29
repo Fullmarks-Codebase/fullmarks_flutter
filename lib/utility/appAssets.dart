@@ -153,4 +153,16 @@ class AppAssets {
   static String randomQuizSearchBg = "assets/randomQuizSearchBg.svg";
   static String fly = "assets/fly.svg";
   static String user = "assets/user.svg";
+  static String customQuizBg = "assets/customQuizBg.svg";
+  static String customQuizBg2 = "assets/customQuizBg2.svg";
+  static String add = "assets/add.svg";
+  static String addImage = "assets/addImage.svg";
+  static String delete = "assets/delete.svg";
+  static String edit = "assets/edit.svg";
+  static String editImage = "assets/editImage.svg";
+  static String eye = "assets/eye.svg";
+  static String list = "assets/list.svg";
+  static String createCustomBg = "assets/createCustomBg.svg";
+  static String myQuizItemBg = "assets/myQuizItemBg.svg";
+  static String enterWhite = "assets/enterWhite.svg";
 }
