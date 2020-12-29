@@ -125,6 +125,9 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                 isSufix: true,
                 isSpacer: true,
               ),
+              SizedBox(
+                height: 16,
+              ),
             ],
           ),
         ),
@@ -151,7 +154,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
             child: SvgPicture.asset(AppAssets.challenge),
           ),
           SizedBox(
-            width: 16,
+            width: 4,
           ),
           Expanded(
             flex: 20,

@@ -50,48 +50,50 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
   }
 
   Widget questionAnswerItemView() {
-    return SingleChildScrollView(
-      child: Container(
-        margin: EdgeInsets.only(
-          right: 16,
-          left: 16,
-          bottom: 16,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          children: [
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.only(
-                right: 16,
-                left: 16,
-                top: 16,
-              ),
-              child: Text(
-                "Question 1",
-                style: TextStyle(
-                  color: AppColors.appColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.only(
+            right: 16,
+            left: 16,
+            bottom: 16,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            children: [
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(
+                  right: 16,
+                  left: 16,
+                  top: 16,
+                ),
+                child: Text(
+                  "Question 1",
+                  style: TextStyle(
+                    color: AppColors.appColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.all(16),
-              child: Divider(
-                thickness: 2,
+              Container(
+                padding: EdgeInsets.all(16),
+                child: Divider(
+                  thickness: 2,
+                ),
               ),
-            ),
-            questionImageView(),
-            questionText(),
-            SizedBox(
-              height: 16,
-            ),
-            answersView()
-          ],
+              questionImageView(),
+              questionText(),
+              SizedBox(
+                height: 16,
+              ),
+              answersView()
+            ],
+          ),
         ),
       ),
     );

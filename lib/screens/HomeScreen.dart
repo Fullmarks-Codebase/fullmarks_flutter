@@ -428,11 +428,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Row(
         children: [
-          SvgPicture.asset(assetName),
+          Expanded(
+            flex: 1,
+            child: SvgPicture.asset(assetName),
+          ),
           SizedBox(
-            width: 16,
+            width: 4,
           ),
           Expanded(
+            flex: 2,
             child: Column(
               children: [
                 text.trim().length == 0

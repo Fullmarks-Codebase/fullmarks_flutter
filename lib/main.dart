@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fullmarks/screens/HomeScreen.dart';
-import 'package:fullmarks/screens/InstructionsScreen.dart';
-import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/screens/SplashScreen.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 
@@ -75,8 +72,7 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
           scaffoldBackgroundColor: AppColors.background,
         ),
-        // home: SplashScreen(),
-        home: HomeScreen(),
+        home: SplashScreen(),
       ),
     );
   }

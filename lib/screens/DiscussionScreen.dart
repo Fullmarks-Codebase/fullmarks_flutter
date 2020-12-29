@@ -101,6 +101,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
 
   Widget filterDiscussion() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
           width: 8,
@@ -122,51 +123,48 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
   }
 
   Widget filterItemView(String assetName, String title, int index) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          if (mounted)
-            setState(() {
-              selectedFilter = index;
-            });
-        },
-        child: Container(
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: selectedFilter == index
-                ? AppColors.appColor
-                : AppColors.chartBgColorLight,
-            border: Border.all(
-              color: AppColors.appColor,
-            ),
+    return GestureDetector(
+      onTap: () {
+        if (mounted)
+          setState(() {
+            selectedFilter = index;
+          });
+      },
+      child: Container(
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: selectedFilter == index
+              ? AppColors.appColor
+              : AppColors.chartBgColorLight,
+          border: Border.all(
+            color: AppColors.appColor,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                assetName,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              assetName,
+              color:
+                  selectedFilter == index ? Colors.white : AppColors.appColor,
+            ),
+            SizedBox(
+              width: 4,
+            ),
+            Text(
+              title,
+              style: TextStyle(
                 color:
                     selectedFilter == index ? Colors.white : AppColors.appColor,
+                // fontSize: 16,
+                fontWeight: FontWeight.w500,
               ),
-              SizedBox(
-                width: 4,
-              ),
-              Text(
-                title,
-                style: TextStyle(
-                  color: selectedFilter == index
-                      ? Colors.white
-                      : AppColors.appColor,
-                  // fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ),
     );
@@ -180,6 +178,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
         controller: controller,
         itemBuilder: (context, index) {
           return DiscussionItemView(
+            isDetails: false,
             index: index,
             onUpArrowTap: () {
               controller.animateTo(

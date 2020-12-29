@@ -228,6 +228,8 @@ class Utility {
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   isSpacer ? Spacer() : Container(),
                   Container(
@@ -285,22 +287,24 @@ class Utility {
             assetName: isBack ? AppAssets.backArrow : null,
             onPressed: isBack ? onBackPressed : null,
           ),
-          Spacer(),
-          Container(
-            padding: EdgeInsets.only(
-              bottom: 16,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              text,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.only(
+                bottom: 16,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
-          Spacer(),
           Utility.roundShadowButton(
             context: context,
             assetName: isHome ? homeassetName : null,

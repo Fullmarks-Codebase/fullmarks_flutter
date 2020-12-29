@@ -481,8 +481,8 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        height: 15,
-                        width: 15,
+                        height: 12,
+                        width: 12,
                         child: SvgPicture.asset(
                           AppAssets.participants,
                           color: AppColors.appColor,
@@ -499,12 +499,12 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
                         ),
                       ),
                       SizedBox(
-                        width: 4,
+                        width: 2,
                       ),
                       Icon(
                         Icons.keyboard_arrow_down,
                         color: AppColors.appColor,
-                        size: 15,
+                        size: 12,
                       )
                     ],
                   ),

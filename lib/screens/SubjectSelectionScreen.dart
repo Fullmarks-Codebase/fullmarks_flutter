@@ -147,6 +147,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
+              maxLines: 1,
             ),
           ],
         ),

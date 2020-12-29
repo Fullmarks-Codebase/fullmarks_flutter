@@ -294,7 +294,7 @@ class _OtpScreenState extends State<OtpScreen>
 
   /// Returns "Otp text field"
   Widget _otpTextField(int digit) {
-    double size = MediaQuery.of(context).size.width / (widget.otpLength) - 20;
+    double size = MediaQuery.of(context).size.width / (widget.otpLength) - 30;
     if (MediaQuery.of(context).size.width > 600) {
       size = 80;
     }

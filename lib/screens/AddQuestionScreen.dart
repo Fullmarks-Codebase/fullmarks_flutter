@@ -65,8 +65,14 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
             widget.isEdit ? Container() : timerView(),
           ],
         ),
-        addImageView(),
-        addQuestionView(),
+        Expanded(
+          child: ListView(
+            children: [
+              addImageView(),
+              addQuestionView(),
+            ],
+          ),
+        )
       ],
     );
   }
@@ -134,14 +140,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
           Utility.button(
             context,
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddQuestionScreen(
-                    isEdit: false,
-                  ),
-                ),
-              );
+              Navigator.pop(context);
             },
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,

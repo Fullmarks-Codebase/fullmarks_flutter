@@ -16,7 +16,7 @@ class DiscussionItemView extends StatefulWidget {
     @required this.totalDiscussions,
     @required this.onUpArrowTap,
     @required this.onItemTap,
-    this.isDetails,
+    @required this.isDetails,
   });
   @override
   _DiscussionItemViewState createState() => _DiscussionItemViewState();

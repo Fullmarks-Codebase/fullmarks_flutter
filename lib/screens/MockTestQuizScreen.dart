@@ -406,35 +406,38 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                 //     ),
                 //   ),
                 // ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Utility.correctIncorrectView(
-                      color: AppColors.wrongBorderColor,
-                      title: "Active",
-                      textColor: Colors.black,
-                      fontSize: 14,
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Utility.correctIncorrectView(
-                      color: AppColors.strongCyan,
-                      title: "Attempted",
-                      textColor: Colors.black,
-                      fontSize: 14,
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Utility.correctIncorrectView(
-                      color: AppColors.greyColor2,
-                      title: "Not Attempted",
-                      textColor: Colors.black,
-                      fontSize: 14,
-                    ),
-                  ],
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Utility.correctIncorrectView(
+                        color: AppColors.wrongBorderColor,
+                        title: "Active",
+                        textColor: Colors.black,
+                        fontSize: 14,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Utility.correctIncorrectView(
+                        color: AppColors.strongCyan,
+                        title: "Attempted",
+                        textColor: Colors.black,
+                        fontSize: 14,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Utility.correctIncorrectView(
+                        color: AppColors.greyColor2,
+                        title: "Not Attempted",
+                        textColor: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ],
+                  ),
                 ),
                 // ],
                 // ),
