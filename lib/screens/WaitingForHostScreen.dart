@@ -23,7 +23,9 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
   gotoHome() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (BuildContext context) => LiveQuizPlayScreen(),
+        builder: (BuildContext context) => LiveQuizPlayScreen(
+          isRandomQuiz: false,
+        ),
       ),
     );
   }

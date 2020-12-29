@@ -5,6 +5,14 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class AddFriendScreen extends StatefulWidget {
+  String title;
+  String buttonStr;
+  bool isShare;
+  AddFriendScreen({
+    @required this.buttonStr,
+    @required this.title,
+    @required this.isShare,
+  });
   @override
   _AddFriendScreenState createState() => _AddFriendScreenState();
 }
@@ -43,7 +51,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
           Column(
             children: [
               Spacer(),
-              sendRequestView(),
+              buttonView(),
             ],
           )
         ],
@@ -56,7 +64,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       children: [
         Utility.appbar(
           context,
-          text: "Add a Friend",
+          text: widget.title,
           onBackPressed: () {
             Navigator.pop(context);
           },
@@ -68,7 +76,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     );
   }
 
-  Widget sendRequestView() {
+  Widget buttonView() {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: Utility.bottomDecoration(),
@@ -79,7 +87,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
         onPressed: () {
           Navigator.pop(context);
         },
-        text: "Send Request",
+        text: widget.buttonStr,
       ),
     );
   }
@@ -95,6 +103,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
         border: Border.all(
           color: AppColors.appColor,
         ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(

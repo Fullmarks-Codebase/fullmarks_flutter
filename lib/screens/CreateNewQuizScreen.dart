@@ -86,6 +86,7 @@ class _CreateNewQuizScreenState extends State<CreateNewQuizScreen> {
                           MaterialPageRoute(
                             builder: (context) => SubjectSelectionScreen(
                               title: "Create New Quiz",
+                              isRandomQuiz: false,
                             ),
                           ),
                         );

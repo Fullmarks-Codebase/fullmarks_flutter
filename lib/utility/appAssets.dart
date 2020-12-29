@@ -127,6 +127,7 @@ class AppAssets {
   static String challenge = "assets/challenge.svg";
   static String addFriend = "assets/addFriend.svg";
   static String contacts = "assets/contacts.svg";
+  static String contact = "assets/contact.svg";
   static String join = "assets/join.svg";
   static String newQuiz = "assets/newQuiz.svg";
   static String random = "assets/random.svg";
@@ -149,4 +150,7 @@ class AppAssets {
   static String createQuizBg = "assets/createQuizBg.svg";
   static String createQuizBg2 = "assets/createQuizBg2.svg";
   static String newQuizSubjectBg = "assets/newQuizSubjectBg.svg";
+  static String randomQuizSearchBg = "assets/randomQuizSearchBg.svg";
+  static String fly = "assets/fly.svg";
+  static String user = "assets/user.svg";
 }

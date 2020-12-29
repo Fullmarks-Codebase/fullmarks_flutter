@@ -5,6 +5,12 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class RankListScreen extends StatefulWidget {
+  bool isRandomQuiz;
+  String title;
+  RankListScreen({
+    @required this.isRandomQuiz,
+    @required this.title,
+  });
   @override
   _RankListScreenState createState() => _RankListScreenState();
 }
@@ -36,7 +42,7 @@ class _RankListScreenState extends State<RankListScreen> {
       children: [
         Utility.appbar(
           context,
-          text: "Rank List",
+          text: widget.title,
           onBackPressed: () {
             Navigator.pop(context);
           },
@@ -76,7 +82,7 @@ class _RankListScreenState extends State<RankListScreen> {
                   right: 16,
                   left: 16,
                 ),
-                itemCount: 27,
+                itemCount: widget.isRandomQuiz ? 2 : 27,
                 separatorBuilder: (context, index) {
                   return Divider(
                     color: AppColors.lightAppColor,

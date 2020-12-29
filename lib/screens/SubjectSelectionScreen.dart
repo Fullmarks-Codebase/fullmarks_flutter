@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/screens/CreateQuizLobbyScreen.dart';
+import 'package:fullmarks/screens/RandomQuizMatchScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class SubjectSelectionScreen extends StatefulWidget {
   String title;
+  bool isRandomQuiz;
   SubjectSelectionScreen({
     @required this.title,
+    @required this.isRandomQuiz,
   });
   @override
   _SubjectSelectionScreenState createState() => _SubjectSelectionScreenState();
@@ -115,14 +119,14 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
   Widget subjectItemView(int index) {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => SubTopicScreen(
-        //       subjectName: subjects[index].title,
-        //     ),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => widget.isRandomQuiz
+                ? RandomQuizMatchScreen()
+                : CreateQuizLobbyScreen(),
+          ),
+        );
       },
       child: Container(
         color: Colors.transparent,

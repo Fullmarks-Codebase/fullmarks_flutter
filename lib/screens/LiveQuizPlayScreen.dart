@@ -6,6 +6,10 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class LiveQuizPlayScreen extends StatefulWidget {
+  bool isRandomQuiz;
+  LiveQuizPlayScreen({
+    @required this.isRandomQuiz,
+  });
   @override
   _LiveQuizPlayScreenState createState() => _LiveQuizPlayScreenState();
 }
@@ -15,6 +19,8 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   int totalQuestion = 5;
   int currentQuestion = 0;
   int selectedAnswer = -1;
+
+  //after user selects answer, when time ends then show answer is correct or incorrect
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +241,10 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         } else if (index == 3) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (BuildContext context) => RankListScreen(),
+              builder: (BuildContext context) => RankListScreen(
+                isRandomQuiz: widget.isRandomQuiz,
+                title: widget.isRandomQuiz ? "Live Quiz Result" : "Rank List",
+              ),
             ),
           );
         }
@@ -299,26 +308,71 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   Widget scoreView() {
     return Expanded(
       flex: 20,
-      child: Container(
-        alignment: Alignment.centerRight,
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            vertical: 8,
-            horizontal: 16,
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.whiteColor,
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Text(
-            "My Score : 5",
-            style: TextStyle(
-              fontSize: 10,
-              color: AppColors.appColor,
+      child: widget.isRandomQuiz
+          ? Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "Adit",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Text(
+                        "5",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: AssetImage(AppAssets.dummyUser),
+                      ),
+                      border: Border.all(
+                        color: AppColors.myProgressIncorrectcolor,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container(
+              alignment: Alignment.centerRight,
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.whiteColor,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Text(
+                  "My Score : 5",
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: AppColors.appColor,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -364,55 +418,99 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   Widget participantsView() {
     return Expanded(
       flex: 20,
-      child: Container(
-        alignment: Alignment.center,
-        child: GestureDetector(
-          onTap: () {
-            showParticipantsDialog();
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              vertical: 8,
-              horizontal: 8,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  height: 15,
-                  width: 15,
-                  child: SvgPicture.asset(
-                    AppAssets.participants,
-                    color: AppColors.appColor,
+      child: widget.isRandomQuiz
+          ? Container(
+              child: Row(
+                children: [
+                  Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: AssetImage(AppAssets.dummyUser),
+                      ),
+                      border: Border.all(
+                        color: AppColors.myProgressIncorrectcolor,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Amit",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Text(
+                        "1",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            )
+          : Container(
+              alignment: Alignment.center,
+              child: GestureDetector(
+                onTap: () {
+                  showParticipantsDialog();
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 15,
+                        width: 15,
+                        child: SvgPicture.asset(
+                          AppAssets.participants,
+                          color: AppColors.appColor,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        "Participants (15)",
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: AppColors.appColor,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        color: AppColors.appColor,
+                        size: 15,
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(
-                  width: 4,
-                ),
-                Text(
-                  "Participants (15)",
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: AppColors.appColor,
-                  ),
-                ),
-                SizedBox(
-                  width: 4,
-                ),
-                Icon(
-                  Icons.keyboard_arrow_down,
-                  color: AppColors.appColor,
-                  size: 15,
-                )
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 

@@ -113,6 +113,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                     MaterialPageRoute(
                       builder: (context) => SubjectSelectionScreen(
                         title: "Random Quiz",
+                        isRandomQuiz: true,
                       ),
                     ),
                   );
@@ -174,7 +175,11 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AddFriendScreen(),
+                        builder: (context) => AddFriendScreen(
+                          buttonStr: "Send Request",
+                          isShare: false,
+                          title: "Add a Friend",
+                        ),
                       ),
                     );
                   },
@@ -337,7 +342,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
             shape: BoxShape.circle,
             border: Border.all(
               color: AppColors.chartBgColor,
-              width: 2,
+              width: 3,
             ),
             image: DecorationImage(
               image: AssetImage(AppAssets.dummyUser),

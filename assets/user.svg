@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="120" height="120" viewBox="0 0 120 120">
+  <defs>
+    <filter id="Profile_Page" x="0" y="0" width="120" height="120" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#4276e3" flood-opacity="0.255"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_9672" data-name="Group 9672" transform="translate(-214 -122)">
+    <g transform="matrix(1, 0, 0, 1, 214, 122)" filter="url(#Profile_Page)">
+      <circle id="Profile_Page-2" data-name="Profile Page" cx="51" cy="51" r="51" transform="translate(9 6)" fill="#d9d9d9"/>
+    </g>
+    <path id="Icon_metro-user" data-name="Icon metro-user" d="M36.633,42.1V38.787c4.425-2.493,8.034-8.71,8.034-14.927,0-9.983,0-18.076-12.05-18.076s-12.05,8.093-12.05,18.076c0,6.217,3.609,12.433,8.034,14.927V42.1C14.974,43.213,4.5,49.908,4.5,58H60.734c0-8.094-10.475-14.789-24.1-15.9Z" transform="translate(241.201 146.684)" fill="#a0a0a0"/>
+  </g>
+</svg>

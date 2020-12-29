@@ -159,7 +159,6 @@ class Utility {
             child:
                 assetName == null ? Container() : SvgPicture.asset(assetName),
           ),
-          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           onPressed: onPressed,
         ),
       ),
