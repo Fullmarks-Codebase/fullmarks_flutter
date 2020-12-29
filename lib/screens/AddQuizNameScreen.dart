@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/screens/StartAddQuestionScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
-
-import 'AddQuestionScreen.dart';
 
 class AddQuizNameScreen extends StatefulWidget {
   @override
@@ -92,7 +91,7 @@ class _AddQuizNameScreenState extends State<AddQuizNameScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AddQuestionScreen(),
+                          builder: (context) => StartAddQuestionScreen(),
                         ),
                       );
                     },

@@ -860,7 +860,7 @@ class Utility {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Do you want to  delete your Question?",
+                "Do you want to  delete this Question?",
                 style: TextStyle(
                   color: AppColors.appColor,
                   fontWeight: FontWeight.bold,

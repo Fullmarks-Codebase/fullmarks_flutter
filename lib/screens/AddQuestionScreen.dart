@@ -6,11 +6,26 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class AddQuestionScreen extends StatefulWidget {
+  bool isEdit;
+  AddQuestionScreen({
+    @required this.isEdit,
+  });
   @override
   _AddQuestionScreenState createState() => _AddQuestionScreenState();
 }
 
 class _AddQuestionScreenState extends State<AddQuestionScreen> {
+  TextEditingController questionController = TextEditingController();
+
+  @override
+  void initState() {
+    if (widget.isEdit) {
+      questionController.text =
+          "Which one of the following has maximum number of atoms?";
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,14 +55,14 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
           children: [
             Utility.appbar(
               context,
-              text: "Add Question",
+              text: (widget.isEdit ? "Edit" : "Add") + " Question",
               onBackPressed: () {
                 Navigator.pop(context);
               },
               isHome: false,
               textColor: Colors.white,
             ),
-            timerView(),
+            widget.isEdit ? Container() : timerView(),
           ],
         ),
         addImageView(),
@@ -68,6 +83,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
       child: Column(
         children: [
           TextField(
+            controller: questionController,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -121,7 +137,9 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddQuestionScreen(),
+                  builder: (context) => AddQuestionScreen(
+                    isEdit: false,
+                  ),
                 ),
               );
             },
@@ -129,7 +147,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
             end: Alignment.bottomCenter,
             gradientColor1: AppColors.buttonGradient1,
             gradientColor2: AppColors.buttonGradient2,
-            text: "Add",
+            text: widget.isEdit ? "Save" : "Add",
           )
         ],
       ),
@@ -147,7 +165,34 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
         color: AppColors.greyColor12,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: SvgPicture.asset(AppAssets.addImage),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          widget.isEdit
+              ? Image.asset(
+                  AppAssets.dummyQuestionImage,
+                  fit: BoxFit.fitHeight,
+                  height: 180,
+                )
+              : SvgPicture.asset(AppAssets.addImage),
+          widget.isEdit
+              ? Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                    ),
+                    color: Colors.black12,
+                  ),
+                  child: SvgPicture.asset(
+                    AppAssets.pencil,
+                    color: Colors.white,
+                  ),
+                )
+              : Container()
+        ],
+      ),
     );
   }
 
@@ -217,12 +262,24 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
         ),
         child: Column(
           children: [
-            SvgPicture.asset(AppAssets.add),
+            widget.isEdit
+                ? Container(
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                    child: SvgPicture.asset(
+                      AppAssets.pencil,
+                      color: bgColor,
+                    ),
+                  )
+                : SvgPicture.asset(AppAssets.add),
             SizedBox(
               height: 16,
             ),
             Text(
-              "Add Option",
+              widget.isEdit ? "Option 123" : "Add Option",
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,

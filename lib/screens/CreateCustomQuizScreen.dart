@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/screens/CustomQuizListScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
+import 'AddQuestionScreen.dart';
 import 'AddQuizNameScreen.dart';
+import 'CreateQuizLobbyScreen.dart';
 
 class CreateCustomQuizScreen extends StatefulWidget {
   @override
@@ -134,116 +137,143 @@ class _CreateCustomQuizScreenState extends State<CreateCustomQuizScreen> {
   }
 
   Widget myQuizItemView(int index) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
-      margin: EdgeInsets.only(
-        bottom: 16,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.chartBgColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white,
-        ),
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Row(
-            children: [
-              Expanded(child: Container()),
-              SvgPicture.asset(
-                AppAssets.myQuizItemBg,
-                color: Color(0x595D8AEA),
-              ),
-            ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CustomQuizListScreen(),
           ),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Physical Quiz",
-                      style: TextStyle(
-                        color: AppColors.myProgressIncorrectcolor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      "100 Questions",
-                      style: TextStyle(
-                        color: AppColors.whiteColor,
-                      ),
-                    )
-                  ],
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
+        margin: EdgeInsets.only(
+          bottom: 16,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.chartBgColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.white,
+          ),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Row(
+              children: [
+                Expanded(child: Container()),
+                SvgPicture.asset(
+                  AppAssets.myQuizItemBg,
+                  color: Color(0x595D8AEA),
                 ),
-              ),
-              Expanded(
-                child: index == 0
-                    ? Column(
-                        children: [
-                          Utility.button(
-                            context,
-                            onPressed: () {},
-                            text: "Add Question",
-                            bgColor: AppColors.chartBgColor,
-                            borderColor: AppColors.myProgressIncorrectcolor,
-                            assetName: AppAssets.list,
-                            isPrefix: true,
-                            fontSize: 14,
-                            padding: 8,
-                          ),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Utility.button(
-                            context,
-                            onPressed: () {},
-                            text: "Start Quiz",
-                            bgColor: AppColors.strongCyan,
-                            assetName: AppAssets.enterWhite,
-                            isSufix: true,
-                            isSpacer: true,
-                            fontSize: 14,
-                            padding: 8,
-                          ),
-                        ],
-                      )
-                    : Container(
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 1),
-                                blurRadius: 3,
-                                color: Colors.black12,
-                              ),
-                            ],
-                          ),
-                          child: SvgPicture.asset(
-                            AppAssets.submit,
-                            color: AppColors.myProgressCorrectcolor,
-                          ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Physical Quiz",
+                        style: TextStyle(
+                          color: AppColors.myProgressIncorrectcolor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
                       ),
-              )
-            ],
-          )
-        ],
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        "100 Questions",
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: index == 0
+                      ? Column(
+                          children: [
+                            Utility.button(
+                              context,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddQuestionScreen(
+                                      isEdit: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                              text: "Add Question",
+                              bgColor: AppColors.chartBgColor,
+                              borderColor: AppColors.myProgressIncorrectcolor,
+                              assetName: AppAssets.list,
+                              isPrefix: true,
+                              fontSize: 14,
+                              padding: 8,
+                            ),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Utility.button(
+                              context,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        CreateQuizLobbyScreen(),
+                                  ),
+                                );
+                              },
+                              text: "Start Quiz",
+                              bgColor: AppColors.strongCyan,
+                              assetName: AppAssets.enterWhite,
+                              isSufix: true,
+                              isSpacer: true,
+                              fontSize: 14,
+                              padding: 8,
+                            ),
+                          ],
+                        )
+                      : Container(
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: Offset(0, 1),
+                                  blurRadius: 3,
+                                  color: Colors.black12,
+                                ),
+                              ],
+                            ),
+                            child: SvgPicture.asset(
+                              AppAssets.submit,
+                              color: AppColors.myProgressCorrectcolor,
+                            ),
+                          ),
+                        ),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
