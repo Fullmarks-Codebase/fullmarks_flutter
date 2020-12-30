@@ -31,16 +31,14 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
       body: Stack(
         children: [
           Utility.setSvgFullScreen(context, AppAssets.commonBg),
-          Expanded(
-            child: Column(
-              children: [
-                Spacer(),
-                SvgPicture.asset(
-                  AppAssets.bottomBarbg,
-                  width: MediaQuery.of(context).size.width,
-                ),
-              ],
-            ),
+          Column(
+            children: [
+              Spacer(),
+              SvgPicture.asset(
+                AppAssets.bottomBarbg,
+                width: MediaQuery.of(context).size.width,
+              ),
+            ],
           ),
           body(),
         ],
