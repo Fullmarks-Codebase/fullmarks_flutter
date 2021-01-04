@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fullmarks/models/CheckinResponse.dart';
 import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/screens/VerificationScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,10 +15,18 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool _isLoading = false;
+  TextEditingController _phoneNumberController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: body(),
+      body: Stack(
+        children: [
+          body(),
+          _isLoading ? Utility.progress(context) : Container(),
+        ],
+      ),
     );
   }
 
@@ -32,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: TextField(
+            controller: _phoneNumberController,
             decoration: InputDecoration(
               labelText: "Enter your mobile phone",
               suffixIcon: Icon(Icons.phone_android),
@@ -49,9 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
             gradientColor1: AppColors.buttonGradient1,
             gradientColor2: AppColors.buttonGradient2,
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => VerificationScreen(),
-              ));
+              _verifyTap();
             },
             text: "Verify",
           ),
@@ -71,11 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Utility.button(
                   context,
                   bgColor: AppColors.fbColor,
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => VerificationScreen(),
-                    ));
-                  },
+                  onPressed: () {},
                   assetName: AppAssets.facebook,
                 ),
               ),
@@ -86,11 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Utility.button(
                   context,
                   bgColor: AppColors.googleColor,
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => VerificationScreen(),
-                    ));
-                  },
+                  onPressed: () {},
                   assetName: AppAssets.google,
                 ),
               ),
@@ -118,5 +120,52 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ],
     );
+  }
+
+  _verifyTap() {
+    if (_phoneNumberController.text.trim().length == 0) {
+      Utility.showToast("Please enter your mobile phone");
+    } else {
+      _sendOtp();
+    }
+  }
+
+  _sendOtp() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["phoneNumber"] = _phoneNumberController.text.trim();
+      //api call
+      CheckinResponse response = CheckinResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.login, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.message.phoneNumber != "0") {
+        Utility.showToast("OTP send successfully");
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) => VerificationScreen(
+              phoneNumber: _phoneNumberController.text.trim(),
+            ),
+          ),
+        );
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
   }
 }

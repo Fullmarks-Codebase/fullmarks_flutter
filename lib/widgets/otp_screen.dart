@@ -20,6 +20,7 @@ class OtpScreen extends StatefulWidget {
   final Color titleColor;
   final Color themeColor;
   final Color keyboardBackgroundColor;
+  Widget getAutoSendText;
 
   /// default [otpLength] is 4
   final int otpLength;
@@ -31,6 +32,7 @@ class OtpScreen extends StatefulWidget {
     @required this.routeCallback,
     this.themeColor = Colors.black,
     this.titleColor = Colors.black,
+    this.getAutoSendText,
     this.keyboardBackgroundColor,
   }) : super(key: key) {
     this._isGradientApplied = false;
@@ -45,6 +47,7 @@ class OtpScreen extends StatefulWidget {
     this.titleColor = Colors.white,
     @required this.topColor,
     @required this.bottomColor,
+    @required this.getAutoSendText,
     this.keyboardBackgroundColor,
   }) : super(key: key) {
     this._isGradientApplied = true;
@@ -59,7 +62,6 @@ class _OtpScreenState extends State<OtpScreen>
   Size _screenSize;
   int _currentDigit;
   List<int> otpValues;
-  bool showLoadingButton = false;
 
   @override
   void initState() {
@@ -100,15 +102,6 @@ class _OtpScreenState extends State<OtpScreen>
           fontSize: 18.0,
           color: widget.titleColor,
           fontWeight: FontWeight.w600),
-    );
-  }
-
-  get _getAutoSendText {
-    return new Text(
-      "Auto Resending in 30",
-      textAlign: TextAlign.center,
-      style:
-          new TextStyle(color: AppColors.appColor, fontWeight: FontWeight.w600),
     );
   }
 
@@ -157,7 +150,7 @@ class _OtpScreenState extends State<OtpScreen>
                 horizontal: 20,
                 vertical: 8,
               ),
-              child: _getAutoSendText,
+              child: widget.getAutoSendText,
             ),
             Spacer(),
             Padding(
@@ -165,14 +158,6 @@ class _OtpScreenState extends State<OtpScreen>
               child: _getInputField,
             ),
             Spacer(),
-            showLoadingButton
-                ? Center(
-                    child: Utility.progress(context),
-                  )
-                : Container(
-                    width: 0,
-                    height: 0,
-                  ),
             _getOtpKeyboard
           ],
         ),
@@ -272,14 +257,13 @@ class _OtpScreenState extends State<OtpScreen>
                       color: widget.themeColor,
                     ),
                     onPressed: () {
-                      setState(() {
-                        for (int i = widget.otpLength - 1; i >= 0; i--) {
-                          if (otpValues[i] != null) {
-                            otpValues[i] = null;
-                            break;
-                          }
+                      for (int i = widget.otpLength - 1; i >= 0; i--) {
+                        if (otpValues[i] != null) {
+                          otpValues[i] = null;
+                          break;
                         }
-                      });
+                      }
+                      _notify();
                     }),
               ],
             ),
@@ -366,34 +350,36 @@ class _OtpScreenState extends State<OtpScreen>
   /// sets number into text fields n performs
   ///  validation after last number is entered
   void _setCurrentDigit(int i) async {
-    setState(() {
-      _currentDigit = i;
-      int currentField;
-      for (currentField = 0; currentField < widget.otpLength; currentField++) {
-        if (otpValues[currentField] == null) {
-          otpValues[currentField] = _currentDigit;
-          break;
+    _currentDigit = i;
+    int currentField;
+    for (currentField = 0; currentField < widget.otpLength; currentField++) {
+      if (otpValues[currentField] == null) {
+        otpValues[currentField] = _currentDigit;
+        break;
+      }
+    }
+    if (currentField == widget.otpLength - 1) {
+      String otp = otpValues.join();
+      widget.validateOtp(otp).then((value) {
+        if (value == null) {
+          widget.routeCallback(context);
+        } else if (value.isNotEmpty) {
+          Utility.showToast(value);
+          clearOtp();
         }
-      }
-      if (currentField == widget.otpLength - 1) {
-        showLoadingButton = true;
-        String otp = otpValues.join();
-        widget.validateOtp(otp).then((value) {
-          showLoadingButton = false;
-          if (value == null) {
-            widget.routeCallback(context);
-          } else if (value.isNotEmpty) {
-            Utility.showToast(value);
-            clearOtp();
-          }
-        });
-      }
-    });
+      });
+    }
+    _notify();
   }
 
   ///to clear otp when error occurs
   void clearOtp() {
     otpValues = List<int>.filled(widget.otpLength, null, growable: false);
-    setState(() {});
+    _notify();
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
   }
 }

@@ -139,6 +139,7 @@ class AppAssets {
   static String intro2 = "assets/intro2.json";
   static String intro3 = "assets/intro3.json";
   static String intro4 = "assets/intro4.json";
+  static String loading = "assets/loading.json";
   static String instructions1 = "assets/instructions1.json";
   static String instructions2 = "assets/instructions2.json";
   static String instructions3 = "assets/instructions3.json";

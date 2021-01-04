@@ -108,10 +108,8 @@ class _TestScreenState extends State<TestScreen> {
   Widget imageAnswerItemView(int index) {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            selectedAnswer = index;
-          });
+        selectedAnswer = index;
+        _notify();
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -179,10 +177,8 @@ class _TestScreenState extends State<TestScreen> {
   Widget textAnswerItemView(int index) {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            selectedAnswer = index;
-          });
+        selectedAnswer = index;
+        _notify();
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -293,11 +289,14 @@ class _TestScreenState extends State<TestScreen> {
     );
   }
 
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   questionAnimateTo(int page) {
-    if (mounted)
-      setState(() {
-        currentQuestion = page;
-      });
+    currentQuestion = page;
+    _notify();
 
     questionsNumberController.animateTo(
       (currentQuestion * 25).toDouble(),

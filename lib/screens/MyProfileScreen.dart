@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
+import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -10,6 +15,21 @@ class MyProfileScreen extends StatefulWidget {
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
+  Customer customer;
+
+  @override
+  void initState() {
+    customer = Customer.fromJson(
+        jsonDecode(PreferenceUtils.getString(AppStrings.userPreference)));
+    _notify();
+    super.initState();
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +93,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 width: 16,
               ),
               Text(
-                "Amitstcetet",
+                customer.username == "" ? "-" : customer.username,
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -94,7 +114,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 width: 16,
               ),
               Text(
-                "Amits@info.com",
+                customer.email == "" ? "-" : customer.email,
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -115,7 +135,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 width: 16,
               ),
               Text(
-                "Male",
+                customer.gender == "" ? "-" : customer.gender,
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -136,7 +156,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 width: 16,
               ),
               Text(
-                "18 Dec 1996",
+                customer.dob == "" ? "-" : customer.dob,
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -172,7 +192,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               ),
               Expanded(
                 child: Text(
-                  "+91 9898339898",
+                  customer.phoneNumber,
                   style: TextStyle(
                     fontSize: 16,
                   ),
@@ -225,7 +245,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          "Amitstcetet Nohire",
+          customer.username == "" ? "-" : customer.username,
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -262,6 +282,25 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     );
   }
 
+  dummyUserView(double size) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppColors.appColor,
+          width: 2,
+        ),
+      ),
+      height: size,
+      width: size,
+      child: Icon(
+        Icons.person,
+        color: AppColors.appColor,
+        size: size / 1.5,
+      ),
+    );
+  }
+
   Widget userImage() {
     return Container(
       height: (MediaQuery.of(context).size.height / 3.5) / 2,
@@ -269,19 +308,24 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          Container(
-            height: (MediaQuery.of(context).size.height / 3.5) / 2,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.appColor,
-                width: 2,
-              ),
-              image: DecorationImage(
-                image: AssetImage(AppAssets.dummyUser),
-              ),
-            ),
-          ),
+          customer == null
+              ? dummyUserView((MediaQuery.of(context).size.height / 3.5) / 2)
+              : customer.userProfileImage == ""
+                  ? dummyUserView(
+                      (MediaQuery.of(context).size.height / 3.5) / 2)
+                  : Container(
+                      height: (MediaQuery.of(context).size.height / 3.5) / 2,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.appColor,
+                          width: 2,
+                        ),
+                        image: DecorationImage(
+                          image: AssetImage(AppAssets.dummyUser),
+                        ),
+                      ),
+                    ),
           Positioned(
             right: 10,
             child: Container(

@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/HomeScreen.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
+import 'package:fullmarks/utility/PreferenceUtils.dart';
+import 'package:lottie/lottie.dart';
 import 'package:package_info/package_info.dart';
 
 import 'AppAssets.dart';
@@ -44,13 +50,15 @@ class Utility {
       alignment: Alignment.center,
       color: Colors.white.withOpacity(0.5),
       child: Container(
-        width: MediaQuery.of(context).size.width / 4,
+        width: MediaQuery.of(context).size.width /
+            1.5, // change this value to increase/decrease size of progress
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: LinearProgressIndicator(
-            backgroundColor: AppColors.appColor.withOpacity(0.1),
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.appColor),
-          ),
+          child: LottieBuilder.asset(AppAssets.loading),
+          // child: LinearProgressIndicator(
+          //   backgroundColor: AppColors.appColor.withOpacity(0.1),
+          //   valueColor: AlwaysStoppedAnimation<Color>(AppColors.appColor),
+          // ),
         ),
       ),
     );
@@ -1136,6 +1144,60 @@ class Utility {
           color: Colors.black12,
         ),
       ],
+    );
+  }
+
+  static String getUsername() {
+    Customer customer = Customer.fromJson(
+        jsonDecode(PreferenceUtils.getString(AppStrings.userPreference)));
+    return customer == null
+        ? ""
+        : customer.username == ""
+            ? customer.phoneNumber
+            : customer.username;
+  }
+
+  static Widget getUserImageView(double size) {
+    Customer customer = Customer.fromJson(
+        jsonDecode(PreferenceUtils.getString(AppStrings.userPreference)));
+    return customer == null
+        ? dummyUserView(size)
+        : customer.userProfileImage == ""
+            ? dummyUserView(size)
+            : Container(
+                margin: EdgeInsets.all(16),
+                height: size,
+                width: size,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.appColor,
+                    width: 2,
+                  ),
+                  image: DecorationImage(
+                    image: NetworkImage(customer.userProfileImage),
+                  ),
+                ),
+              );
+  }
+
+  static Widget dummyUserView(double size) {
+    return Container(
+      margin: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppColors.appColor,
+          width: 2,
+        ),
+      ),
+      height: size,
+      width: size,
+      child: Icon(
+        Icons.person,
+        color: AppColors.appColor,
+        size: size / 2,
+      ),
     );
   }
 }

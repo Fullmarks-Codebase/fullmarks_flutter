@@ -83,13 +83,16 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
     );
   }
 
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   Widget gradeItemView(int index) {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            selected = index;
-          });
+        selected = index;
+        _notify();
       },
       child: Container(
         decoration: BoxDecoration(

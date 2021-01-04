@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
+import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:lottie/lottie.dart';
 
 class IntroSliderScreen extends StatefulWidget {
@@ -90,6 +92,8 @@ class _IntroSliderScreenState extends State<IntroSliderScreen> {
               child: FloatingActionButton(
                 backgroundColor: AppColors.appColor,
                 onPressed: () {
+                  PreferenceUtils.setBool(
+                      AppStrings.introSliderPreference, true);
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (BuildContext context) => HomeScreen(),
@@ -156,6 +160,11 @@ class _IntroSliderScreenState extends State<IntroSliderScreen> {
 
   void getChangedPageAndMoveBar(int page) {
     currentPageValue = page;
-    setState(() {});
+    _notify();
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
   }
 }

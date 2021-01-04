@@ -2,9 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
+import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
+import 'HomeScreen.dart';
 import 'LoginScreen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -13,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  String version = "Unknown";
+  String _version = "Unknown";
 
   @override
   void initState() {
@@ -25,18 +29,37 @@ class _SplashScreenState extends State<SplashScreen> {
   gotoHome() {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (BuildContext context) => LoginScreen(),
+          builder: (BuildContext context) => getRoute(),
         ),
         (Route<dynamic> route) => false);
   }
 
+  Widget getRoute() {
+    if (PreferenceUtils.getString(AppStrings.userPreference) == "") {
+      //if not login
+      return LoginScreen();
+    } else {
+      //if login
+      if (PreferenceUtils.getBool(AppStrings.introSliderPreference)) {
+        //if intro slider seen
+        return HomeScreen();
+      } else {
+        //if intro slider not seen
+        return IntroSliderScreen();
+      }
+    }
+  }
+
   getPackageInfo() {
     Utility.getPackageInfo().then((value) {
-      if (mounted)
-        setState(() {
-          version = value.version;
-        });
+      _version = value.version;
+      _notify();
     });
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
   }
 
   @override
@@ -62,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
             SvgPicture.asset(AppAssets.splashLogoName),
             Spacer(),
             SafeArea(
-              child: Text("App Version " + version),
+              child: Text("App Version " + _version),
             ),
             SizedBox(
               height: 16,

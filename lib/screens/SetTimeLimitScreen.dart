@@ -130,14 +130,17 @@ class _SetTimeLimitScreenState extends State<SetTimeLimitScreen> {
     );
   }
 
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   Widget timeItemView(String time, int index) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          if (mounted)
-            setState(() {
-              selectedIndex = index;
-            });
+          selectedIndex = index;
+          _notify();
         },
         child: Container(
           alignment: Alignment.centerRight,

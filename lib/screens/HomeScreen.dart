@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/ChangeGradeScreen.dart';
 import 'package:fullmarks/screens/LiveQuizScreen.dart';
+import 'package:fullmarks/screens/LoginScreen.dart';
 import 'package:fullmarks/screens/MockTestScreen.dart';
 import 'package:fullmarks/screens/MyFriendsScreen.dart';
 import 'package:fullmarks/screens/MyProfileScreen.dart';
@@ -12,6 +15,8 @@ import 'package:fullmarks/screens/NotificationListScreen.dart';
 import 'package:fullmarks/screens/SubTopicScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
+import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 import 'DiscussionScreen.dart';
@@ -23,14 +28,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> scafoldKey = GlobalKey();
-  // int touchedIndex;
   ScrollController controller;
   bool isProgress = true;
   List<Subject> subjects = Utility.getsubjects();
+  Customer customer;
 
   @override
   void initState() {
     controller = ScrollController();
+    customer = Customer.fromJson(
+        jsonDecode(PreferenceUtils.getString(AppStrings.userPreference)));
+    _notify();
     super.initState();
   }
 
@@ -63,28 +71,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   alignment: Alignment.center,
                   child: Row(
                     children: [
-                      Container(
-                        margin: EdgeInsets.all(16),
-                        height: 80,
-                        width: 80,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.appColor,
-                            width: 2,
-                          ),
-                          image: DecorationImage(
-                            image: AssetImage(AppAssets.dummyUser),
-                          ),
-                        ),
-                      ),
+                      Utility.getUserImageView(80),
                       Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Amitstcetet',
+                              Utility.getUsername(),
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 18,
@@ -234,6 +228,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "Logout",
                 onTap: () {
                   Navigator.pop(context);
+                  //remove user preference
+                  PreferenceUtils.remove(AppStrings.userPreference);
+                  //remove intro slider seen preference
+                  PreferenceUtils.remove(AppStrings.introSliderPreference);
+
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => LoginScreen(),
+                      ),
+                      (Route<dynamic> route) => false);
                 },
               ),
             ],
@@ -555,13 +559,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   Widget myProgressView() {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            isProgress = !isProgress;
-          });
+        isProgress = !isProgress;
+        _notify();
       },
       child: Container(
         decoration: BoxDecoration(
@@ -695,28 +702,14 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             children: [
               Text(
-                'Amitstcetet',
+                Utility.getUsername(),
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              Container(
-                margin: EdgeInsets.all(16),
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.appColor,
-                    width: 2,
-                  ),
-                  image: DecorationImage(
-                    image: AssetImage(AppAssets.dummyUser),
-                  ),
-                ),
-              ),
+              Utility.getUserImageView(50),
             ],
           ),
         )

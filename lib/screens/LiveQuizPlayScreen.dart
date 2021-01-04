@@ -154,13 +154,16 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
     );
   }
 
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   Widget imageAnswerItemView(int index) {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            selectedAnswer = index;
-          });
+        selectedAnswer = index;
+        _notify();
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -228,10 +231,8 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   Widget textAnswerItemView(int index) {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            selectedAnswer = index;
-          });
+        selectedAnswer = index;
+        _notify();
 
         if (index == 0) {
           Utility.showAnswerToast(context, "Correct", AppColors.correctColor);

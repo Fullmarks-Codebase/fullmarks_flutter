@@ -132,13 +132,16 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
     );
   }
 
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   Widget myProgressView() {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            isProgress = !isProgress;
-          });
+        isProgress = !isProgress;
+        _notify();
       },
       child: Container(
         decoration: BoxDecoration(

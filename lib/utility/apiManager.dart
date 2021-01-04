@@ -34,9 +34,7 @@ class ApiManager {
         await http.post(url, body: request, headers: headers);
     print(response.body);
     print(response.statusCode);
-    return await json.decode(response.statusCode == 200
-        ? response.body
-        : handleErrors(response.body));
+    return await json.decode(response.body);
   }
 
   deleteCall({@required String url}) async {
@@ -46,9 +44,7 @@ class ApiManager {
     http.Response response = await http.delete(url, headers: headers);
     print(response.body);
     print(response.statusCode);
-    return await json.decode(response.statusCode == 200
-        ? response.body
-        : handleErrors(response.body));
+    return await json.decode(response.body);
   }
 
   getCall(
@@ -62,22 +58,6 @@ class ApiManager {
     http.Response response = await http.get(uri, headers: headers);
     print(response.body);
     print(response.statusCode);
-    return await json.decode(response.statusCode == 200
-        ? response.body
-        : handleErrors(response.body));
-  }
-
-  String handleErrors(String body) {
-    try {
-      Map errors = json.decode(body)["errors"];
-      String msg = errors.values.first
-          .toString()
-          .replaceAll("[", "")
-          .replaceAll("]", "");
-      return "{\"error\": true, \"msg\": \"$msg\"}";
-    } catch (e) {
-      print(e.toString());
-      return "{\"error\": true, \"msg\": \"Something went wrong\"";
-    }
+    return await json.decode(response.body);
   }
 }

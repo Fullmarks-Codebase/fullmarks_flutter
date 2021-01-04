@@ -152,23 +152,24 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   }
 
   void updateSearchQuery(String newQuery) {
-    if (mounted)
-      setState(() {
-        suggestionList = newQuery.isEmpty
-            ? friends
-            : friends
-                .where((p) =>
-                    p.name.contains(RegExp(newQuery, caseSensitive: false)))
-                .toList();
-      });
+    suggestionList = newQuery.isEmpty
+        ? friends
+        : friends
+            .where(
+                (p) => p.name.contains(RegExp(newQuery, caseSensitive: false)))
+            .toList();
+    _notify();
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
   }
 
   void _clearSearchQuery() {
-    if (mounted)
-      setState(() {
-        _searchQueryController.clear();
-        updateSearchQuery("");
-      });
+    _searchQueryController.clear();
+    updateSearchQuery("");
+    _notify();
   }
 
   Widget friendsList() {
@@ -192,11 +193,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       children: [
         ListTile(
           onTap: () {
-            if (mounted)
-              setState(() {
-                suggestionList[index].isChecked =
-                    !suggestionList[index].isChecked;
-              });
+            suggestionList[index].isChecked = !suggestionList[index].isChecked;
+            _notify();
           },
           leading: CircleAvatar(
             backgroundColor: AppColors.greyColor10,

@@ -179,13 +179,16 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
     );
   }
 
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   Widget imageAnswerItemView(int index) {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            selectedAnswer = index;
-          });
+        selectedAnswer = index;
+        _notify();
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -253,10 +256,8 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
   Widget textAnswerItemView(int index) {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            selectedAnswer = index;
-          });
+        selectedAnswer = index;
+        _notify();
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -345,10 +346,8 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              if (mounted)
-                setState(() {
-                  isPopOpen = true;
-                });
+              isPopOpen = true;
+              _notify();
               showQuestionNumberDialog();
             },
             child: Container(
@@ -495,10 +494,8 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                     FlatButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        if (mounted)
-                          setState(() {
-                            isPopOpen = false;
-                          });
+                        isPopOpen = false;
+                        _notify();
                       },
                       child: Text("Close"),
                     ),
@@ -599,10 +596,8 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
   }
 
   questionAnimateTo(int page) {
-    if (mounted)
-      setState(() {
-        currentQuestion = page;
-      });
+    currentQuestion = page;
+    _notify();
 
     questionController.jumpToPage(currentQuestion);
   }

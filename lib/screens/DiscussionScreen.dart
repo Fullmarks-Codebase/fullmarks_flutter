@@ -87,16 +87,19 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
               title: e,
               selectedCategory: selectedCategory,
               onTap: (index) {
-                if (mounted)
-                  setState(() {
-                    selectedCategory = index;
-                  });
+                selectedCategory = index;
+                _notify();
               },
             );
           }).toList(),
         ),
       ),
     );
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
   }
 
   Widget filterDiscussion() {
@@ -125,10 +128,8 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
   Widget filterItemView(String assetName, String title, int index) {
     return GestureDetector(
       onTap: () {
-        if (mounted)
-          setState(() {
-            selectedFilter = index;
-          });
+        selectedFilter = index;
+        _notify();
       },
       child: Container(
         padding: EdgeInsets.all(8),

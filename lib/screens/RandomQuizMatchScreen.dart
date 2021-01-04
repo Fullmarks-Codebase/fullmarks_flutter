@@ -82,6 +82,11 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
     );
   }
 
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   Widget searchingView() {
     return Expanded(
       child: Container(
@@ -91,10 +96,8 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
         child: GestureDetector(
           onTap: () {
             //click only for ui purpose
-            if (mounted)
-              setState(() {
-                isMatchFound = !isMatchFound;
-              });
+            isMatchFound = !isMatchFound;
+            _notify();
           },
           child: isMatchFound
               ? Row(

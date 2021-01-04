@@ -109,15 +109,18 @@ class _AddDiscussionScreenState extends State<AddDiscussionScreen> {
               title: e,
               selectedCategory: selectedCategory,
               onTap: (index) {
-                if (mounted)
-                  setState(() {
-                    selectedCategory = index;
-                  });
+                selectedCategory = index;
+                _notify();
               },
             );
           }).toList(),
         ),
       ),
     );
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
   }
 }

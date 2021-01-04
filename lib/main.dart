@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fullmarks/screens/SplashScreen.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/PreferenceUtils.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +13,8 @@ void main() {
     SystemChrome.setEnabledSystemUIOverlays([
       SystemUiOverlay.top,
     ]).then((value) {
+      //initialisation of persistent storage for simple data
+      PreferenceUtils.init();
       runApp(MyApp());
     });
   });
