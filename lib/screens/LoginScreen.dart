@@ -7,7 +7,10 @@ import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
+import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+
+import 'HomeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -107,9 +110,16 @@ class _LoginScreenState extends State<LoginScreen> {
               context,
               bgColor: AppColors.strongCyan,
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => IntroSliderScreen(),
-                ));
+                PreferenceUtils.setBool(AppStrings.skipPreference, true);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          PreferenceUtils.getBool(
+                                  AppStrings.introSliderPreference)
+                              ? HomeScreen()
+                              : IntroSliderScreen(),
+                    ),
+                    (Route<dynamic> route) => false);
               },
               text: "Skip This Step",
             ),

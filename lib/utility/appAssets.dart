@@ -166,4 +166,5 @@ class AppAssets {
   static String createCustomBg = "assets/createCustomBg.svg";
   static String myQuizItemBg = "assets/myQuizItemBg.svg";
   static String enterWhite = "assets/enterWhite.svg";
+  static String askingForProgress = "assets/askingForProgress.svg";
 }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/InstructionsScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+
+import 'AskingForProgressScreen.dart';
 
 class SetsScreen extends StatefulWidget {
   String subtopicName;
@@ -17,6 +20,20 @@ class SetsScreen extends StatefulWidget {
 }
 
 class _SetsScreenState extends State<SetsScreen> {
+  Customer customer;
+
+  @override
+  void initState() {
+    customer = Utility.getCustomer();
+    _notify();
+    super.initState();
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,11 +72,13 @@ class _SetsScreenState extends State<SetsScreen> {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (BuildContext context) => InstructionsScreen(
-            subtopicName: widget.subtopicName,
-            subjectName: widget.subjectName,
-            setName: "Set " + index.toString(),
-          ),
+          builder: (BuildContext context) => customer == null
+              ? AskingForProgressScreen()
+              : InstructionsScreen(
+                  subtopicName: widget.subtopicName,
+                  subjectName: widget.subjectName,
+                  setName: "Set " + index.toString(),
+                ),
         ));
       },
       child: Container(

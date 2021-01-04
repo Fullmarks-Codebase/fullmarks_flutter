@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/SetsScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
@@ -16,6 +17,14 @@ class SubTopicScreen extends StatefulWidget {
 
 class _SubTopicScreenState extends State<SubTopicScreen> {
   bool isProgress = true;
+  Customer customer;
+
+  @override
+  void initState() {
+    customer = Utility.getCustomer();
+    _notify();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,21 +147,23 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
   }
 
   Widget myProgressView() {
-    return GestureDetector(
-      onTap: () {
-        isProgress = !isProgress;
-        _notify();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.chartBgColor,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        padding: EdgeInsets.all(8),
-        margin: EdgeInsets.symmetric(horizontal: 16),
-        child: isProgress ? progressView() : noProgressView(),
-      ),
-    );
+    return customer == null
+        ? Utility.noUserProgressView(context)
+        : GestureDetector(
+            onTap: () {
+              isProgress = !isProgress;
+              _notify();
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.chartBgColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              padding: EdgeInsets.all(8),
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              child: isProgress ? progressView() : noProgressView(),
+            ),
+          );
   }
 
   Widget noProgressView() {

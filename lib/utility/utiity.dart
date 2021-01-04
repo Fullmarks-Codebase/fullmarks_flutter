@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/HomeScreen.dart';
+import 'package:fullmarks/screens/LoginScreen.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:lottie/lottie.dart';
@@ -1148,8 +1149,7 @@ class Utility {
   }
 
   static String getUsername() {
-    Customer customer = Customer.fromJson(
-        jsonDecode(PreferenceUtils.getString(AppStrings.userPreference)));
+    Customer customer = getCustomer();
     return customer == null
         ? ""
         : customer.username == ""
@@ -1158,8 +1158,7 @@ class Utility {
   }
 
   static Widget getUserImageView(double size) {
-    Customer customer = Customer.fromJson(
-        jsonDecode(PreferenceUtils.getString(AppStrings.userPreference)));
+    Customer customer = getCustomer();
     return customer == null
         ? dummyUserView(size)
         : customer.userProfileImage == ""
@@ -1197,6 +1196,64 @@ class Utility {
         Icons.person,
         color: AppColors.appColor,
         size: size / 2,
+      ),
+    );
+  }
+
+  static Customer getCustomer() {
+    if (PreferenceUtils.getString(AppStrings.userPreference) == "") {
+      return null;
+    }
+    return Customer.fromJson(
+        jsonDecode(PreferenceUtils.getString(AppStrings.userPreference)));
+  }
+
+  static Widget noUserProgressView(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.whiteColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(0, 1),
+            blurRadius: 3,
+            color: Colors.black38,
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(8),
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      alignment: Alignment.center,
+      child: Column(
+        children: [
+          Text(
+            "Please Login or Signup to \nTrack your Progress",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Utility.button(
+              context,
+              gradientColor1: AppColors.buttonGradient1,
+              gradientColor2: AppColors.buttonGradient2,
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => LoginScreen(),
+                    ),
+                    (Route<dynamic> route) => false);
+              },
+              text: "Sign Up",
+            ),
+          )
+        ],
       ),
     );
   }

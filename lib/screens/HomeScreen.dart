@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,6 +17,7 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
+import 'AskingForProgressScreen.dart';
 import 'DiscussionScreen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,8 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     controller = ScrollController();
-    customer = Customer.fromJson(
-        jsonDecode(PreferenceUtils.getString(AppStrings.userPreference)));
+    customer = Utility.getCustomer();
     _notify();
     super.initState();
   }
@@ -46,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scafoldKey,
-      drawer: drawer(),
+      drawer: customer == null ? null : drawer(),
       body: Stack(
         children: [
           Utility.setSvgFullScreen(context, AppAssets.commonBg),
@@ -162,12 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "Mock Test",
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MockTestScreen(),
-                    ),
-                  );
+                  mockTestTap();
                 },
               ),
               drawerItemView(
@@ -175,12 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "Live Quizzes",
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LiveQuizScreen(),
-                    ),
-                  );
+                  liveQuizTap();
                 },
               ),
               drawerItemView(
@@ -188,12 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "Discussion",
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DiscussionScreen(),
-                    ),
-                  );
+                  discussionTap();
                 },
               ),
               drawerItemView(
@@ -350,6 +333,36 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  discussionTap() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            customer == null ? AskingForProgressScreen() : DiscussionScreen(),
+      ),
+    );
+  }
+
+  liveQuizTap() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            customer == null ? AskingForProgressScreen() : LiveQuizScreen(),
+      ),
+    );
+  }
+
+  mockTestTap() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            customer == null ? AskingForProgressScreen() : MockTestScreen(),
+      ),
+    );
+  }
+
   Widget horizontalView() {
     return CarouselSlider(
       options: CarouselOptions(
@@ -368,12 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
             right: 8,
           ),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LiveQuizScreen(),
-              ),
-            );
+            liveQuizTap();
           },
         ),
         horizontalItemView(
@@ -386,12 +394,7 @@ class _HomeScreenState extends State<HomeScreen> {
             right: 8,
           ),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MockTestScreen(),
-              ),
-            );
+            mockTestTap();
           },
         ),
         horizontalItemView(
@@ -403,12 +406,7 @@ class _HomeScreenState extends State<HomeScreen> {
             left: 8,
           ),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DiscussionScreen(),
-              ),
-            );
+            discussionTap();
           },
         ),
       ],
@@ -565,21 +563,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget myProgressView() {
-    return GestureDetector(
-      onTap: () {
-        isProgress = !isProgress;
-        _notify();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.chartBgColor,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        padding: EdgeInsets.all(8),
-        margin: EdgeInsets.symmetric(horizontal: 16),
-        child: isProgress ? progressView() : noProgressView(),
-      ),
-    );
+    return customer == null
+        ? Utility.noUserProgressView(context)
+        : GestureDetector(
+            onTap: () {
+              isProgress = !isProgress;
+              _notify();
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.chartBgColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              padding: EdgeInsets.all(8),
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              child: isProgress ? progressView() : noProgressView(),
+            ),
+          );
   }
 
   Widget noProgressView() {
@@ -681,39 +681,69 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget toolbarView() {
-    return Row(
-      children: [
-        SizedBox(
-          width: 8,
-        ),
-        Utility.roundShadowButton(
-          context: context,
-          assetName: AppAssets.drawer,
-          onPressed: () {
-            scafoldKey.currentState.openDrawer();
-          },
-        ),
-        Spacer(),
-        Container(
-          alignment: Alignment.center,
-          padding: EdgeInsets.only(
-            top: 16,
-          ),
-          child: Row(
-            children: [
-              Text(
-                Utility.getUsername(),
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
+    return customer == null
+        ? SafeArea(
+            bottom: false,
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(
+                bottom: 16,
               ),
-              Utility.getUserImageView(50),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Class - Seven',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.black,
+                    ),
+                    onPressed: null,
+                  )
+                ],
+              ),
+            ),
+          )
+        : Row(
+            children: [
+              SizedBox(
+                width: 8,
+              ),
+              Utility.roundShadowButton(
+                context: context,
+                assetName: AppAssets.drawer,
+                onPressed: () {
+                  scafoldKey.currentState.openDrawer();
+                },
+              ),
+              Spacer(),
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(
+                  top: 16,
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      Utility.getUsername(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Utility.getUserImageView(50),
+                  ],
+                ),
+              )
             ],
-          ),
-        )
-      ],
-    );
+          );
   }
 }

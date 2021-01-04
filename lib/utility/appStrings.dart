@@ -9,4 +9,5 @@ class AppStrings {
   //preference keys
   static String userPreference = "USER_APP_PREFERENCE";
   static String introSliderPreference = "INTRO_SLIDER_APP_PREFERENCE";
+  static String skipPreference = "SKIP_APP_PREFERENCE";
 }
