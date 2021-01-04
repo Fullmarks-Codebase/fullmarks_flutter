@@ -192,28 +192,27 @@ class Utility {
     bool isPrefix = false,
     bool isSufix = false,
     bool isSpacer = false,
+    double height = 60,
   }) {
-    return InkWell(
-      onTap: onPressed,
-      child: Container(
-        alignment: Alignment.center,
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.all(padding),
-        decoration: BoxDecoration(
-          color: bgColor,
-          gradient: gradientColor1 == null || gradientColor2 == null
-              ? null
-              : LinearGradient(
-                  begin: begin,
-                  end: end,
-                  colors: [gradientColor1, gradientColor2],
-                  stops: [0.25, 0.75],
-                ),
-          borderRadius: BorderRadius.circular(radius),
-          border: Border.all(
-            color: borderColor == null ? Colors.transparent : borderColor,
-          ),
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: height,
+      decoration: BoxDecoration(
+        color: bgColor,
+        gradient: gradientColor1 == null || gradientColor2 == null
+            ? null
+            : LinearGradient(
+                begin: begin,
+                end: end,
+                colors: [gradientColor1, gradientColor2],
+                stops: [0.25, 0.75],
+              ),
+        borderRadius: BorderRadius.circular(radius),
+        border: Border.all(
+          color: borderColor == null ? Colors.transparent : borderColor,
         ),
+      ),
+      child: FlatButton(
         child: text != null
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -258,7 +257,13 @@ class Utility {
                     assetName,
                   )
                 : Container(),
+        onPressed: onPressed,
       ),
+    );
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.all(padding),
+      child: InkWell(),
     );
   }
 
@@ -291,7 +296,7 @@ class Utility {
           SizedBox(
             width: 8,
           ),
-          Utility.roundShadowButton(
+          roundShadowButton(
             context: context,
             assetName: isBack ? AppAssets.backArrow : null,
             onPressed: isBack ? onBackPressed : null,
@@ -314,7 +319,7 @@ class Utility {
               ),
             ),
           ),
-          Utility.roundShadowButton(
+          roundShadowButton(
             context: context,
             assetName: isHome ? homeassetName : null,
             onPressed: isHome ? onHomePressed : null,
@@ -782,7 +787,7 @@ class Utility {
               SizedBox(
                 height: 16,
               ),
-              Utility.button(
+              button(
                 context,
                 gradientColor1: AppColors.buttonGradient1,
                 gradientColor2: AppColors.buttonGradient2,
@@ -794,7 +799,7 @@ class Utility {
               SizedBox(
                 height: 8,
               ),
-              Utility.button(
+              button(
                 context,
                 onPressed: () {
                   Navigator.pop(context);
@@ -832,7 +837,7 @@ class Utility {
               SizedBox(
                 height: 16,
               ),
-              Utility.button(
+              button(
                 context,
                 gradientColor1: AppColors.buttonGradient1,
                 gradientColor2: AppColors.buttonGradient2,
@@ -844,7 +849,7 @@ class Utility {
               SizedBox(
                 height: 8,
               ),
-              Utility.button(
+              button(
                 context,
                 onPressed: () {
                   Navigator.pop(context);
@@ -882,7 +887,7 @@ class Utility {
               SizedBox(
                 height: 16,
               ),
-              Utility.button(
+              button(
                 context,
                 bgColor: AppColors.redColor2,
                 onPressed: onDeletePress,
@@ -891,7 +896,7 @@ class Utility {
               SizedBox(
                 height: 8,
               ),
-              Utility.button(
+              button(
                 context,
                 onPressed: () {
                   Navigator.pop(context);
@@ -1196,7 +1201,7 @@ class Utility {
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Utility.button(
+            child: button(
               context,
               gradientColor1: AppColors.buttonGradient1,
               gradientColor2: AppColors.buttonGradient2,

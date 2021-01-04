@@ -4,15 +4,14 @@ class UserResponse {
   UserResponse({this.customer});
 
   UserResponse.fromJson(Map<String, dynamic> json) {
-    customer = json['customer'] != null
-        ? new Customer.fromJson(json['customer'])
-        : null;
+    customer =
+        json['result'] != null ? new Customer.fromJson(json['result']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.customer != null) {
-      data['customer'] = this.customer.toJson();
+      data['result'] = this.customer.toJson();
     }
     return data;
   }

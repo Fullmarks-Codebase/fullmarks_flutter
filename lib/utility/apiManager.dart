@@ -3,8 +3,12 @@ import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fullmarks/screens/LoginScreen.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:http/http.dart' as http;
+
+import 'AppStrings.dart';
+import 'PreferenceUtils.dart';
 
 class ApiManager {
   BuildContext context;
@@ -39,6 +43,9 @@ class ApiManager {
         await http.post(url, body: request, headers: headers);
     print(response.body);
     print(response.statusCode);
+    if (response.statusCode == 403) {
+      logout();
+    }
     return await json.decode(response.body);
   }
 
@@ -53,6 +60,9 @@ class ApiManager {
     http.Response response = await http.delete(url, headers: headers);
     print(response.body);
     print(response.statusCode);
+    if (response.statusCode == 403) {
+      logout();
+    }
     return await json.decode(response.body);
   }
 
@@ -71,6 +81,22 @@ class ApiManager {
     http.Response response = await http.get(uri, headers: headers);
     print(response.body);
     print(response.statusCode);
+    if (response.statusCode == 403) {
+      logout();
+    }
     return await json.decode(response.body);
+  }
+
+  logout() {
+    //remove user preference
+    PreferenceUtils.remove(AppStrings.userPreference);
+    //remove intro slider seen preference
+    PreferenceUtils.remove(AppStrings.introSliderPreference);
+
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (BuildContext context) => LoginScreen(),
+        ),
+        (Route<dynamic> route) => false);
   }
 }

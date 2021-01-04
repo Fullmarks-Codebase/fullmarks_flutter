@@ -11,6 +11,7 @@ import 'package:fullmarks/screens/MyProfileScreen.dart';
 import 'package:fullmarks/screens/MyProgressScreen.dart';
 import 'package:fullmarks/screens/NotificationListScreen.dart';
 import 'package:fullmarks/screens/SubTopicScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
@@ -255,16 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "Logout",
                 onTap: () {
                   Navigator.pop(context);
-                  //remove user preference
-                  PreferenceUtils.remove(AppStrings.userPreference);
-                  //remove intro slider seen preference
-                  PreferenceUtils.remove(AppStrings.introSliderPreference);
-
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => LoginScreen(),
-                      ),
-                      (Route<dynamic> route) => false);
+                  ApiManager(context).logout();
                 },
               ),
             ],
@@ -504,17 +496,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                 SizedBox(
-                  height: 8,
+                  height: 16,
                 ),
                 Utility.button(
                   context,
                   onPressed: onTap,
                   text: buttonText,
-                  gradientColor1: Color(0xff76B5FF),
-                  gradientColor2: Color(0xff4499FF),
+                  gradientColor1: Color(0xFF76B5FF),
+                  gradientColor2: Color(0xFF4499FF),
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   fontSize: 14,
+                  height: 40,
                 ),
               ],
             ),

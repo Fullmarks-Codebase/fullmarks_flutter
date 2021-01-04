@@ -88,7 +88,7 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Text("App Version " + _version),
             ),
             SizedBox(
-              height: 16,
+              height: kBottomNavigationBarHeight,
             ),
           ],
         )

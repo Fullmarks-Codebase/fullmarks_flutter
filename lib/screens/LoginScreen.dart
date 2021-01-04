@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fullmarks/models/CheckinResponse.dart';
+import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/screens/VerificationScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
@@ -60,6 +61,15 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: InputDecoration(
                 labelText: "Enter your mobile phone",
                 suffixIcon: Icon(Icons.phone_android),
+                prefixIcon: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Text(
+                    '+91 ',
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
               ),
               keyboardType: TextInputType.number,
             ),
@@ -121,41 +131,34 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget body2() {
-    return Column(
-      children: [
-        SafeArea(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Utility.button(
-              context,
-              bgColor: AppColors.strongCyan,
-              onPressed: () {
-                PreferenceUtils.setBool(AppStrings.skipPreference, true);
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          PreferenceUtils.getBool(
-                                  AppStrings.introSliderPreference)
-                              ? HomeScreen()
-                              : IntroSliderScreen(),
-                    ),
-                    (Route<dynamic> route) => false);
-              },
-              text: "Skip This Step",
-            ),
-          ),
+    return SafeArea(
+      child: Container(
+        margin: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Utility.button(
+          context,
+          bgColor: AppColors.strongCyan,
+          onPressed: () {
+            PreferenceUtils.setBool(AppStrings.skipPreference, true);
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      PreferenceUtils.getBool(AppStrings.introSliderPreference)
+                          ? HomeScreen()
+                          : IntroSliderScreen(),
+                ),
+                (Route<dynamic> route) => false);
+          },
+          text: "Skip This Step",
         ),
-        SizedBox(
-          height: 16,
-        )
-      ],
+      ),
     );
   }
 
   Widget body() {
     return Expanded(
       child: ListView(
-        physics: ClampingScrollPhysics(),
+        physics: BouncingScrollPhysics(),
         children: [
           body1(),
           body2(),
@@ -182,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var request = Map<String, dynamic>();
       request["phoneNumber"] = _phoneNumberController.text.trim();
       //api call
-      CheckinResponse response = CheckinResponse.fromJson(
+      CommonResponse response = CommonResponse.fromJson(
         await ApiManager(context)
             .postCall(url: AppStrings.login, request: request),
       );
@@ -190,8 +193,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
       _notify();
 
-      if (response.message.phoneNumber != "0") {
-        Utility.showToast("OTP send successfully");
+      Utility.showToast(response.message);
+
+      if (response.code == 200) {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (BuildContext context) => VerificationScreen(

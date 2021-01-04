@@ -10,13 +10,9 @@ void main() {
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
   ]).then((value) {
-    SystemChrome.setEnabledSystemUIOverlays([
-      SystemUiOverlay.top,
-    ]).then((value) {
-      //initialisation of persistent storage for simple data
-      PreferenceUtils.init();
-      runApp(MyApp());
-    });
+    //initialisation of persistent storage for simple data
+    PreferenceUtils.init();
+    runApp(MyApp());
   });
 }
 
@@ -68,14 +64,22 @@ class MyApp extends StatelessWidget {
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: AppColors.appColor,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          scaffoldBackgroundColor: AppColors.background,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarIconBrightness: Brightness.dark,
         ),
-        home: SplashScreen(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: AppColors.appColor,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+            scaffoldBackgroundColor: AppColors.background,
+          ),
+          home: SplashScreen(),
+        ),
       ),
     );
   }

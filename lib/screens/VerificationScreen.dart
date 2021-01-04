@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:fullmarks/models/CheckinResponse.dart';
 import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/IntroSliderScreen.dart';
@@ -66,7 +65,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
       var request = Map<String, dynamic>();
       request["phoneNumber"] = widget.phoneNumber;
       //api call
-      CheckinResponse response = CheckinResponse.fromJson(
+      CommonResponse response = CommonResponse.fromJson(
         await ApiManager(context)
             .postCall(url: AppStrings.login, request: request),
       );
@@ -74,9 +73,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
       _isLoading = false;
       _notify();
 
-      if (response.message.phoneNumber != "0") {
-        Utility.showToast("OTP resend successfully");
-      }
+      Utility.showToast(response.message);
     } else {
       //show message that internet is not available
       Utility.showToast(AppStrings.noInternet);
