@@ -1270,13 +1270,3 @@ class Subject {
     this.subtitle = subtitle;
   }
 }
-
-class Friends {
-  String name;
-  bool isChecked;
-
-  Friends(String name, bool isChecked) {
-    this.name = name;
-    this.isChecked = isChecked;
-  }
-}

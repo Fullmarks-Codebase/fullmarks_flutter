@@ -41,5 +41,25 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>This app needs access to music</string>
+	<key>kTCCServiceMediaLibrary</key>
+	<string>This app needs access to media</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>This app needs access to calendars</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to camera</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app needs access to contacts</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to microphone</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>This app needs access to speech</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This app needs access to motion</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to photos</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>This app needs access to reminders</string>
 </dict>
 </plist>

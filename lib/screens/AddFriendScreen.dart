@@ -1,8 +1,11 @@
+import 'package:contacts_service/contacts_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AddFriendScreen extends StatefulWidget {
   String title;
@@ -18,27 +21,45 @@ class AddFriendScreen extends StatefulWidget {
 }
 
 class _AddFriendScreenState extends State<AddFriendScreen> {
-  List<Friends> friends = [
-    Friends("Ankit Solanki", false),
-    Friends("Brijesh Kumar", false),
-    Friends("Chintan Kumar", false),
-    Friends("Jasprit Bumrah", false),
-    Friends("Mohammed Siraj", false),
-    Friends("Mahendra Singh Dhoni", false),
-    Friends("Ravichandran Ashwin", false),
-    Friends("Ravindra Jadeja", false),
-    Friends("Virat kohli", false),
-    Friends("Umesh Yadav", false),
-  ];
-  List<Friends> suggestionList = List();
+  Iterable<Contact> friends = List();
+  Iterable<Contact> suggestionList = List();
   ScrollController controller;
   TextEditingController _searchQueryController = TextEditingController();
+  List<int> selectedContact = List();
 
   @override
   void initState() {
     controller = ScrollController();
-    suggestionList = friends;
+    getContacts();
     super.initState();
+  }
+
+  getContacts() async {
+    final PermissionStatus permissionStatus = await _getPermission();
+    if (permissionStatus == PermissionStatus.granted) {
+      //We can now access our contacts here
+      final Iterable<Contact> contacts = await ContactsService.getContacts();
+      friends = contacts;
+      suggestionList = friends;
+      _notify();
+    } else {
+      //If permissions have been denied show standard cupertino alert dialog
+      openAppSettings();
+    }
+  }
+
+  //Check contacts permission
+  Future<PermissionStatus> _getPermission() async {
+    final PermissionStatus permission = await Permission.contacts.status;
+    if (permission != PermissionStatus.granted &&
+        permission != PermissionStatus.denied) {
+      final Map<Permission, PermissionStatus> permissionStatus =
+          await [Permission.contacts].request();
+      return permissionStatus[Permission.contacts] ??
+          PermissionStatus.undetermined;
+    } else {
+      return permission;
+    }
   }
 
   @override
@@ -156,7 +177,10 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
         ? friends
         : friends
             .where(
-                (p) => p.name.contains(RegExp(newQuery, caseSensitive: false)))
+              (p) => p.displayName.contains(
+                RegExp(newQuery, caseSensitive: false),
+              ),
+            )
             .toList();
     _notify();
   }
@@ -193,21 +217,31 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       children: [
         ListTile(
           onTap: () {
-            suggestionList[index].isChecked = !suggestionList[index].isChecked;
+            if (selectedContact.contains(index)) {
+              selectedContact.remove(index);
+            } else {
+              selectedContact.add(index);
+            }
             _notify();
           },
-          leading: CircleAvatar(
-            backgroundColor: AppColors.greyColor10,
-            child: Text(
-              suggestionList[index].name.substring(0, 1),
-              style: TextStyle(
-                color: AppColors.greyColor11,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
+          leading: (suggestionList.toList()[index].avatar != null &&
+                  suggestionList.toList()[index].avatar.isNotEmpty)
+              ? CircleAvatar(
+                  backgroundImage:
+                      MemoryImage(suggestionList.toList()[index].avatar),
+                )
+              : CircleAvatar(
+                  backgroundColor: AppColors.greyColor10,
+                  child: Text(
+                    suggestionList.toList()[index].displayName.substring(0, 1),
+                    style: TextStyle(
+                      color: AppColors.greyColor11,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
           title: Text(
-            suggestionList[index].name,
+            suggestionList.toList()[index].displayName,
             style: TextStyle(
               color: AppColors.blackColor,
               fontWeight: FontWeight.bold,
@@ -215,7 +249,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          trailing: SvgPicture.asset(suggestionList[index].isChecked
+          trailing: SvgPicture.asset(selectedContact.contains(index)
               ? AppAssets.friendCheck
               : AppAssets.friendUncheck),
         ),
