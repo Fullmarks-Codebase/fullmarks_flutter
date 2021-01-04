@@ -54,6 +54,50 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget getUserImageView(double size) {
+    Customer customer = Utility.getCustomer();
+    return customer == null
+        ? dummyUserView(size)
+        : customer.userProfileImage == ""
+            ? dummyUserView(size)
+            : Container(
+                margin: EdgeInsets.all(16),
+                height: size,
+                width: size,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.appColor,
+                    width: 2,
+                  ),
+                  image: DecorationImage(
+                    image: NetworkImage(customer.userProfileImage),
+                  ),
+                ),
+              );
+  }
+
+  Widget dummyUserView(double size) {
+    return Container(
+      margin: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppColors.appColor,
+          width: 2,
+        ),
+      ),
+      height: size,
+      width: size,
+      child: Icon(
+        Icons.person,
+        color: AppColors.appColor,
+        size: size / 2,
+      ),
+    );
+  }
+
   Widget drawer() {
     return Drawer(
       child: Stack(
@@ -69,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   alignment: Alignment.center,
                   child: Row(
                     children: [
-                      Utility.getUserImageView(80),
+                      getUserImageView(80),
                       Expanded(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -739,7 +783,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Utility.getUserImageView(50),
+                    getUserImageView(50),
                   ],
                 ),
               )

@@ -26,6 +26,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   ScrollController controller;
   TextEditingController _searchQueryController = TextEditingController();
   List<int> selectedContact = List();
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -38,10 +39,19 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     final PermissionStatus permissionStatus = await _getPermission();
     if (permissionStatus == PermissionStatus.granted) {
       //We can now access our contacts here
-      final Iterable<Contact> contacts = await ContactsService.getContacts();
-      friends = contacts;
-      suggestionList = friends;
+      _isLoading = true;
       _notify();
+      await ContactsService.getContacts().then((value) {
+        _isLoading = false;
+        _notify();
+        friends = value;
+        suggestionList = friends;
+        _notify();
+      }).catchError((onError) {
+        _isLoading = false;
+        _notify();
+        print(onError);
+      });
     } else {
       //If permissions have been denied show standard cupertino alert dialog
       openAppSettings();
@@ -74,7 +84,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
               Spacer(),
               buttonView(),
             ],
-          )
+          ),
+          _isLoading ? Utility.progress(context) : Container(),
         ],
       ),
     );
@@ -168,7 +179,6 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
         },
       );
     }
-
     return Container();
   }
 
@@ -224,24 +234,21 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
             }
             _notify();
           },
-          leading: (suggestionList.toList()[index].avatar != null &&
-                  suggestionList.toList()[index].avatar.isNotEmpty)
-              ? CircleAvatar(
-                  backgroundImage:
-                      MemoryImage(suggestionList.toList()[index].avatar),
-                )
-              : CircleAvatar(
-                  backgroundColor: AppColors.greyColor10,
-                  child: Text(
-                    suggestionList.toList()[index].displayName.substring(0, 1),
-                    style: TextStyle(
-                      color: AppColors.greyColor11,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
+          leading: CircleAvatar(
+            backgroundColor: AppColors.greyColor10,
+            child: Text(
+              suggestionList.toList()[index].displayName == null ||
+                      suggestionList.toList()[index].displayName == ""
+                  ? "-"
+                  : suggestionList.toList()[index].displayName.substring(0, 1),
+              style: TextStyle(
+                color: AppColors.greyColor11,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
           title: Text(
-            suggestionList.toList()[index].displayName,
+            suggestionList.toList()[index].displayName ?? "-",
             style: TextStyle(
               color: AppColors.blackColor,
               fontWeight: FontWeight.bold,

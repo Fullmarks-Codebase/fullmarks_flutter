@@ -29,18 +29,21 @@ class Customer {
   String gender;
   String createdAt;
   String updatedAt;
+  String token;
 
-  Customer(
-      {this.id,
-      this.username,
-      this.phoneNumber,
-      this.email,
-      this.otp,
-      this.dob,
-      this.userProfileImage,
-      this.gender,
-      this.createdAt,
-      this.updatedAt});
+  Customer({
+    this.id,
+    this.username,
+    this.phoneNumber,
+    this.email,
+    this.otp,
+    this.dob,
+    this.userProfileImage,
+    this.gender,
+    this.createdAt,
+    this.updatedAt,
+    this.token,
+  });
 
   Customer.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
@@ -53,6 +56,7 @@ class Customer {
     gender = json['gender'] ?? "";
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
+    token = json['token'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
@@ -67,6 +71,7 @@ class Customer {
     data['gender'] = this.gender;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
+    data['token'] = this.token;
     return data;
   }
 }

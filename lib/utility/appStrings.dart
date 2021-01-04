@@ -1,7 +1,8 @@
 class AppStrings {
-  static String baseUrl = "http://104.131.14.251:3001/app/customer/";
-  static String login = baseUrl + "checkin";
-  static String verify = baseUrl + "verify";
+  static String baseUrl = "http://104.131.14.251:3001/";
+  static String login = baseUrl + "app/customer/checkin";
+  static String verify = baseUrl + "app/customer/verify";
+  static String customer = baseUrl + "customer";
 
   //constant strings
   static String noInternet = "No Internet Connection";

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/AddFriendScreen.dart';
 import 'package:fullmarks/screens/CreateNewQuizScreen.dart';
 import 'package:fullmarks/screens/JoinQuizScreen.dart';
@@ -240,7 +241,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
           child: Column(
             children: [
               Text(
-                'Amitstcetet',
+                Utility.getUsername(),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -338,21 +339,50 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
             ],
           ),
         ),
-        Container(
-          height: 100,
-          width: 100,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: AppColors.chartBgColor,
-              width: 3,
-            ),
-            image: DecorationImage(
-              image: AssetImage(AppAssets.dummyUser),
-            ),
-          ),
-        ),
+        getUserImageView(100)
       ],
+    );
+  }
+
+  Widget getUserImageView(double size) {
+    Customer customer = Utility.getCustomer();
+    return customer == null
+        ? dummyUserView(size)
+        : customer.userProfileImage == ""
+            ? dummyUserView(size)
+            : Container(
+                height: size,
+                width: size,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.appColor,
+                    width: 2,
+                  ),
+                  image: DecorationImage(
+                    image: NetworkImage(customer.userProfileImage),
+                  ),
+                ),
+              );
+  }
+
+  Widget dummyUserView(double size) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppColors.appColor,
+          width: 2,
+        ),
+      ),
+      height: size,
+      width: size,
+      child: Icon(
+        Icons.person,
+        color: AppColors.appColor,
+        size: size / 2,
+      ),
     );
   }
 }

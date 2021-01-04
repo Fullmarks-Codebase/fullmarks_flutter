@@ -1157,49 +1157,6 @@ class Utility {
             : customer.username;
   }
 
-  static Widget getUserImageView(double size) {
-    Customer customer = getCustomer();
-    return customer == null
-        ? dummyUserView(size)
-        : customer.userProfileImage == ""
-            ? dummyUserView(size)
-            : Container(
-                margin: EdgeInsets.all(16),
-                height: size,
-                width: size,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.appColor,
-                    width: 2,
-                  ),
-                  image: DecorationImage(
-                    image: NetworkImage(customer.userProfileImage),
-                  ),
-                ),
-              );
-  }
-
-  static Widget dummyUserView(double size) {
-    return Container(
-      margin: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: AppColors.appColor,
-          width: 2,
-        ),
-      ),
-      height: size,
-      width: size,
-      child: Icon(
-        Icons.person,
-        color: AppColors.appColor,
-        size: size / 2,
-      ),
-    );
-  }
-
   static Customer getCustomer() {
     if (PreferenceUtils.getString(AppStrings.userPreference) == "") {
       return null;

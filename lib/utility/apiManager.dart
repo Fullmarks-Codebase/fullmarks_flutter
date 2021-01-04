@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fullmarks/utility/Utiity.dart';
 import 'package:http/http.dart' as http;
 
 class ApiManager {
@@ -30,6 +31,10 @@ class ApiManager {
     print(request);
     var headers = Map<String, String>();
     headers["Accept"] = "application/json";
+    if (Utility.getCustomer() != null) {
+      headers["Authorization"] = Utility.getCustomer().token;
+    }
+    print(headers);
     http.Response response =
         await http.post(url, body: request, headers: headers);
     print(response.body);
@@ -41,6 +46,10 @@ class ApiManager {
     print(url);
     var headers = Map<String, String>();
     headers["Accept"] = "application/json";
+    if (Utility.getCustomer() != null) {
+      headers["Authorization"] = Utility.getCustomer().token;
+    }
+    print(headers);
     http.Response response = await http.delete(url, headers: headers);
     print(response.body);
     print(response.statusCode);
@@ -55,6 +64,10 @@ class ApiManager {
     var headers = Map<String, String>();
     headers["Accept"] = "application/json";
     uri = uri.replace(queryParameters: request);
+    if (Utility.getCustomer() != null) {
+      headers["Authorization"] = Utility.getCustomer().token;
+    }
+    print(headers);
     http.Response response = await http.get(uri, headers: headers);
     print(response.body);
     print(response.statusCode);

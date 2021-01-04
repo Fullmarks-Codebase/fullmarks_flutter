@@ -26,83 +26,103 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          body(),
+          Column(
+            children: [
+              SvgPicture.asset(
+                AppAssets.topbarBg1,
+                width: MediaQuery.of(context).size.width,
+              ),
+              body(),
+            ],
+          ),
           _isLoading ? Utility.progress(context) : Container(),
         ],
       ),
     );
   }
 
-  Widget body() {
+  Widget body1() {
+    return Container(
+      height: MediaQuery.of(context).size.height / 1.3,
+      child: Column(
+        children: [
+          Container(
+            height: (MediaQuery.of(context).size.height / 1.3) / 2.5,
+            child: SvgPicture.asset(AppAssets.loginLogo),
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: TextField(
+              controller: _phoneNumberController,
+              decoration: InputDecoration(
+                labelText: "Enter your mobile phone",
+                suffixIcon: Icon(Icons.phone_android),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Utility.button(
+              context,
+              gradientColor1: AppColors.buttonGradient1,
+              gradientColor2: AppColors.buttonGradient2,
+              onPressed: () {
+                _verifyTap();
+              },
+              text: "Verify",
+            ),
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          Text(
+            "Or Get started with",
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Utility.button(
+                    context,
+                    bgColor: AppColors.fbColor,
+                    onPressed: () {},
+                    assetName: AppAssets.facebook,
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                  child: Utility.button(
+                    context,
+                    bgColor: AppColors.googleColor,
+                    onPressed: () {},
+                    assetName: AppAssets.google,
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget body2() {
     return Column(
       children: [
-        SvgPicture.asset(
-          AppAssets.topbarBg1,
-          width: MediaQuery.of(context).size.width,
-        ),
-        Spacer(),
-        SvgPicture.asset(AppAssets.loginLogo),
-        Spacer(),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: TextField(
-            controller: _phoneNumberController,
-            decoration: InputDecoration(
-              labelText: "Enter your mobile phone",
-              suffixIcon: Icon(Icons.phone_android),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-        ),
-        SizedBox(
-          height: 16,
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Utility.button(
-            context,
-            gradientColor1: AppColors.buttonGradient1,
-            gradientColor2: AppColors.buttonGradient2,
-            onPressed: () {
-              _verifyTap();
-            },
-            text: "Verify",
-          ),
-        ),
-        SizedBox(
-          height: 16,
-        ),
-        Text("Or Get started with"),
-        SizedBox(
-          height: 16,
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              Expanded(
-                child: Utility.button(
-                  context,
-                  bgColor: AppColors.fbColor,
-                  onPressed: () {},
-                  assetName: AppAssets.facebook,
-                ),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: Utility.button(
-                  context,
-                  bgColor: AppColors.googleColor,
-                  onPressed: () {},
-                  assetName: AppAssets.google,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Spacer(),
         SafeArea(
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
@@ -127,8 +147,20 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         SizedBox(
           height: 16,
-        ),
+        )
       ],
+    );
+  }
+
+  Widget body() {
+    return Expanded(
+      child: ListView(
+        physics: ClampingScrollPhysics(),
+        children: [
+          body1(),
+          body2(),
+        ],
+      ),
     );
   }
 
