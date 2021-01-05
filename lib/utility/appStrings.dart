@@ -28,5 +28,5 @@ class AppStrings {
   static int male = 0;
   static int female = 1;
 
-  static int delay = 300;
+  static int delay = 150;
 }

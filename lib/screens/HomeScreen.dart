@@ -255,7 +255,10 @@ class _HomeScreenState extends State<HomeScreen> {
               drawerItemView(
                 assetName: AppAssets.drawerMockTest,
                 text: "Mock Test",
-                onTap: () {
+                onTap: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                   mockTestTap();
                 },
@@ -263,7 +266,10 @@ class _HomeScreenState extends State<HomeScreen> {
               drawerItemView(
                 assetName: AppAssets.drawerLiveQuiz,
                 text: "Live Quizzes",
-                onTap: () {
+                onTap: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                   liveQuizTap();
                 },
@@ -271,7 +277,10 @@ class _HomeScreenState extends State<HomeScreen> {
               drawerItemView(
                 assetName: AppAssets.drawerDiscussion,
                 text: "Discussion",
-                onTap: () {
+                onTap: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                   discussionTap();
                 },
@@ -342,8 +351,9 @@ class _HomeScreenState extends State<HomeScreen> {
     @required String text,
     @required Function onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
+    return FlatButton(
+      padding: EdgeInsets.zero,
+      onPressed: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 16),
         child: Row(
@@ -460,9 +470,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  discussionTap() async {
-    //delay to give ripple effect
-    await Future.delayed(Duration(milliseconds: AppStrings.delay));
+  discussionTap() {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -472,9 +480,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  liveQuizTap() async {
-    //delay to give ripple effect
-    await Future.delayed(Duration(milliseconds: AppStrings.delay));
+  liveQuizTap() {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -484,9 +490,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  mockTestTap() async {
-    //delay to give ripple effect
-    await Future.delayed(Duration(milliseconds: AppStrings.delay));
+  mockTestTap() {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -513,7 +517,9 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.only(
             right: 8,
           ),
-          onTap: () {
+          onTap: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
             liveQuizTap();
           },
         ),
@@ -526,7 +532,9 @@ class _HomeScreenState extends State<HomeScreen> {
             left: 8,
             right: 8,
           ),
-          onTap: () {
+          onTap: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
             mockTestTap();
           },
         ),
@@ -538,7 +546,9 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.only(
             left: 8,
           ),
-          onTap: () {
+          onTap: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
             discussionTap();
           },
         ),
@@ -653,6 +663,9 @@ class _HomeScreenState extends State<HomeScreen> {
         color: Colors.transparent,
         child: Column(
           children: [
+            SizedBox(
+              height: 4,
+            ),
             Expanded(
               child: Utility.imageLoader(
                 baseUrl: AppStrings.subjectImage,

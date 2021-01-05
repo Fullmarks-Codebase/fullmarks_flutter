@@ -154,7 +154,7 @@ class Utility {
           color: assetName == null ? Colors.transparent : Colors.white,
           child: InkWell(
             child: Container(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.all(10),
               child:
                   assetName == null ? Container() : SvgPicture.asset(assetName),
             ),
