@@ -37,9 +37,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               Utility.appbar(
                 context,
                 text: "",
-                onBackPressed: () {
-                  Navigator.pop(context);
-                },
                 isHome: false,
               ),
               Spacer(),

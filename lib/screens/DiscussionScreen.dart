@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/DiscussionDetailsScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:fullmarks/widgets/DiscussionItemView.dart';
 
@@ -38,7 +39,9 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.appColor,
         child: Icon(Icons.add),
-        onPressed: () {
+        onPressed: () async {
+          //delay to give ripple effect
+          await Future.delayed(Duration(milliseconds: AppStrings.delay));
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -56,9 +59,6 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
         Utility.appbar(
           context,
           text: "Discussion Forum",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
         ),
         filterDiscussion(),
         SizedBox(
@@ -181,7 +181,9 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
           return DiscussionItemView(
             isDetails: false,
             index: index,
-            onUpArrowTap: () {
+            onUpArrowTap: () async {
+              //delay to give ripple effect
+              await Future.delayed(Duration(milliseconds: AppStrings.delay));
               controller.animateTo(
                 0,
                 duration: Duration(milliseconds: 300),
@@ -189,7 +191,9 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
               );
             },
             totalDiscussions: totalDiscussions,
-            onItemTap: () {
+            onItemTap: () async {
+              //delay to give ripple effect
+              await Future.delayed(Duration(milliseconds: AppStrings.delay));
               Navigator.push(
                 context,
                 MaterialPageRoute(

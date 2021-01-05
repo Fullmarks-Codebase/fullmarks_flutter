@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/RankListScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class LiveQuizPlayScreen extends StatefulWidget {
@@ -161,7 +162,9 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
 
   Widget imageAnswerItemView(int index) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
         selectedAnswer = index;
         _notify();
       },
@@ -230,7 +233,9 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
 
   Widget textAnswerItemView(int index) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
         selectedAnswer = index;
         _notify();
 
@@ -466,7 +471,10 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
           : Container(
               alignment: Alignment.center,
               child: GestureDetector(
-                onTap: () {
+                onTap: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   showParticipantsDialog();
                 },
                 child: Container(

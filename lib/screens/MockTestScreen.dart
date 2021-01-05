@@ -38,9 +38,6 @@ class _MockTestScreenState extends State<MockTestScreen> {
         Utility.appbar(
           context,
           text: "Mock Test",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
         ),
         mockTestList(),
@@ -154,11 +151,8 @@ class _MockTestScreenState extends State<MockTestScreen> {
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: SvgPicture.asset(
-                      index == 2 ? AppAssets.whiteNext : AppAssets.cyanCheck),
-                  onPressed: null,
-                ),
+                SvgPicture.asset(
+                    index == 2 ? AppAssets.whiteNext : AppAssets.cyanCheck),
               ],
             ),
           ],

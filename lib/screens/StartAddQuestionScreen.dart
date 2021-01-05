@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 import 'AddQuestionScreen.dart';
@@ -39,9 +40,6 @@ class _StartAddQuestionScreenState extends State<StartAddQuestionScreen> {
         Utility.appbar(
           context,
           text: "Quiz Name",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
           textColor: Colors.white,
         ),
@@ -80,7 +78,10 @@ class _StartAddQuestionScreenState extends State<StartAddQuestionScreen> {
                     ),
                     child: Utility.button(
                       context,
-                      onPressed: () {
+                      onPressed: () async {
+                        //delay to give ripple effect
+                        await Future.delayed(
+                            Duration(milliseconds: AppStrings.delay));
                         Navigator.push(
                           context,
                           MaterialPageRoute(

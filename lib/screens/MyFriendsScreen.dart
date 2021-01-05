@@ -27,9 +27,6 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
         Utility.appbar(
           context,
           text: "My Friends",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
         ),
         myFriendsList(),

@@ -9,6 +9,7 @@ import 'package:fullmarks/screens/MyFriendsScreen.dart';
 import 'package:fullmarks/screens/SubjectSelectionScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class LiveQuizScreen extends StatefulWidget {
@@ -44,9 +45,6 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
         Utility.appbar(
           context,
           text: "Quizzes",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
         ),
         liveQuizView(),
@@ -67,7 +65,10 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
               addFriendView(),
               Utility.button(
                 context,
-                onPressed: () {
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -89,7 +90,10 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
               ),
               Utility.button(
                 context,
-                onPressed: () {
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -108,7 +112,10 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
               ),
               Utility.button(
                 context,
-                onPressed: () {
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -175,7 +182,10 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                 ),
                 Utility.button(
                   context,
-                  onPressed: () {
+                  onPressed: () async {
+                    //delay to give ripple effect
+                    await Future.delayed(
+                        Duration(milliseconds: AppStrings.delay));
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -197,7 +207,10 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                 ),
                 Utility.button(
                   context,
-                  onPressed: () {
+                  onPressed: () async {
+                    //delay to give ripple effect
+                    await Future.delayed(
+                        Duration(milliseconds: AppStrings.delay));
                     Navigator.push(
                       context,
                       MaterialPageRoute(

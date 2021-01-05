@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fullmarks/screens/TestResultScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class TestScreen extends StatefulWidget {
@@ -53,9 +54,6 @@ class _TestScreenState extends State<TestScreen> {
               widget.subtopicName +
               " / " +
               widget.setName,
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
         ),
         timeElapsedView(),
@@ -175,39 +173,51 @@ class _TestScreenState extends State<TestScreen> {
   }
 
   Widget textAnswerItemView(int index) {
-    return GestureDetector(
-      onTap: () {
-        selectedAnswer = index;
-        _notify();
-      },
-      child: Container(
-        margin: EdgeInsets.only(
-          bottom: 16,
-          left: 16,
-          right: 16,
-        ),
+    return Container(
+      margin: EdgeInsets.only(
+        bottom: 16,
+        left: 16,
+        right: 16,
+      ),
+      child: FlatButton(
         padding: EdgeInsets.symmetric(
           horizontal: 8,
           vertical: 12,
         ),
-        alignment: Alignment.center,
-        decoration: selectedAnswer == index
-            ? Utility.selectedAnswerDecoration()
-            : Utility.defaultAnswerDecoration(),
-        child: Text(
-          index == 0
-              ? "(A) 18 g of H2O"
-              : index == 1
-                  ? "(B) 21 g of H2O"
-                  : index == 2
-                      ? "(C) 19 g of H2O"
-                      : "(D) 90 g of H2O",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+        color: selectedAnswer == index
+            ? AppColors.myProgressIncorrectcolor
+            : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(
+            color: selectedAnswer == index
+                ? AppColors.myProgressIncorrectcolor
+                : AppColors.blackColor,
           ),
-          textAlign: TextAlign.center,
+        ),
+        onPressed: () async {
+          //delay to give ripple effect
+          await Future.delayed(Duration(milliseconds: AppStrings.delay));
+          selectedAnswer = index;
+          _notify();
+        },
+        child: Container(
+          alignment: Alignment.center,
+          child: Text(
+            index == 0
+                ? "(A) 18 g of H2O"
+                : index == 1
+                    ? "(B) 21 g of H2O"
+                    : index == 2
+                        ? "(C) 19 g of H2O"
+                        : "(D) 90 g of H2O",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );
@@ -237,7 +247,10 @@ class _TestScreenState extends State<TestScreen> {
                     context,
                     gradientColor1: AppColors.buttonGradient1,
                     gradientColor2: AppColors.buttonGradient2,
-                    onPressed: () {
+                    onPressed: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
                       questionAnimateTo(currentQuestion - 1);
                     },
                     text: "Prev",
@@ -253,11 +266,16 @@ class _TestScreenState extends State<TestScreen> {
               context,
               gradientColor1: AppColors.buttonGradient1,
               gradientColor2: AppColors.buttonGradient2,
-              onPressed: () {
+              onPressed: () async {
+                //delay to give ripple effect
+                await Future.delayed(Duration(milliseconds: AppStrings.delay));
                 if (currentQuestion == (totalQuestion - 1)) {
                   Utility.showSubmitQuizDialog(
                     context: context,
-                    onSubmitPress: () {
+                    onSubmitPress: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
                       Navigator.pop(context);
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
@@ -346,33 +364,37 @@ class _TestScreenState extends State<TestScreen> {
   }
 
   Widget questionNumberItemView(int index) {
-    return GestureDetector(
-      onTap: () {
+    return FlatButton(
+      minWidth: 50,
+      color: currentQuestion == index
+          ? AppColors.appColor
+          : index == 3 || index == 5
+              ? AppColors.strongCyan
+              : Colors.white,
+      shape: CircleBorder(
+        side: BorderSide(
+          color: currentQuestion == index
+              ? AppColors.appColor
+              : index == 3 || index == 5
+                  ? AppColors.strongCyan
+                  : Colors.black,
+        ),
+      ),
+      onPressed: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
         questionAnimateTo(index);
       },
-      child: Container(
-        margin: EdgeInsets.only(
-          right: 8,
-        ),
-        padding: EdgeInsets.all(
-          (index + 1).toString().length >= 2 ? 8 : 12,
-        ),
-        decoration: currentQuestion == index
-            ? Utility.getCurrentDecoration()
-            : index == 3 || index == 5
-                ? Utility.getSubmitedDecoration()
-                : Utility.defaultDecoration(),
-        child: Text(
-          (index + 1).toString(),
-          style: TextStyle(
-            color: currentQuestion == index
-                ? Colors.white
-                : index == 3 || index == 5
-                    ? Colors.white
-                    : Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+      child: Text(
+        (index + 1).toString(),
+        style: TextStyle(
+          color: currentQuestion == index
+              ? Colors.white
+              : index == 3 || index == 5
+                  ? Colors.white
+                  : Colors.black,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class QuizResultScreen extends StatefulWidget {
@@ -35,9 +36,6 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
         Utility.appbar(
           context,
           text: "Quiz Result",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
         ),
         resultList(),
@@ -58,7 +56,10 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                       child: Utility.roundShadowButton(
                         context: context,
                         assetName: AppAssets.upArrow,
-                        onPressed: () {
+                        onPressed: () async {
+                          //delay to give ripple effect
+                          await Future.delayed(
+                              Duration(milliseconds: AppStrings.delay));
                           controller.animateTo(
                             0,
                             duration: Duration(milliseconds: 300),

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/screens/CreateQuizLobbyScreen.dart';
 import 'package:fullmarks/screens/RandomQuizMatchScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class SubjectSelectionScreen extends StatefulWidget {
@@ -18,7 +21,46 @@ class SubjectSelectionScreen extends StatefulWidget {
 }
 
 class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
-  List<Subject> subjects = Utility.getsubjects();
+  List<SubjectDetails> subjects = List();
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    _getSubjects();
+    super.initState();
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
+  _getSubjects() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      //api call
+      SubjectsResponse response = SubjectsResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.subjects, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        subjects = response.result;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +78,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
             ],
           ),
           body(),
+          _isLoading ? Utility.progress(context) : Container(),
         ],
       ),
     );
@@ -47,9 +90,6 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
         Utility.appbar(
           context,
           text: widget.title,
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
           textColor: Colors.white,
         ),
@@ -133,15 +173,17 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
         child: Column(
           children: [
             Expanded(
-              child: SvgPicture.asset(
-                subjects[index].assetName,
+              child: Utility.imageLoader(
+                baseUrl: AppStrings.subjectImage,
+                url: subjects[index].image,
+                placeholder: AppAssets.subjectPlaceholder,
               ),
             ),
             SizedBox(
               height: 4,
             ),
             Text(
-              subjects[index].title,
+              subjects[index].name,
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 16,

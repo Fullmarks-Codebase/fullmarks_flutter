@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class ChangeGradeScreen extends StatefulWidget {
@@ -52,9 +53,6 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
         Utility.appbar(
           context,
           text: "Choose Grade",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
         ),
         gradeList(),
       ],
@@ -90,7 +88,9 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
 
   Widget gradeItemView(int index) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
         selected = index;
         _notify();
       },

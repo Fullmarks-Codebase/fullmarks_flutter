@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/SubjectsResponse.dart';
+import 'package:fullmarks/models/SubtopicResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/SetsScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class SubTopicScreen extends StatefulWidget {
-  String subjectName;
+  SubjectDetails subject;
   SubTopicScreen({
-    @required this.subjectName,
+    @required this.subject,
   });
   @override
   _SubTopicScreenState createState() => _SubTopicScreenState();
@@ -18,12 +22,45 @@ class SubTopicScreen extends StatefulWidget {
 class _SubTopicScreenState extends State<SubTopicScreen> {
   bool isProgress = true;
   Customer customer;
+  bool _isLoading = false;
+  List<SubtopicDetails> subtopics = List();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     customer = Utility.getCustomer();
+    _getSubtopic();
     _notify();
     super.initState();
+  }
+
+  _getSubtopic() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["subjectId"] = widget.subject.id.toString();
+      //api call
+      SubtopicResponse response = SubtopicResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.subTopics, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        subtopics = response.result;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   @override
@@ -33,9 +70,16 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
         children: [
           Utility.setSvgFullScreen(context, AppAssets.commonBg),
           body(),
+          _isLoading ? Utility.progress(context) : Container(),
         ],
       ),
     );
+  }
+
+  Future<Null> _handleRefresh() async {
+    _getSubtopic();
+    await Future.delayed(Duration(milliseconds: AppStrings.delay));
+    return null;
   }
 
   Widget body() {
@@ -43,21 +87,31 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
       children: [
         Utility.appbar(
           context,
-          text: widget.subjectName,
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
+          text: widget.subject.name,
         ),
         Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                myProgressView(),
-                SizedBox(
-                  height: 16,
-                ),
-                subTopicList()
-              ],
+          child: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: _handleRefresh,
+            child: ListView(
+              padding: EdgeInsets.all(16),
+              physics: AlwaysScrollableScrollPhysics(),
+              children: subtopics.length == 0
+                  ? [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height -
+                            ((AppBar().preferredSize.height * 2) + 100),
+                        child: Utility.emptyView("No Subtopics"),
+                      ),
+                    ]
+                  : [
+                      myProgressView(),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      subTopicList()
+                    ],
             ),
           ),
         ),
@@ -66,76 +120,83 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
   }
 
   Widget subTopicList() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: List.generate(10, (index) {
-          return subTopicItemView(index + 1);
-        }),
-      ),
+    return Column(
+      children: List.generate(subtopics.length, (index) {
+        return subTopicItemView(index);
+      }),
     );
   }
 
   Widget subTopicItemView(int index) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (BuildContext context) => SetsScreen(
-            subtopicName: "Subtopic " + index.toString(),
-            subjectName: widget.subjectName,
-          ),
-        ));
-      },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 16),
-        padding: EdgeInsets.only(
-          left: 16,
-          top: 8,
-          bottom: 8,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.subtopicItemColor,
-          border: Border.all(
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: AppColors.subtopicItemColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: FlatButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
             color: AppColors.subtopicItemBorderColor,
             width: 2,
           ),
-          borderRadius: BorderRadius.circular(16),
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Subtopic " + index.toString(),
-                    style: TextStyle(
-                      color: AppColors.subtopicItemBorderColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    (index * 10).toString() + "% Completed",
-                    style: TextStyle(
-                      color: AppColors.subtopicItemBorderColor,
-                    ),
-                  ),
-                ],
+        onPressed: () async {
+          //delay to give ripple effect
+          await Future.delayed(Duration(milliseconds: AppStrings.delay));
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) => SetsScreen(
+                subtopic: subtopics[index],
+                subject: widget.subject,
               ),
             ),
-            IconButton(
-              icon: Icon(
-                Icons.arrow_forward_ios,
-                color: AppColors.subtopicItemBorderColor,
+          );
+        },
+        child: Container(
+          padding: EdgeInsets.only(
+            left: 16,
+            top: 8,
+            bottom: 8,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      subtopics[index].name,
+                      style: TextStyle(
+                        color: AppColors.subtopicItemBorderColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      "0% Completed",
+                      style: TextStyle(
+                        color: AppColors.subtopicItemBorderColor,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              onPressed: null,
-            ),
-          ],
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_forward_ios,
+                  color: AppColors.subtopicItemBorderColor,
+                ),
+                onPressed: null,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -160,7 +221,6 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                 borderRadius: BorderRadius.circular(16),
               ),
               padding: EdgeInsets.all(8),
-              margin: EdgeInsets.symmetric(horizontal: 16),
               child: isProgress ? progressView() : noProgressView(),
             ),
           );
@@ -206,7 +266,16 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                SvgPicture.asset(AppAssets.calculatorWhite),
+                Container(
+                  height: (MediaQuery.of(context).size.width / 2) / 3,
+                  width: (MediaQuery.of(context).size.width / 2) / 3,
+                  child: Utility.imageLoader(
+                    baseUrl: AppStrings.subjectImage,
+                    url: widget.subject.image,
+                    placeholder: AppAssets.subjectPlaceholder,
+                  ),
+                ),
+                // SvgPicture.asset(AppAssets.calculatorWhite),
                 Utility.pieChart(),
               ],
             ),
@@ -224,7 +293,7 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                 "My Progress",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),

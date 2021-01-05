@@ -45,7 +45,8 @@ class AppAssets {
   static String physics = "assets/physics.svg";
   static String sad = "assets/sad.svg";
   static String rateUs = "assets/rateUs.svg";
-  static String shareApp = "assets/shareApp.svg";
+  static String shareApp = "assets/shareApp.png";
+  // static String shareApp = "assets/shareApp.svg";
   static String upArrow = "assets/upArrow.svg";
   static String star = "assets/star.svg";
   static String home = "assets/home.svg";
@@ -166,5 +167,7 @@ class AppAssets {
   static String createCustomBg = "assets/createCustomBg.svg";
   static String myQuizItemBg = "assets/myQuizItemBg.svg";
   static String enterWhite = "assets/enterWhite.svg";
-  static String askingForProgress = "assets/askingForProgress.svg";
+  static String askingForProgress = "assets/askingForProgress.png";
+  static String subjectPlaceholder = "assets/subjectPlaceholder.png";
+  static String subjectPlaceholderWhite = "assets/subjectPlaceholderWhite.png";
 }

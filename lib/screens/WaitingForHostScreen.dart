@@ -58,9 +58,6 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
           context,
           text: "Join Quiz",
           textColor: Colors.white,
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           homeassetName: AppAssets.share,
         ),
         waitingView(),

@@ -37,9 +37,6 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
         Utility.appbar(
           context,
           text: "Preview",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
           textColor: Colors.white,
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class AddDiscussionScreen extends StatefulWidget {
@@ -32,11 +33,10 @@ class _AddDiscussionScreenState extends State<AddDiscussionScreen> {
         Utility.appbar(
           context,
           text: "Add Question",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           homeassetName: AppAssets.checkBlue,
-          onHomePressed: () {
+          onHomePressed: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
             Navigator.pop(context);
           },
         ),

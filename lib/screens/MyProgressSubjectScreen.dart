@@ -32,9 +32,6 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
         Utility.appbar(
           context,
           text: widget.title,
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
         ),
         myProgressSubjectList(),
       ],

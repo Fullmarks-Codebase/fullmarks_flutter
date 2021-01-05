@@ -83,7 +83,9 @@ class _LoginScreenState extends State<LoginScreen> {
               context,
               gradientColor1: AppColors.buttonGradient1,
               gradientColor2: AppColors.buttonGradient2,
-              onPressed: () {
+              onPressed: () async {
+                //delay to give ripple effect
+                await Future.delayed(Duration(milliseconds: AppStrings.delay));
                 _verifyTap();
               },
               text: "Verify",
@@ -107,7 +109,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Utility.button(
                     context,
                     bgColor: AppColors.fbColor,
-                    onPressed: () {},
+                    onPressed: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
+                    },
                     assetName: AppAssets.facebook,
                   ),
                 ),
@@ -118,7 +124,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Utility.button(
                     context,
                     bgColor: AppColors.googleColor,
-                    onPressed: () {},
+                    onPressed: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
+                    },
                     assetName: AppAssets.google,
                   ),
                 ),
@@ -138,7 +148,9 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Utility.button(
           context,
           bgColor: AppColors.strongCyan,
-          onPressed: () {
+          onPressed: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
             PreferenceUtils.setBool(AppStrings.skipPreference, true);
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(

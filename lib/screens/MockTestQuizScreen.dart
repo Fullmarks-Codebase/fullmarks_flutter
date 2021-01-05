@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 import 'TestResultScreen.dart';
@@ -42,9 +43,6 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
         Utility.appbar(
           context,
           text: "SSC CGL Mock Test -1",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
           textColor: Colors.white,
         ),
@@ -492,7 +490,10 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                   children: [
                     Spacer(),
                     FlatButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        //delay to give ripple effect
+                        await Future.delayed(
+                            Duration(milliseconds: AppStrings.delay));
                         Navigator.pop(context);
                         isPopOpen = false;
                         _notify();
@@ -547,7 +548,10 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                     context,
                     gradientColor1: AppColors.buttonGradient1,
                     gradientColor2: AppColors.buttonGradient2,
-                    onPressed: () {
+                    onPressed: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
                       questionAnimateTo(currentQuestion - 1);
                     },
                     text: "Prev",
@@ -563,11 +567,16 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
               context,
               gradientColor1: AppColors.buttonGradient1,
               gradientColor2: AppColors.buttonGradient2,
-              onPressed: () {
+              onPressed: () async {
+                //delay to give ripple effect
+                await Future.delayed(Duration(milliseconds: AppStrings.delay));
                 if (currentQuestion == (totalQuestion - 1)) {
                   Utility.showSubmitQuizDialog(
                     context: context,
-                    onSubmitPress: () {
+                    onSubmitPress: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
                       Navigator.pop(context);
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(

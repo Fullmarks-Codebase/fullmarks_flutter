@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/CreateCustomQuizScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 import 'SubjectSelectionScreen.dart';
@@ -40,9 +41,6 @@ class _CreateNewQuizScreenState extends State<CreateNewQuizScreen> {
         Utility.appbar(
           context,
           text: "Create New Quiz",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
           textColor: Colors.white,
         ),
@@ -81,7 +79,10 @@ class _CreateNewQuizScreenState extends State<CreateNewQuizScreen> {
                     ),
                     child: Utility.button(
                       context,
-                      onPressed: () {
+                      onPressed: () async {
+                        //delay to give ripple effect
+                        await Future.delayed(
+                            Duration(milliseconds: AppStrings.delay));
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -108,7 +109,10 @@ class _CreateNewQuizScreenState extends State<CreateNewQuizScreen> {
                     ),
                     child: Utility.button(
                       context,
-                      onPressed: () {
+                      onPressed: () async {
+                        //delay to give ripple effect
+                        await Future.delayed(
+                            Duration(milliseconds: AppStrings.delay));
                         Navigator.push(
                           context,
                           MaterialPageRoute(

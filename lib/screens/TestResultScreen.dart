@@ -1,9 +1,9 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/QuizResultScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 import 'HomeScreen.dart';
@@ -38,9 +38,6 @@ class _TestResultScreenState extends State<TestResultScreen> {
         Utility.appbar(
           context,
           text: "Test Result",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isBack: false,
         ),
         Expanded(
@@ -54,7 +51,10 @@ class _TestResultScreenState extends State<TestResultScreen> {
                   context,
                   gradientColor1: AppColors.buttonGradient1,
                   gradientColor2: AppColors.buttonGradient2,
-                  onPressed: () {
+                  onPressed: () async {
+                    //delay to give ripple effect
+                    await Future.delayed(
+                        Duration(milliseconds: AppStrings.delay));
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (BuildContext context) => QuizResultScreen(),
@@ -68,7 +68,10 @@ class _TestResultScreenState extends State<TestResultScreen> {
                 ),
                 Utility.button(
                   context,
-                  onPressed: () {
+                  onPressed: () async {
+                    //delay to give ripple effect
+                    await Future.delayed(
+                        Duration(milliseconds: AppStrings.delay));
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
                           builder: (BuildContext context) => HomeScreen(),

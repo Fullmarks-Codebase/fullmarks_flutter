@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:fullmarks/widgets/DiscussionItemView.dart';
 
@@ -43,9 +44,6 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
         Utility.appbar(
           context,
           text: "Discussion Forum",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
         ),
         discussionDetailsView()
       ],
@@ -69,7 +67,9 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
             Utility.roundShadowButton(
               context: context,
               assetName: AppAssets.upArrow,
-              onPressed: () {
+              onPressed: () async {
+                //delay to give ripple effect
+                await Future.delayed(Duration(milliseconds: AppStrings.delay));
                 controller.animateTo(
                   0,
                   duration: Duration(milliseconds: 300),

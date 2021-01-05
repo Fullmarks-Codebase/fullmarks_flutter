@@ -1,10 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/ChangeGradeScreen.dart';
 import 'package:fullmarks/screens/LiveQuizScreen.dart';
-import 'package:fullmarks/screens/LoginScreen.dart';
 import 'package:fullmarks/screens/MockTestScreen.dart';
 import 'package:fullmarks/screens/MyFriendsScreen.dart';
 import 'package:fullmarks/screens/MyProfileScreen.dart';
@@ -15,7 +15,6 @@ import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
-import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 import 'AskingForProgressScreen.dart';
@@ -30,15 +29,46 @@ class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> scafoldKey = GlobalKey();
   ScrollController controller;
   bool isProgress = true;
-  List<Subject> subjects = Utility.getsubjects();
+  List<SubjectDetails> subjects = List();
+  bool _isLoading = false;
   Customer customer;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     controller = ScrollController();
     customer = Utility.getCustomer();
+    _getSubjects();
     _notify();
     super.initState();
+  }
+
+  _getSubjects() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      //api call
+      SubjectsResponse response = SubjectsResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.subjects, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        subjects = response.result;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   @override
@@ -49,7 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           Utility.setSvgFullScreen(context, AppAssets.commonBg),
-          body()
+          body(),
+          _isLoading ? Utility.progress(context) : Container(),
         ],
       ),
     );
@@ -72,7 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 2,
                   ),
                   image: DecorationImage(
-                    image: NetworkImage(customer.userProfileImage),
+                    image: NetworkImage(
+                        AppStrings.userImage + customer.userProfileImage),
                   ),
                 ),
               );
@@ -147,15 +179,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-                      IconButton(
-                        icon: SvgPicture.asset(AppAssets.notification),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                NotificationListScreen(),
-                          ));
-                        },
+                      ClipOval(
+                        child: Material(
+                          color: Colors.white, // button color
+                          child: InkWell(
+                            child: Container(
+                              padding: EdgeInsets.all(16),
+                              child: SvgPicture.asset(AppAssets.notification),
+                            ),
+                            onTap: () async {
+                              //delay to give ripple effect
+                              await Future.delayed(
+                                  Duration(milliseconds: AppStrings.delay));
+                              Navigator.pop(context);
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    NotificationListScreen(),
+                              ));
+                            },
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -164,7 +207,10 @@ class _HomeScreenState extends State<HomeScreen> {
               drawerItemView(
                 assetName: AppAssets.drawerMyProgress,
                 text: "My Progress",
-                onTap: () {
+                onTap: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                   Navigator.push(
                     context,
@@ -177,7 +223,10 @@ class _HomeScreenState extends State<HomeScreen> {
               drawerItemView(
                 assetName: AppAssets.drawerMyProfile,
                 text: "My Profile",
-                onTap: () {
+                onTap: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                   Navigator.push(
                     context,
@@ -190,7 +239,10 @@ class _HomeScreenState extends State<HomeScreen> {
               drawerItemView(
                 assetName: AppAssets.drawerChangeGrade,
                 text: "Change Grade",
-                onTap: () {
+                onTap: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                   Navigator.push(
                     context,
@@ -227,7 +279,10 @@ class _HomeScreenState extends State<HomeScreen> {
               drawerItemView(
                 assetName: AppAssets.drawerMyBuddies,
                 text: "My Buddies",
-                onTap: () {
+                onTap: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                   Navigator.push(
                     context,
@@ -240,21 +295,30 @@ class _HomeScreenState extends State<HomeScreen> {
               drawerItemView(
                 assetName: AppAssets.drawerShareApp,
                 text: "Share this App",
-                onTap: () {
+                onTap: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                 },
               ),
               drawerItemView(
                 assetName: AppAssets.drawerRateApp,
                 text: "Rate Us",
-                onTap: () {
+                onTap: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                 },
               ),
               drawerItemView(
                 assetName: AppAssets.drawerLogout,
                 text: "Logout",
-                onTap: () {
+                onTap: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                   ApiManager(context).logout();
                 },
@@ -264,6 +328,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  Future<Null> _handleRefresh() async {
+    _getSubjects();
+    //delay to give ripple effect
+    await Future.delayed(Duration(milliseconds: AppStrings.delay));
+    return null;
   }
 
   Widget drawerItemView({
@@ -304,64 +375,84 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         toolbarView(),
         Expanded(
-          child: SingleChildScrollView(
-            controller: controller,
-            child: Column(
-              children: [
-                myProgressView(),
-                SizedBox(
-                  height: 16,
-                ),
-                Text(
-                  "Practice Subject",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+          child: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: _handleRefresh,
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              controller: controller,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 4,
                   ),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                subjectView(),
-                SizedBox(
-                  height: 16,
-                ),
-                horizontalView(),
-                SizedBox(
-                  height: 16,
-                ),
-                horizontalItemView(
-                  color: AppColors.appColor,
-                  assetName: AppAssets.shareApp,
-                  text: "Share this App to your friends",
-                  buttonText: "Share this App",
-                  margin: EdgeInsets.symmetric(horizontal: 16),
-                  onTap: () {},
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                horizontalItemView(
-                  color: AppColors.strongCyan,
-                  assetName: AppAssets.rateUs,
-                  text: "",
-                  buttonText: "Rate Us!",
-                  margin: EdgeInsets.symmetric(horizontal: 16),
-                  onTap: () {},
-                ),
-                Utility.roundShadowButton(
-                  context: context,
-                  assetName: AppAssets.upArrow,
-                  onPressed: () {
-                    controller.animateTo(
-                      0,
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.ease,
-                    );
-                  },
-                )
-              ],
+                  myProgressView(),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Text(
+                    "Practice Subject",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  subjectView(),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  horizontalView(),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  horizontalItemView(
+                    color: AppColors.appColor,
+                    assetName: AppAssets.shareApp,
+                    isPng: true,
+                    text: "Share this App to your friends",
+                    buttonText: "Share this App",
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    onTap: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
+                    },
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  horizontalItemView(
+                    color: AppColors.strongCyan,
+                    assetName: AppAssets.rateUs,
+                    text: "",
+                    buttonText: "Rate Us!",
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    onTap: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
+                    },
+                  ),
+                  Utility.roundShadowButton(
+                    context: context,
+                    assetName: AppAssets.upArrow,
+                    onPressed: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
+                      controller.animateTo(
+                        0,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.ease,
+                      );
+                    },
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -369,7 +460,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  discussionTap() {
+  discussionTap() async {
+    //delay to give ripple effect
+    await Future.delayed(Duration(milliseconds: AppStrings.delay));
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -379,7 +472,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  liveQuizTap() {
+  liveQuizTap() async {
+    //delay to give ripple effect
+    await Future.delayed(Duration(milliseconds: AppStrings.delay));
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -389,7 +484,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  mockTestTap() {
+  mockTestTap() async {
+    //delay to give ripple effect
+    await Future.delayed(Duration(milliseconds: AppStrings.delay));
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -456,6 +553,7 @@ class _HomeScreenState extends State<HomeScreen> {
     @required String buttonText,
     EdgeInsets margin,
     @required Function onTap,
+    bool isPng = false,
   }) {
     return Container(
       margin: margin,
@@ -468,7 +566,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Expanded(
             flex: 1,
-            child: SvgPicture.asset(assetName),
+            child: isPng ? Image.asset(assetName) : SvgPicture.asset(assetName),
           ),
           SizedBox(
             width: 4,
@@ -518,30 +616,35 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget subjectView() {
-    return GridView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: subjects.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 8.0,
-        mainAxisSpacing: 16.0,
-      ),
-      itemBuilder: (BuildContext context, int index) {
-        return subjectItemView(index);
-      },
-    );
+    return subjects.length == 0
+        ? Utility.emptyView("No Subjects")
+        : GridView.builder(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: subjects.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 8.0,
+              mainAxisSpacing: 16.0,
+            ),
+            itemBuilder: (BuildContext context, int index) {
+              return subjectItemView(index);
+            },
+          );
   }
 
   Widget subjectItemView(int index) {
-    return GestureDetector(
-      onTap: () {
+    return FlatButton(
+      padding: EdgeInsets.zero,
+      onPressed: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => SubTopicScreen(
-              subjectName: subjects[index].title,
+              subject: subjects[index],
             ),
           ),
         );
@@ -551,15 +654,18 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             Expanded(
-              child: SvgPicture.asset(
-                subjects[index].assetName,
+              child: Utility.imageLoader(
+                baseUrl: AppStrings.subjectImage,
+                url: subjects[index].image,
+                placeholder: AppAssets.subjectPlaceholder,
+                fit: BoxFit.contain,
               ),
             ),
             SizedBox(
               height: 4,
             ),
             Text(
-              subjects[index].title,
+              subjects[index].name,
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 16,
@@ -580,13 +686,16 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: FittedBox(
                 child: Text(
-                  subjects[index].subtitle,
+                  "0% Completed",
                   style: TextStyle(
                     color: AppColors.appColor,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
+            ),
+            SizedBox(
+              height: 4,
             ),
           ],
         ),
@@ -601,7 +710,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget myProgressView() {
     return customer == null
-        ? Utility.noUserProgressView(context)
+        ? Container(
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            child: Utility.noUserProgressView(context),
+          )
         : GestureDetector(
             onTap: () {
               isProgress = !isProgress;
@@ -671,7 +783,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 "My Progress",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -749,16 +861,24 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           )
         : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
                 width: 8,
               ),
-              Utility.roundShadowButton(
-                context: context,
-                assetName: AppAssets.drawer,
-                onPressed: () {
-                  scafoldKey.currentState.openDrawer();
-                },
+              Container(
+                padding: EdgeInsets.only(top: 16),
+                child: Utility.roundShadowButton(
+                  context: context,
+                  assetName: AppAssets.drawer,
+                  onPressed: () async {
+                    //delay to give ripple effect
+                    await Future.delayed(
+                        Duration(milliseconds: AppStrings.delay));
+                    scafoldKey.currentState.openDrawer();
+                  },
+                ),
               ),
               Spacer(),
               Container(

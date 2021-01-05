@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/CustomQuizListScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 import 'AddQuestionScreen.dart';
@@ -42,9 +43,6 @@ class _CreateCustomQuizScreenState extends State<CreateCustomQuizScreen> {
         Utility.appbar(
           context,
           text: "Create Custom Quiz",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
           textColor: Colors.white,
         ),
@@ -83,7 +81,10 @@ class _CreateCustomQuizScreenState extends State<CreateCustomQuizScreen> {
                     ),
                     child: Utility.button(
                       context,
-                      onPressed: () {
+                      onPressed: () async {
+                        //delay to give ripple effect
+                        await Future.delayed(
+                            Duration(milliseconds: AppStrings.delay));
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -138,7 +139,9 @@ class _CreateCustomQuizScreenState extends State<CreateCustomQuizScreen> {
 
   Widget myQuizItemView(int index) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -205,7 +208,10 @@ class _CreateCustomQuizScreenState extends State<CreateCustomQuizScreen> {
                           children: [
                             Utility.button(
                               context,
-                              onPressed: () {
+                              onPressed: () async {
+                                //delay to give ripple effect
+                                await Future.delayed(
+                                    Duration(milliseconds: AppStrings.delay));
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -228,7 +234,10 @@ class _CreateCustomQuizScreenState extends State<CreateCustomQuizScreen> {
                             ),
                             Utility.button(
                               context,
-                              onPressed: () {
+                              onPressed: () async {
+                                //delay to give ripple effect
+                                await Future.delayed(
+                                    Duration(milliseconds: AppStrings.delay));
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

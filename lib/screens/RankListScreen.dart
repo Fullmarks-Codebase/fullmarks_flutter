@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class RankListScreen extends StatefulWidget {
@@ -43,9 +44,6 @@ class _RankListScreenState extends State<RankListScreen> {
         Utility.appbar(
           context,
           text: widget.title,
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           homeassetName: AppAssets.home,
           textColor: Colors.white,
         ),
@@ -101,7 +99,11 @@ class _RankListScreenState extends State<RankListScreen> {
               ),
               child: Utility.button(
                 context,
-                onPressed: () {},
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
+                },
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 gradientColor1: AppColors.buttonGradient1,

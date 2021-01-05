@@ -41,9 +41,6 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
         Utility.appbar(
           context,
           text: isMatchFound ? "Matched" : "Searching for Player",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
           textColor: Colors.white,
         ),

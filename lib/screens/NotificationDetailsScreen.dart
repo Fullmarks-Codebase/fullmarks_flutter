@@ -28,9 +28,6 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
         Utility.appbar(
           context,
           text: "Notifications",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
         ),
         notificationItemView(),
       ],

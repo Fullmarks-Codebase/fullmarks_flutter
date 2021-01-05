@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/StartAddQuestionScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class AddQuizNameScreen extends StatefulWidget {
@@ -38,9 +39,6 @@ class _AddQuizNameScreenState extends State<AddQuizNameScreen> {
         Utility.appbar(
           context,
           text: "Create Custom Quiz",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
           textColor: Colors.white,
         ),
@@ -87,7 +85,10 @@ class _AddQuizNameScreenState extends State<AddQuizNameScreen> {
                   ),
                   Utility.button(
                     context,
-                    onPressed: () {
+                    onPressed: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
                       Navigator.push(
                         context,
                         MaterialPageRoute(

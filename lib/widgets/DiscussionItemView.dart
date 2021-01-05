@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/AddCommentScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class DiscussionItemView extends StatefulWidget {
@@ -205,7 +206,10 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
                     onTap: () {
                       Utility.showDeleteDialog(
                         context: context,
-                        onDeletePress: () {
+                        onDeletePress: () async {
+                          //delay to give ripple effect
+                          await Future.delayed(
+                              Duration(milliseconds: AppStrings.delay));
                           Navigator.pop(context);
                         },
                       );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class OtherProfileScreen extends StatefulWidget {
@@ -26,9 +27,6 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               Utility.appbar(
                 context,
                 text: "",
-                onBackPressed: () {
-                  Navigator.pop(context);
-                },
                 isHome: false,
               ),
               Spacer(),
@@ -48,7 +46,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
         context,
         gradientColor1: AppColors.buttonGradient1,
         gradientColor2: AppColors.buttonGradient2,
-        onPressed: () {},
+        onPressed: () async {
+          //delay to give ripple effect
+          await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        },
         text: "Add Buddy",
       ),
     );

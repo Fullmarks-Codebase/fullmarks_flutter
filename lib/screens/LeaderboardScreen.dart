@@ -37,9 +37,6 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         Utility.appbar(
           context,
           text: "Global Rank",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
           textColor: Colors.white,
         ),

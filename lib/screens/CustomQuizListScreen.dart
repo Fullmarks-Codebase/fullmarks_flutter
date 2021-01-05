@@ -4,6 +4,7 @@ import 'package:fullmarks/screens/AddQuestionScreen.dart';
 import 'package:fullmarks/screens/PreviewQuestionScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class CustomQuizListScreen extends StatefulWidget {
@@ -39,9 +40,6 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
         Utility.appbar(
           context,
           text: "Quiz Name",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
           isHome: false,
           textColor: Colors.white,
         ),
@@ -63,7 +61,10 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
             children: [
               Utility.button(
                 context,
-                onPressed: () {
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -85,7 +86,10 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
               ),
               Utility.button(
                 context,
-                onPressed: () {
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                 },
                 text: "Submit",
@@ -226,7 +230,10 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                 questionItemViewButton(AppAssets.delete, () {
                   Utility.showDeleteDialog(
                     context: context,
-                    onDeletePress: () {
+                    onDeletePress: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
                       Navigator.pop(context);
                     },
                   );

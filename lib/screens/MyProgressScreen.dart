@@ -29,9 +29,6 @@ class _MyProgressScreenState extends State<MyProgressScreen> {
         Utility.appbar(
           context,
           text: "My Progress",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
         ),
         myProgressList(),
       ],

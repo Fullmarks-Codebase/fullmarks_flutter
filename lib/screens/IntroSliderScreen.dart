@@ -91,7 +91,10 @@ class _IntroSliderScreenState extends State<IntroSliderScreen> {
               margin: EdgeInsets.only(right: 16, bottom: 16),
               child: FloatingActionButton(
                 backgroundColor: AppColors.appColor,
-                onPressed: () {
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   PreferenceUtils.setBool(
                       AppStrings.introSliderPreference, true);
                   Navigator.of(context).pushAndRemoveUntil(

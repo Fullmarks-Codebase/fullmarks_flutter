@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -65,25 +66,29 @@ class Utility {
     );
   }
 
-  // static Widget imageLoader(String url, String placeholder,
-  //     {BoxFit fit = BoxFit.cover}) {
-  //   return (url == "null" || url == null || url.trim() == "")
-  //       ? Image.asset(placeholder)
-  //       : CachedNetworkImage(
-  //           imageUrl: url,
-  //           imageBuilder: (context, imageProvider) => Container(
-  //             decoration: BoxDecoration(
-  //               image: DecorationImage(
-  //                 image: imageProvider,
-  //                 fit: fit,
-  //               ),
-  //             ),
-  //           ),
-  //           placeholder: (context, url) => progress(context),
-  //           errorWidget: (context, url, error) =>
-  //               Image.asset(AppAssets.imageNotFound),
-  //         );
-  // }
+  static Widget imageLoader({
+    @required String baseUrl,
+    @required String url,
+    @required String placeholder,
+    BoxFit fit = BoxFit.cover,
+  }) {
+    return (url == "null" || url == null || url.trim() == "")
+        ? Image.asset(placeholder)
+        : CachedNetworkImage(
+            imageUrl: (url.startsWith("http")) ? url : baseUrl + url,
+            imageBuilder: (context, imageProvider) => Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: imageProvider,
+                  fit: fit,
+                ),
+              ),
+            ),
+            placeholder: (context, url) => progress(context),
+            errorWidget: (context, url, error) =>
+                Image.asset(AppAssets.imageNotFound),
+          );
+  }
 
   static Widget emptyView(String text) {
     return Center(
@@ -92,16 +97,6 @@ class Utility {
         textAlign: TextAlign.center,
       ),
     );
-  }
-
-  static Image imageLoaderImage(String url, String placeholder) {
-    return url == null || url == ""
-        ? Image.asset(placeholder)
-        : Image.network(
-            url,
-            // (url.startsWith("http")) ? url : AppStrings.IMAGEBASE_URL + url,
-            fit: BoxFit.contain,
-          );
   }
 
   // static launchURL(String url) async {
@@ -143,35 +138,79 @@ class Utility {
     @required String assetName,
     @required Function() onPressed,
   }) {
-    return SafeArea(
-      bottom: false,
-      child: Container(
-        padding: EdgeInsets.only(
-          bottom: 16,
-        ),
-        child: IconButton(
-          icon: Container(
-            padding: EdgeInsets.all(8),
-            decoration: assetName == null
-                ? BoxDecoration()
-                : BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        offset: Offset(0, 1),
-                        blurRadius: 1,
-                        color: AppColors.appColor,
-                      ),
-                    ],
-                    shape: BoxShape.circle,
-                  ),
-            child:
-                assetName == null ? Container() : SvgPicture.asset(assetName),
+    return Container(
+      margin: EdgeInsets.only(
+        left: 8,
+        right: 8,
+      ),
+      child: ClipOval(
+        child: Material(
+          shape: CircleBorder(
+            side: BorderSide(
+              color:
+                  assetName == null ? Colors.transparent : AppColors.appColor,
+            ),
           ),
-          onPressed: onPressed,
+          color: assetName == null ? Colors.transparent : Colors.white,
+          child: InkWell(
+            child: Container(
+              padding: EdgeInsets.all(8),
+              child:
+                  assetName == null ? Container() : SvgPicture.asset(assetName),
+            ),
+            onTap: assetName == null ? null : onPressed,
+          ),
         ),
       ),
     );
+    // return SafeArea(
+    //   bottom: false,
+    //   child: Container(
+    //     padding: EdgeInsets.only(
+    //       bottom: 16,
+    //     ),
+    //     child: FlatButton(
+    //       color: assetName == null ? Colors.transparent : Colors.white,
+    //       shape: CircleBorder(
+    //         side: BorderSide(
+    //           color:
+    //               assetName == null ? Colors.transparent : AppColors.appColor,
+    //         ),
+    //       ),
+    //       onPressed: assetName == null ? null : onPressed,
+    //       child: assetName == null ? Container() : SvgPicture.asset(assetName),
+    //     ),
+    //   ),
+    // );
+    // return SafeArea(
+    //   bottom: false,
+    //   child: Container(
+    //     padding: EdgeInsets.only(
+    //       bottom: 16,
+    //     ),
+    //     child: IconButton(
+    //       icon: Container(
+    //         padding: EdgeInsets.all(8),
+    // decoration: assetName == null
+    //     ? BoxDecoration()
+    //     : BoxDecoration(
+    //         color: Colors.white,
+    //         boxShadow: [
+    //           BoxShadow(
+    //             offset: Offset(0, 1),
+    //             blurRadius: 1,
+    //             color: AppColors.appColor,
+    //           ),
+    //         ],
+    //         shape: BoxShape.circle,
+    //       ),
+    //         child:
+    //             assetName == null ? Container() : SvgPicture.asset(assetName),
+    //       ),
+    //       onPressed: onPressed,
+    //     ),
+    //   ),
+    // );
   }
 
   static Widget button(
@@ -260,17 +299,12 @@ class Utility {
         onPressed: onPressed,
       ),
     );
-    return Container(
-      alignment: Alignment.center,
-      padding: EdgeInsets.all(padding),
-      child: InkWell(),
-    );
   }
 
   static Widget appbar(
     BuildContext context, {
     @required String text,
-    @required Function() onBackPressed,
+    Function() onBackPressed,
     bool isHome = true,
     bool isBack = true,
     Color textColor = Colors.black,
@@ -281,7 +315,9 @@ class Utility {
       homeassetName = AppAssets.home;
     }
     if (onHomePressed == null) {
-      onHomePressed = () {
+      onHomePressed = () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (BuildContext context) => HomeScreen(),
@@ -289,45 +325,57 @@ class Utility {
             (Route<dynamic> route) => false);
       };
     }
+    if (onBackPressed == null) {
+      onBackPressed = () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        Navigator.pop(context);
+      };
+    }
     return SafeArea(
       bottom: false,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 8,
-          ),
-          roundShadowButton(
-            context: context,
-            assetName: isBack ? AppAssets.backArrow : null,
-            onPressed: isBack ? onBackPressed : null,
-          ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.only(
-                bottom: 16,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
+      child: Container(
+        padding: EdgeInsets.only(
+          bottom: 16,
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 8,
+            ),
+            roundShadowButton(
+              context: context,
+              assetName: isBack ? AppAssets.backArrow : null,
+              onPressed: isBack ? onBackPressed : null,
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.only(
+                  bottom: 16,
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                alignment: Alignment.center,
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
-          ),
-          roundShadowButton(
-            context: context,
-            assetName: isHome ? homeassetName : null,
-            onPressed: isHome ? onHomePressed : null,
-          ),
-          SizedBox(
-            width: 8,
-          ),
-        ],
+            roundShadowButton(
+              context: context,
+              assetName: isHome ? homeassetName : null,
+              onPressed: isHome ? onHomePressed : null,
+            ),
+            SizedBox(
+              width: 8,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -347,6 +395,7 @@ class Utility {
             title,
             style: TextStyle(
               color: Colors.white,
+              fontSize: 12,
             ),
             maxLines: 2,
           ),
@@ -358,7 +407,7 @@ class Utility {
   static Widget correctIncorrectView({
     @required Color color,
     @required String title,
-    double fontSize = 20,
+    double fontSize = 16,
     Color textColor = Colors.white,
   }) {
     return Row(
@@ -413,36 +462,6 @@ class Utility {
     );
   }
 
-  static List<Subject> getsubjects() {
-    return [
-      Subject(
-        AppAssets.maths,
-        "Mathmatics",
-        "7% Completed",
-      ),
-      Subject(
-        AppAssets.physics,
-        "Physics",
-        "100% Completed",
-      ),
-      Subject(
-        AppAssets.chemistry,
-        "Chemistry",
-        "20% Completed",
-      ),
-      Subject(
-        AppAssets.biology,
-        "Biology",
-        "20% Completed",
-      ),
-      Subject(
-        AppAssets.english,
-        "English",
-        "20% Completed",
-      ),
-    ];
-  }
-
   static BoxDecoration selectedAnswerDecoration({
     Color color,
   }) {
@@ -471,57 +490,6 @@ class Utility {
       borderRadius: BorderRadius.circular(8),
       border: Border.all(
         color: AppColors.blackColor,
-      ),
-      boxShadow: [
-        BoxShadow(
-          offset: Offset(0, 1),
-          blurRadius: 1,
-          color: Colors.black38,
-        ),
-      ],
-    );
-  }
-
-  static BoxDecoration defaultDecoration() {
-    return BoxDecoration(
-      color: Colors.white,
-      shape: BoxShape.circle,
-      border: Border.all(
-        color: Colors.black,
-      ),
-      boxShadow: [
-        BoxShadow(
-          offset: Offset(0, 1),
-          blurRadius: 1,
-          color: Colors.black38,
-        ),
-      ],
-    );
-  }
-
-  static BoxDecoration getSubmitedDecoration() {
-    return BoxDecoration(
-      color: AppColors.strongCyan,
-      shape: BoxShape.circle,
-      border: Border.all(
-        color: AppColors.strongCyan,
-      ),
-      boxShadow: [
-        BoxShadow(
-          offset: Offset(0, 1),
-          blurRadius: 1,
-          color: Colors.black38,
-        ),
-      ],
-    );
-  }
-
-  static BoxDecoration getCurrentDecoration() {
-    return BoxDecoration(
-      color: AppColors.appColor,
-      shape: BoxShape.circle,
-      border: Border.all(
-        color: AppColors.appColor,
       ),
       boxShadow: [
         BoxShadow(
@@ -801,7 +769,10 @@ class Utility {
               ),
               button(
                 context,
-                onPressed: () {
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                 },
                 text: "Cancel",
@@ -851,7 +822,10 @@ class Utility {
               ),
               button(
                 context,
-                onPressed: () {
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                 },
                 text: "Back to Quiz",
@@ -898,7 +872,10 @@ class Utility {
               ),
               button(
                 context,
-                onPressed: () {
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                 },
                 text: "Cancel",
@@ -1184,7 +1161,6 @@ class Utility {
         ],
       ),
       padding: EdgeInsets.all(8),
-      margin: EdgeInsets.symmetric(horizontal: 16),
       alignment: Alignment.center,
       child: Column(
         children: [
@@ -1205,7 +1181,9 @@ class Utility {
               context,
               gradientColor1: AppColors.buttonGradient1,
               gradientColor2: AppColors.buttonGradient2,
-              onPressed: () {
+              onPressed: () async {
+                //delay to give ripple effect
+                await Future.delayed(Duration(milliseconds: AppStrings.delay));
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (BuildContext context) => LoginScreen(),
@@ -1218,17 +1196,5 @@ class Utility {
         ],
       ),
     );
-  }
-}
-
-class Subject {
-  String assetName;
-  String title;
-  String subtitle;
-
-  Subject(String assetName, String title, String subtitle) {
-    this.assetName = assetName;
-    this.title = title;
-    this.subtitle = subtitle;
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/TestScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:lottie/lottie.dart';
 
@@ -38,9 +39,6 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
         Utility.appbar(
           context,
           text: "Instruction",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
         ),
         Expanded(
           child: Stack(
@@ -239,10 +237,15 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
             context,
             gradientColor1: AppColors.buttonGradient1,
             gradientColor2: AppColors.buttonGradient2,
-            onPressed: () {
+            onPressed: () async {
+              //delay to give ripple effect
+              await Future.delayed(Duration(milliseconds: AppStrings.delay));
               Utility.showStartQuizDialog(
                 context: context,
-                onStartPress: () {
+                onStartPress: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                   Navigator.of(context).push(
                     MaterialPageRoute(

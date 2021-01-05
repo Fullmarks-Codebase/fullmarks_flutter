@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/screens/AddFriendScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 import 'LiveQuizPlayScreen.dart';
@@ -42,9 +43,6 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
           Utility.appbar(
             context,
             text: "Create New Quiz",
-            onBackPressed: () {
-              Navigator.pop(context);
-            },
             isHome: false,
             textColor: Colors.white,
           ),
@@ -60,7 +58,9 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
             ),
             child: Utility.button(
               context,
-              onPressed: () {
+              onPressed: () async {
+                //delay to give ripple effect
+                await Future.delayed(Duration(milliseconds: AppStrings.delay));
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (BuildContext context) => LiveQuizPlayScreen(
@@ -220,7 +220,10 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
                 Expanded(
                   child: Utility.button(
                     context,
-                    onPressed: () {
+                    onPressed: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -245,7 +248,10 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
                 Expanded(
                   child: Utility.button(
                     context,
-                    onPressed: () {
+                    onPressed: () async {
+                      //delay to give ripple effect
+                      await Future.delayed(
+                          Duration(milliseconds: AppStrings.delay));
                       Navigator.push(
                         context,
                         MaterialPageRoute(

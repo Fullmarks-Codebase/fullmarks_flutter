@@ -28,9 +28,6 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
         Utility.appbar(
           context,
           text: "Notifications",
-          onBackPressed: () {
-            Navigator.pop(context);
-          },
         ),
         notificationList(),
       ],
