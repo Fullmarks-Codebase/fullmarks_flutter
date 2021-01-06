@@ -86,7 +86,6 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
               buttonView(),
             ],
           ),
-          _isLoading ? Utility.progress(context) : Container(),
         ],
       ),
     );

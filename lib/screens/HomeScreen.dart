@@ -38,10 +38,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     controller = ScrollController();
-    customer = Utility.getCustomer();
+    _getUser();
     _getSubjects();
     _notify();
     super.initState();
+  }
+
+  _getUser() {
+    customer = Utility.getCustomer();
+    _notify();
   }
 
   _getSubjects() async {
@@ -80,7 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Utility.setSvgFullScreen(context, AppAssets.commonBg),
           body(),
-          _isLoading ? Utility.progress(context) : Container(),
         ],
       ),
     );
@@ -169,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   width: 8,
                                 ),
                                 Text(
-                                  'Class Four',
+                                  customer.classGrades.name,
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(0.5),
                                   ),
@@ -228,12 +232,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   await Future.delayed(
                       Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
-                  Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => MyProfileScreen(),
                     ),
                   );
+                  _getUser();
                 },
               ),
               drawerItemView(
@@ -244,12 +249,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   await Future.delayed(
                       Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
-                  Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => ChangeGradeScreen(),
                     ),
                   );
+                  _getUser();
                 },
               ),
               drawerItemView(
@@ -385,86 +391,88 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         toolbarView(),
         Expanded(
-          child: RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: _handleRefresh,
-            child: SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              controller: controller,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 4,
-                  ),
-                  myProgressView(),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Text(
-                    "Practice Subject",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+          child: _isLoading
+              ? Utility.progress(context)
+              : RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: _handleRefresh,
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    controller: controller,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 4,
+                        ),
+                        myProgressView(),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Text(
+                          "Practice Subject",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        subjectView(),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        horizontalView(),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        horizontalItemView(
+                          color: AppColors.appColor,
+                          assetName: AppAssets.shareApp,
+                          isPng: true,
+                          text: "Share this App to your friends",
+                          buttonText: "Share this App",
+                          margin: EdgeInsets.symmetric(horizontal: 16),
+                          onTap: () async {
+                            //delay to give ripple effect
+                            await Future.delayed(
+                                Duration(milliseconds: AppStrings.delay));
+                          },
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        horizontalItemView(
+                          color: AppColors.strongCyan,
+                          assetName: AppAssets.rateUs,
+                          text: "",
+                          buttonText: "Rate Us!",
+                          margin: EdgeInsets.symmetric(horizontal: 16),
+                          onTap: () async {
+                            //delay to give ripple effect
+                            await Future.delayed(
+                                Duration(milliseconds: AppStrings.delay));
+                          },
+                        ),
+                        Utility.roundShadowButton(
+                          context: context,
+                          assetName: AppAssets.upArrow,
+                          onPressed: () async {
+                            //delay to give ripple effect
+                            await Future.delayed(
+                                Duration(milliseconds: AppStrings.delay));
+                            controller.animateTo(
+                              0,
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.ease,
+                            );
+                          },
+                        )
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  subjectView(),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  horizontalView(),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  horizontalItemView(
-                    color: AppColors.appColor,
-                    assetName: AppAssets.shareApp,
-                    isPng: true,
-                    text: "Share this App to your friends",
-                    buttonText: "Share this App",
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    onTap: () async {
-                      //delay to give ripple effect
-                      await Future.delayed(
-                          Duration(milliseconds: AppStrings.delay));
-                    },
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  horizontalItemView(
-                    color: AppColors.strongCyan,
-                    assetName: AppAssets.rateUs,
-                    text: "",
-                    buttonText: "Rate Us!",
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    onTap: () async {
-                      //delay to give ripple effect
-                      await Future.delayed(
-                          Duration(milliseconds: AppStrings.delay));
-                    },
-                  ),
-                  Utility.roundShadowButton(
-                    context: context,
-                    assetName: AppAssets.upArrow,
-                    onPressed: () async {
-                      //delay to give ripple effect
-                      await Future.delayed(
-                          Duration(milliseconds: AppStrings.delay));
-                      controller.animateTo(
-                        0,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.ease,
-                      );
-                    },
-                  )
-                ],
-              ),
-            ),
-          ),
+                ),
         ),
       ],
     );

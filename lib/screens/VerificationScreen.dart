@@ -8,6 +8,7 @@ import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
+import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:fullmarks/widgets/otp_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -139,8 +140,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
       if (response.customer != null) {
         Utility.showToast("User Logged in Successfully");
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString(
+        PreferenceUtils.setString(
             AppStrings.userPreference, jsonEncode(response.customer.toJson()));
         return null;
       } else {

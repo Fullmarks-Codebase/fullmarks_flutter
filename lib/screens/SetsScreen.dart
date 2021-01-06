@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/SetsResponse.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/models/SubtopicResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/InstructionsScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
@@ -24,12 +26,45 @@ class SetsScreen extends StatefulWidget {
 
 class _SetsScreenState extends State<SetsScreen> {
   Customer customer;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+  bool _isLoading = false;
+  List<SetDetails> setsList = List();
 
   @override
   void initState() {
     customer = Utility.getCustomer();
+    _getSets();
     _notify();
     super.initState();
+  }
+
+  _getSets() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["topicId"] = widget.subtopic.id.toString();
+      //api call
+      SetsResponse response = SetsResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.sets, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        setsList = response.result;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   _notify() {
@@ -49,6 +84,12 @@ class _SetsScreenState extends State<SetsScreen> {
     );
   }
 
+  Future<Null> _handleRefresh() async {
+    _getSets();
+    await Future.delayed(Duration(milliseconds: AppStrings.delay));
+    return null;
+  }
+
   Widget body() {
     return Column(
       children: [
@@ -57,12 +98,28 @@ class _SetsScreenState extends State<SetsScreen> {
           text: widget.subtopic.name,
         ),
         Expanded(
-          child: ListView(
-            padding: EdgeInsets.all(16),
-            children: List.generate(10, (index) {
-              return setsItemView(index + 1);
-            }),
-          ),
+          child: _isLoading
+              ? Utility.progress(context)
+              : RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: _handleRefresh,
+                  child: ListView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.all(16),
+                    children: setsList.length == 0
+                        ? [
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height -
+                                  ((AppBar().preferredSize.height * 2) + 100),
+                              child: Utility.emptyView("No Sets"),
+                            ),
+                          ]
+                        : List.generate(setsList.length, (index) {
+                            return setsItemView(index);
+                          }),
+                  ),
+                ),
         ),
       ],
     );
@@ -98,7 +155,7 @@ class _SetsScreenState extends State<SetsScreen> {
                   : InstructionsScreen(
                       subtopicName: widget.subtopic.name,
                       subjectName: widget.subject.name,
-                      setName: "Set " + index.toString(),
+                      setDetails: setsList[index],
                     ),
             ),
           );
@@ -112,7 +169,7 @@ class _SetsScreenState extends State<SetsScreen> {
             children: [
               Expanded(
                 child: Text(
-                  "Set " + index.toString(),
+                  setsList[index].name,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,

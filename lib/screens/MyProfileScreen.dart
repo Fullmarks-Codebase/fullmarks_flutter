@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/UserResponse.dart';
+import 'package:fullmarks/models/UsersResponse.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
+import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -12,12 +18,46 @@ class MyProfileScreen extends StatefulWidget {
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
   Customer customer;
+  bool _isLoading = false;
 
   @override
   void initState() {
     customer = Utility.getCustomer();
     _notify();
+    _getUser();
     super.initState();
+  }
+
+  _getUser() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["customerId"] = customer.id.toString();
+      //api call
+      UsersResponse response = UsersResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.customer, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        if (response.result.length < 0) {
+          customer = response.result.first;
+          PreferenceUtils.setString(
+              AppStrings.userPreference, jsonEncode(customer.toJson()));
+          _notify();
+        }
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   _notify() {
@@ -228,6 +268,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             ],
           ),
         ),
+        _isLoading ? Utility.progress(context) : Container(),
       ],
     );
   }
@@ -255,7 +296,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               width: 8,
             ),
             Text(
-              'Class Four',
+              customer.classGrades.name,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w500,

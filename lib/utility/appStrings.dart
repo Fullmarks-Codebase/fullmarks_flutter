@@ -2,14 +2,19 @@ class AppStrings {
   static String baseUrl = "http://104.131.14.251:3001/";
   static String login = baseUrl + "app/customer/checkin";
   static String verify = baseUrl + "app/customer/verify";
-  static String customer = baseUrl + "customer";
+  static String customer = baseUrl + "customer/getSingleCustomer";
   static String subjects = baseUrl + "subjects/onlySubjects";
   static String subTopics = baseUrl + "subjects/onlyTopics";
+  static String getClass = baseUrl + "class";
+  static String changeClass = baseUrl + "customer/changeClass";
+  static String sets = baseUrl + "subjects/topics/sets";
+  static String questions = baseUrl + "questions";
 
   //image base url
   static String customQuestion = baseUrl + "images/user_questions/question/";
   static String customAnswers = baseUrl + "images/user_questions/answers/";
   static String userImage = baseUrl + "images/user/";
+  static String classImage = baseUrl + "images/class/";
   static String subjectImage = baseUrl + "images/subjects/";
   static String questionImage = baseUrl + "images/questions/question/";
   static String answersImage = baseUrl + "images/questions/answers/";

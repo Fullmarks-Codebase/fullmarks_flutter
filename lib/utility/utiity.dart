@@ -50,7 +50,7 @@ class Utility {
   static Widget progress(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      color: Colors.white.withOpacity(0.5),
+      // color: Colors.white.withOpacity(0.5),
       child: Container(
         width: MediaQuery.of(context).size.width /
             1.5, // change this value to increase/decrease size of progress

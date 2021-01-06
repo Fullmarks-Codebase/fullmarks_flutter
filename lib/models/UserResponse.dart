@@ -1,3 +1,5 @@
+import 'package:fullmarks/models/ClassResponse.dart';
+
 class UserResponse {
   Customer customer;
 
@@ -29,6 +31,7 @@ class Customer {
   String createdAt;
   String updatedAt;
   String token;
+  ClassDetails classGrades;
 
   Customer({
     this.id,
@@ -42,6 +45,7 @@ class Customer {
     this.createdAt,
     this.updatedAt,
     this.token,
+    this.classGrades,
   });
 
   Customer.fromJson(Map<String, dynamic> json) {
@@ -56,6 +60,8 @@ class Customer {
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
     token = json['token'] ?? "";
+    classGrades =
+        json['class'] != null ? new ClassDetails.fromJson(json['class']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -71,6 +77,9 @@ class Customer {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['token'] = this.token;
+    if (this.classGrades != null) {
+      data['class'] = this.classGrades.toJson();
+    }
     return data;
   }
 }

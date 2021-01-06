@@ -70,7 +70,6 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
         children: [
           Utility.setSvgFullScreen(context, AppAssets.commonBg),
           body(),
-          _isLoading ? Utility.progress(context) : Container(),
         ],
       ),
     );
@@ -90,30 +89,32 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
           text: widget.subject.name,
         ),
         Expanded(
-          child: RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: _handleRefresh,
-            child: ListView(
-              padding: EdgeInsets.all(16),
-              physics: AlwaysScrollableScrollPhysics(),
-              children: subtopics.length == 0
-                  ? [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height -
-                            ((AppBar().preferredSize.height * 2) + 100),
-                        child: Utility.emptyView("No Subtopics"),
-                      ),
-                    ]
-                  : [
-                      myProgressView(),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      subTopicList()
-                    ],
-            ),
-          ),
+          child: _isLoading
+              ? Utility.progress(context)
+              : RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: _handleRefresh,
+                  child: ListView(
+                    padding: EdgeInsets.all(16),
+                    physics: AlwaysScrollableScrollPhysics(),
+                    children: subtopics.length == 0
+                        ? [
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height -
+                                  ((AppBar().preferredSize.height * 2) + 100),
+                              child: Utility.emptyView("No Subtopics"),
+                            ),
+                          ]
+                        : [
+                            myProgressView(),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            subTopicList()
+                          ],
+                  ),
+                ),
         ),
       ],
     );

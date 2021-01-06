@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/models/SetsResponse.dart';
 import 'package:fullmarks/screens/TestResultScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
@@ -8,11 +10,13 @@ import 'package:fullmarks/utility/Utiity.dart';
 class TestScreen extends StatefulWidget {
   String subtopicName;
   String subjectName;
-  String setName;
+  SetDetails setDetails;
+  List<QuestionDetails> questionsDetails;
   TestScreen({
     @required this.subtopicName,
     @required this.subjectName,
-    @required this.setName,
+    @required this.setDetails,
+    @required this.questionsDetails,
   });
   @override
   _TestScreenState createState() => _TestScreenState();
@@ -20,8 +24,6 @@ class TestScreen extends StatefulWidget {
 
 class _TestScreenState extends State<TestScreen> {
   int currentQuestion = 0;
-  int totalQuestion = 15;
-  int selectedAnswer = -1;
   ScrollController questionsNumberController;
   PageController questionController;
 
@@ -53,7 +55,7 @@ class _TestScreenState extends State<TestScreen> {
               " / " +
               widget.subtopicName +
               " / " +
-              widget.setName,
+              widget.setDetails.name,
           isHome: false,
         ),
         timeElapsedView(),
@@ -65,22 +67,24 @@ class _TestScreenState extends State<TestScreen> {
               questionAnimateTo(page);
             },
             children: List.generate(
-              totalQuestion,
+              widget.questionsDetails.length,
               (index) {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
-                      questionText(),
-                      currentQuestion % 2 == 0
-                          ? questionImageView()
-                          : Container(),
+                      widget.questionsDetails[index].question == ""
+                          ? Container()
+                          : questionText(index),
+                      widget.questionsDetails[index].questionImage == ""
+                          ? Container()
+                          : questionImageView(index),
                       Container(
                         padding: EdgeInsets.all(16),
                         child: Divider(
                           thickness: 2,
                         ),
                       ),
-                      answersView()
+                      answersView(index)
                     ],
                   ),
                 );
@@ -93,86 +97,85 @@ class _TestScreenState extends State<TestScreen> {
     );
   }
 
-  Widget answersView() {
+  Widget answersView(int questionIndex) {
     return Column(
       children: List.generate(4, (index) {
-        return (currentQuestion - 1) % 4 == 0
-            ? imageAnswerItemView(index)
-            : textAnswerItemView(index);
+        return textAnswerItemView(questionIndex, index);
       }),
     );
   }
 
-  Widget imageAnswerItemView(int index) {
-    return GestureDetector(
-      onTap: () {
-        selectedAnswer = index;
-        _notify();
-      },
-      child: Container(
-        margin: EdgeInsets.only(
-          bottom: 16,
-          left: 16,
-          right: 16,
-        ),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: selectedAnswer == index
-                ? AppColors.myProgressIncorrectcolor
-                : Colors.transparent,
-            width: 2,
-          ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        alignment: Alignment.center,
-        child: Stack(
-          children: [
-            Image.asset(
-              index == 0
-                  ? AppAssets.answerImage1
-                  : index == 1
-                      ? AppAssets.answerImage2
-                      : index == 2
-                          ? AppAssets.answerImage3
-                          : AppAssets.answerImage4,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 8,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    offset: Offset(0, 1),
-                    blurRadius: 1,
-                    color: Colors.black38,
-                  ),
-                ],
-              ),
-              child: Text(
-                index == 0
-                    ? "(A)"
-                    : index == 1
-                        ? "(B)"
-                        : index == 2
-                            ? "(C)"
-                            : "(D)",
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget imageAnswerItemView(int questionIndex, int answerIndex) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       widget.questionsDetails[questionIndex].selectedAnswer = answerIndex;
+  //       _notify();
+  //     },
+  //     child: Container(
+  //       margin: EdgeInsets.only(
+  //         bottom: 16,
+  //         left: 16,
+  //         right: 16,
+  //       ),
+  //       decoration: BoxDecoration(
+  //         border: Border.all(
+  //           color: widget.questionsDetails[questionIndex].selectedAnswer ==
+  //                   answerIndex
+  //               ? AppColors.myProgressIncorrectcolor
+  //               : Colors.transparent,
+  //           width: 2,
+  //         ),
+  //         borderRadius: BorderRadius.circular(16),
+  //       ),
+  //       alignment: Alignment.center,
+  //       child: Stack(
+  //         children: [
+  //           Image.asset(
+  //             answerIndex == 0
+  //                 ? AppAssets.answerImage1
+  //                 : answerIndex == 1
+  //                     ? AppAssets.answerImage2
+  //                     : answerIndex == 2
+  //                         ? AppAssets.answerImage3
+  //                         : AppAssets.answerImage4,
+  //           ),
+  //           Container(
+  //             padding: EdgeInsets.symmetric(
+  //               horizontal: 10,
+  //               vertical: 8,
+  //             ),
+  //             decoration: BoxDecoration(
+  //               color: Colors.white,
+  //               shape: BoxShape.circle,
+  //               boxShadow: [
+  //                 BoxShadow(
+  //                   offset: Offset(0, 1),
+  //                   blurRadius: 1,
+  //                   color: Colors.black38,
+  //                 ),
+  //               ],
+  //             ),
+  //             child: Text(
+  //               answerIndex == 0
+  //                   ? "(A)"
+  //                   : answerIndex == 1
+  //                       ? "(B)"
+  //                       : answerIndex == 2
+  //                           ? "(C)"
+  //                           : "(D)",
+  //               style: TextStyle(
+  //                 fontSize: 12,
+  //                 fontWeight: FontWeight.bold,
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget textAnswerItemView(int index) {
+  Widget textAnswerItemView(int questionIndex, int answerIndex) {
     return Container(
       margin: EdgeInsets.only(
         bottom: 16,
@@ -184,13 +187,15 @@ class _TestScreenState extends State<TestScreen> {
           horizontal: 8,
           vertical: 12,
         ),
-        color: selectedAnswer == index
-            ? AppColors.myProgressIncorrectcolor
-            : Colors.white,
+        color:
+            widget.questionsDetails[questionIndex].selectedAnswer == answerIndex
+                ? AppColors.myProgressIncorrectcolor
+                : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
           side: BorderSide(
-            color: selectedAnswer == index
+            color: widget.questionsDetails[questionIndex].selectedAnswer ==
+                    answerIndex
                 ? AppColors.myProgressIncorrectcolor
                 : AppColors.blackColor,
           ),
@@ -198,38 +203,110 @@ class _TestScreenState extends State<TestScreen> {
         onPressed: () async {
           //delay to give ripple effect
           await Future.delayed(Duration(milliseconds: AppStrings.delay));
-          selectedAnswer = index;
+          widget.questionsDetails[questionIndex].selectedAnswer = answerIndex;
           _notify();
         },
         child: Container(
           alignment: Alignment.center,
-          child: Text(
-            index == 0
-                ? "(A) 18 g of H2O"
-                : index == 1
-                    ? "(B) 21 g of H2O"
-                    : index == 2
-                        ? "(C) 19 g of H2O"
-                        : "(D) 90 g of H2O",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-            textAlign: TextAlign.center,
+          child: Column(
+            children: [
+              Text(
+                answerIndex == 0
+                    ? "(A) " + widget.questionsDetails[questionIndex].ansOne
+                    : answerIndex == 1
+                        ? "(B) " + widget.questionsDetails[questionIndex].ansTwo
+                        : answerIndex == 2
+                            ? "(C) " +
+                                widget.questionsDetails[questionIndex].ansThree
+                            : "(D) " +
+                                widget.questionsDetails[questionIndex].ansFour,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              (answerIndex == 0
+                      ? widget.questionsDetails[questionIndex].ansOneImage == ""
+                      : answerIndex == 1
+                          ? widget.questionsDetails[questionIndex]
+                                  .ansTwoImage ==
+                              ""
+                          : answerIndex == 2
+                              ? widget.questionsDetails[questionIndex]
+                                      .ansThreeImage ==
+                                  ""
+                              : widget.questionsDetails[questionIndex]
+                                      .ansFourImage ==
+                                  "")
+                  ? Container()
+                  : SizedBox(
+                      height: 8,
+                    ),
+              (answerIndex == 0
+                      ? widget.questionsDetails[questionIndex].ansOneImage == ""
+                      : answerIndex == 1
+                          ? widget.questionsDetails[questionIndex]
+                                  .ansTwoImage ==
+                              ""
+                          : answerIndex == 2
+                              ? widget.questionsDetails[questionIndex]
+                                      .ansThreeImage ==
+                                  ""
+                              : widget.questionsDetails[questionIndex]
+                                      .ansFourImage ==
+                                  "")
+                  ? Container()
+                  : Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      height: 200,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Utility.imageLoader(
+                          baseUrl: AppStrings.answersImage,
+                          url: answerIndex == 0
+                              ? widget
+                                  .questionsDetails[questionIndex].ansOneImage
+                              : answerIndex == 1
+                                  ? widget.questionsDetails[questionIndex]
+                                      .ansTwoImage
+                                  : answerIndex == 2
+                                      ? widget.questionsDetails[questionIndex]
+                                          .ansThreeImage
+                                      : widget.questionsDetails[questionIndex]
+                                          .ansFourImage,
+                          placeholder: AppAssets.imagePlaceholder,
+                        ),
+                      ),
+                    )
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget questionImageView() {
+  Widget questionImageView(int index) {
     return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      height: 200,
       margin: EdgeInsets.only(
         top: 16,
       ),
-      child: Image.asset(
-        AppAssets.dummyQuestionImage,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Utility.imageLoader(
+          baseUrl: AppStrings.questionImage,
+          url: widget.questionsDetails[index].questionImage,
+          placeholder: AppAssets.imagePlaceholder,
+        ),
       ),
     );
   }
@@ -269,7 +346,7 @@ class _TestScreenState extends State<TestScreen> {
               onPressed: () async {
                 //delay to give ripple effect
                 await Future.delayed(Duration(milliseconds: AppStrings.delay));
-                if (currentQuestion == (totalQuestion - 1)) {
+                if (currentQuestion == (widget.questionsDetails.length - 1)) {
                   Utility.showSubmitQuizDialog(
                     context: context,
                     onSubmitPress: () async {
@@ -284,7 +361,7 @@ class _TestScreenState extends State<TestScreen> {
                                 " / " +
                                 widget.subtopicName +
                                 " / " +
-                                widget.setName,
+                                widget.setDetails.name,
                           ),
                         ),
                         (Route<dynamic> route) => false,
@@ -295,8 +372,10 @@ class _TestScreenState extends State<TestScreen> {
                   questionAnimateTo(currentQuestion + 1);
                 }
               },
-              text: currentQuestion == (totalQuestion - 1) ? "Submit" : "Next",
-              assetName: currentQuestion == (totalQuestion - 1)
+              text: currentQuestion == (widget.questionsDetails.length - 1)
+                  ? "Submit"
+                  : "Next",
+              assetName: currentQuestion == (widget.questionsDetails.length - 1)
                   ? AppAssets.submit
                   : AppAssets.nextArrow,
               isSufix: true,
@@ -325,14 +404,15 @@ class _TestScreenState extends State<TestScreen> {
     questionController.jumpToPage(currentQuestion);
   }
 
-  Widget questionText() {
+  Widget questionText(int index) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 16,
       ),
       child: Text(
         (currentQuestion + 1).toString() +
-            ". Which one of the following has maximum number of atoms?",
+            ". " +
+            widget.questionsDetails[index].question,
         style: TextStyle(
           color: Colors.black,
           fontSize: 20,
@@ -355,7 +435,7 @@ class _TestScreenState extends State<TestScreen> {
           bottom: 16,
         ),
         child: Row(
-          children: List.generate(totalQuestion, (index) {
+          children: List.generate(widget.questionsDetails.length, (index) {
             return questionNumberItemView(index);
           }),
         ),

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 // ignore: must_be_immutable
@@ -161,12 +162,16 @@ class _OtpScreenState extends State<OtpScreen>
             _getOtpKeyboard
           ],
         ),
-        Utility.roundShadowButton(
-          context: context,
-          assetName: AppAssets.backArrow,
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        SafeArea(
+          child: Utility.roundShadowButton(
+            context: context,
+            assetName: AppAssets.backArrow,
+            onPressed: () async {
+              //delay to give ripple effect
+              await Future.delayed(Duration(milliseconds: AppStrings.delay));
+              Navigator.pop(context);
+            },
+          ),
         ),
       ],
     );

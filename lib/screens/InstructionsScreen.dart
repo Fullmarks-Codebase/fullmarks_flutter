@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/models/SetsResponse.dart';
 import 'package:fullmarks/screens/TestScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
@@ -10,17 +13,59 @@ import 'package:lottie/lottie.dart';
 class InstructionsScreen extends StatefulWidget {
   String subtopicName;
   String subjectName;
-  String setName;
+  SetDetails setDetails;
   InstructionsScreen({
     @required this.subtopicName,
     @required this.subjectName,
-    @required this.setName,
+    @required this.setDetails,
   });
   @override
   _InstructionsScreenState createState() => _InstructionsScreenState();
 }
 
 class _InstructionsScreenState extends State<InstructionsScreen> {
+  bool _isLoading = false;
+  List<QuestionDetails> questionsDetails = List();
+
+  @override
+  void initState() {
+    _getQuestions();
+    super.initState();
+  }
+
+  _getQuestions() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["setId"] = widget.setDetails.id.toString();
+      //api call
+      QuestionsResponse response = QuestionsResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.questions, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        questionsDetails = response.result;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,33 +86,37 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
           text: "Instruction",
         ),
         Expanded(
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              backgroundAndButton(),
-              Container(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 30,
+          child: _isLoading
+              ? Utility.progress(context)
+              : questionsDetails.length == 0
+                  ? Utility.emptyView("No Questions")
+                  : Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        backgroundAndButton(),
+                        Container(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 30,
+                              ),
+                              instructionView1(),
+                              SizedBox(
+                                height: 40,
+                              ),
+                              instructionView2(),
+                              SizedBox(
+                                height: 40,
+                              ),
+                              instructionView3(),
+                              SizedBox(
+                                height: 130,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
                     ),
-                    instructionView1(),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    instructionView2(),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    instructionView3(),
-                    SizedBox(
-                      height: 130,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
         ),
         SvgPicture.asset(
           AppAssets.bottomBarbg,
@@ -95,7 +144,6 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
           children: [
             Expanded(
               flex: 10,
-              // child: Image.asset(AppAssets.instruction3),
               child: LottieBuilder.asset(AppAssets.instructions3),
             ),
             Spacer(),
@@ -194,7 +242,8 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
             Expanded(
               child: Row(
                 children: [
-                  roundedView(AppColors.appColor, "10"),
+                  roundedView(
+                      AppColors.appColor, questionsDetails.length.toString()),
                   SizedBox(
                     width: 8,
                   ),
@@ -252,7 +301,8 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
                       builder: (BuildContext context) => TestScreen(
                         subtopicName: widget.subtopicName,
                         subjectName: widget.subjectName,
-                        setName: widget.setName,
+                        setDetails: widget.setDetails,
+                        questionsDetails: questionsDetails,
                       ),
                     ),
                   );
