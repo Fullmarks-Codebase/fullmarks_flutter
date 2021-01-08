@@ -58,6 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: TextField(
               controller: _phoneNumberController,
+              maxLength: 10,
               decoration: InputDecoration(
                 labelText: "Enter your mobile phone",
                 suffixIcon: Icon(Icons.phone_android),
@@ -182,43 +183,16 @@ class _LoginScreenState extends State<LoginScreen> {
   _verifyTap() {
     if (_phoneNumberController.text.trim().length == 0) {
       Utility.showToast("Please enter your mobile phone");
+    } else if (_phoneNumberController.text.trim().length < 10) {
+      Utility.showToast("Please enter your mobile phone with 10 digits");
     } else {
-      _sendOtp();
-    }
-  }
-
-  _sendOtp() async {
-    //check internet connection available or not
-    if (await ApiManager.checkInternet()) {
-      //show progress
-      _isLoading = true;
-      _notify();
-      //api request
-      var request = Map<String, dynamic>();
-      request["phoneNumber"] = _phoneNumberController.text.trim();
-      //api call
-      CommonResponse response = CommonResponse.fromJson(
-        await ApiManager(context)
-            .postCall(url: AppStrings.login, request: request),
-      );
-      //hide progress
-      _isLoading = false;
-      _notify();
-
-      Utility.showToast(response.message);
-
-      if (response.code == 200) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (BuildContext context) => VerificationScreen(
-              phoneNumber: _phoneNumberController.text.trim(),
-            ),
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (BuildContext context) => VerificationScreen(
+            phoneNumber: _phoneNumberController.text.trim(),
           ),
-        );
-      }
-    } else {
-      //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+        ),
+      );
     }
   }
 

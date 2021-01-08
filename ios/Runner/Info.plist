@@ -61,5 +61,16 @@
 	<string>This app needs access to photos</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>This app needs access to reminders</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.331846892029-udegb593qb5g01kaif8r1l5m23odn2qc</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

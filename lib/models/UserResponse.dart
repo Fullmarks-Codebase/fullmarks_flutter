@@ -1,19 +1,25 @@
 import 'package:fullmarks/models/ClassResponse.dart';
 
 class UserResponse {
-  Customer customer;
+  int code;
+  String message;
+  Customer result;
 
-  UserResponse({this.customer});
+  UserResponse({this.code, this.message, this.result});
 
   UserResponse.fromJson(Map<String, dynamic> json) {
-    customer =
+    code = json['code'];
+    message = json['message'];
+    result =
         json['result'] != null ? new Customer.fromJson(json['result']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.customer != null) {
-      data['result'] = this.customer.toJson();
+    data['code'] = this.code;
+    data['message'] = this.message;
+    if (this.result != null) {
+      data['result'] = this.result.toJson();
     }
     return data;
   }

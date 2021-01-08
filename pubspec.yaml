@@ -28,6 +28,8 @@ dependencies:
   connectivity: ^2.0.2
   contacts_service: ^0.4.6
   cupertino_icons: ^1.0.0
+  firebase_auth: ^0.18.4+1
+  firebase_core: ^0.5.3
   fl_chart: ^0.12.1
   flutter_svg: ^0.19.0
   fluttertoast: ^7.1.5
