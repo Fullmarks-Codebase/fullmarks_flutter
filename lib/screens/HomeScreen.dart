@@ -666,7 +666,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Utility.button(
                       context,
-                      onPressed: onTap,
+                      onPressed: isComingSoon ? () {} : onTap,
                       text: buttonText,
                       gradientColor1: Color(0xFF76B5FF),
                       gradientColor2: Color(0xFF4499FF),
