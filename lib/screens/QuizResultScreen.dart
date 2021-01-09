@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class QuizResultScreen extends StatefulWidget {
+  List<QuestionDetails> questionsDetails;
+  QuizResultScreen({
+    @required this.questionsDetails,
+  });
   @override
   _QuizResultScreenState createState() => _QuizResultScreenState();
 }
@@ -50,25 +55,31 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
         child: SingleChildScrollView(
           controller: controller,
           child: Column(
-            children: List.generate(3, (index) {
-              return index == 2
-                  ? Container(
-                      child: Utility.roundShadowButton(
-                        context: context,
-                        assetName: AppAssets.upArrow,
-                        onPressed: () async {
-                          //delay to give ripple effect
-                          await Future.delayed(
-                              Duration(milliseconds: AppStrings.delay));
-                          controller.animateTo(
-                            0,
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.ease,
-                          );
-                        },
-                      ),
-                    )
-                  : resultItemView(index);
+            children: List.generate(widget.questionsDetails.length, (index) {
+              return Column(
+                children: [
+                  resultItemView(index),
+                  index == (widget.questionsDetails.length - 1)
+                      ? Container(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Utility.roundShadowButton(
+                            context: context,
+                            assetName: AppAssets.upArrow,
+                            onPressed: () async {
+                              //delay to give ripple effect
+                              await Future.delayed(
+                                  Duration(milliseconds: AppStrings.delay));
+                              controller.animateTo(
+                                0,
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.ease,
+                              );
+                            },
+                          ),
+                        )
+                      : Container(),
+                ],
+              );
             }),
           ),
         ),
@@ -90,7 +101,11 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
           ),
         ],
         border: Border.all(
-          color: index == 0 ? AppColors.strongCyan : AppColors.wrongBorderColor,
+          color: widget.questionsDetails[index].selectedAnswer ==
+                  Utility.getQuestionCorrectAnswer(
+                      widget.questionsDetails[index])
+              ? AppColors.strongCyan
+              : AppColors.wrongBorderColor,
           width: 2,
         ),
         borderRadius: BorderRadius.circular(8),
@@ -99,7 +114,8 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
         children: [
           Text(
             (index + 1).toString() +
-                ". Which one of the following has maximum number of atoms?",
+                ". " +
+                widget.questionsDetails[index].question,
             style: TextStyle(
               color: AppColors.appColor,
               fontSize: 18,
@@ -116,6 +132,26 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     );
   }
 
+  BoxDecoration getAnswerDecoration(int questionIndex, int answerIndex) {
+    if ((answerIndex ==
+        Utility.getQuestionCorrectAnswer(
+            widget.questionsDetails[questionIndex]))) {
+      // show green to correct answer of question
+      return Utility.resultAnswerDecoration(AppColors.strongCyan);
+    } else {
+      //if you are here
+      //then it means that your answer is wrong
+      if (widget.questionsDetails[questionIndex].selectedAnswer ==
+          answerIndex) {
+        //show user selected current answer as red
+        return Utility.resultAnswerDecoration(AppColors.wrongBorderColor);
+      } else {
+        //default
+        return Utility.defaultAnswerDecoration();
+      }
+    }
+  }
+
   Widget textAnswerItemView(int questionIndex, int answerIndex) {
     return Container(
       margin: EdgeInsets.only(
@@ -126,28 +162,83 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
         vertical: 12,
       ),
       alignment: Alignment.center,
-      decoration: answerIndex == 1
-          ? Utility.resultAnswerDecoration(AppColors.strongCyan)
-          : questionIndex == 1 && answerIndex == 0
-              ? Utility.resultAnswerDecoration(AppColors.wrongBorderColor)
-              : Utility.defaultAnswerDecoration(),
-      child: Text(
-        answerIndex == 0
-            ? "(A) 18 g of H2O"
-            : answerIndex == 1
-                ? "(B) 21 g of H2O"
-                : answerIndex == 2
-                    ? "(C) 19 g of H2O"
-                    : "(D) 90 g of H2O",
-        style: TextStyle(
-          color: answerIndex == 1
-              ? Colors.white
-              : questionIndex == 1 && answerIndex == 0
-                  ? Colors.white
-                  : Colors.black,
-          fontWeight: FontWeight.bold,
+      decoration: getAnswerDecoration(questionIndex, answerIndex),
+      child: Container(
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            Text(
+              answerIndex == 0
+                  ? "(A) " + widget.questionsDetails[questionIndex].ansOne
+                  : answerIndex == 1
+                      ? "(B) " + widget.questionsDetails[questionIndex].ansTwo
+                      : answerIndex == 2
+                          ? "(C) " +
+                              widget.questionsDetails[questionIndex].ansThree
+                          : "(D) " +
+                              widget.questionsDetails[questionIndex].ansFour,
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            (answerIndex == 0
+                    ? widget.questionsDetails[questionIndex].ansOneImage == ""
+                    : answerIndex == 1
+                        ? widget.questionsDetails[questionIndex].ansTwoImage ==
+                            ""
+                        : answerIndex == 2
+                            ? widget.questionsDetails[questionIndex]
+                                    .ansThreeImage ==
+                                ""
+                            : widget.questionsDetails[questionIndex]
+                                    .ansFourImage ==
+                                "")
+                ? Container()
+                : SizedBox(
+                    height: 8,
+                  ),
+            (answerIndex == 0
+                    ? widget.questionsDetails[questionIndex].ansOneImage == ""
+                    : answerIndex == 1
+                        ? widget.questionsDetails[questionIndex].ansTwoImage ==
+                            ""
+                        : answerIndex == 2
+                            ? widget.questionsDetails[questionIndex]
+                                    .ansThreeImage ==
+                                ""
+                            : widget.questionsDetails[questionIndex]
+                                    .ansFourImage ==
+                                "")
+                ? Container()
+                : Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    height: 200,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Utility.imageLoader(
+                        baseUrl: AppStrings.answersImage,
+                        url: answerIndex == 0
+                            ? widget.questionsDetails[questionIndex].ansOneImage
+                            : answerIndex == 1
+                                ? widget
+                                    .questionsDetails[questionIndex].ansTwoImage
+                                : answerIndex == 2
+                                    ? widget.questionsDetails[questionIndex]
+                                        .ansThreeImage
+                                    : widget.questionsDetails[questionIndex]
+                                        .ansFourImage,
+                        placeholder: AppAssets.imagePlaceholder,
+                      ),
+                    ),
+                  )
+          ],
         ),
-        textAlign: TextAlign.center,
       ),
     );
   }

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/screens/VerificationScreen.dart';
-import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';

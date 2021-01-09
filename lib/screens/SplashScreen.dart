@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  getPackageInfo() {
+  getPackageInfo() async {
     Utility.getPackageInfo().then((value) {
       _version = value.version;
       _notify();

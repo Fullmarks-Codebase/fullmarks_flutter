@@ -5,8 +5,6 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
-import 'TestResultScreen.dart';
-
 class MockTestQuizScreen extends StatefulWidget {
   @override
   _MockTestQuizScreenState createState() => _MockTestQuizScreenState();
@@ -578,14 +576,12 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                       await Future.delayed(
                           Duration(milliseconds: AppStrings.delay));
                       Navigator.pop(context);
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => TestResultScreen(
-                            title: "SSC CGL Mock Test -1",
-                          ),
-                        ),
-                        (Route<dynamic> route) => false,
-                      );
+                      // Navigator.of(context).pushAndRemoveUntil(
+                      //   MaterialPageRoute(
+                      //     builder: (BuildContext context) => TestResultScreen(),
+                      //   ),
+                      //   (Route<dynamic> route) => false,
+                      // );
                     },
                   );
                 } else {

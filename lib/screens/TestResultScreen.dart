@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/models/ReportsResponse.dart';
+import 'package:fullmarks/models/SetsResponse.dart';
+import 'package:fullmarks/models/SubjectsResponse.dart';
+import 'package:fullmarks/models/SubtopicResponse.dart';
 import 'package:fullmarks/screens/QuizResultScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
@@ -9,17 +13,23 @@ import 'package:fullmarks/utility/Utiity.dart';
 import 'HomeScreen.dart';
 
 class TestResultScreen extends StatefulWidget {
-  String title;
+  List<QuestionDetails> questionsDetails;
+  SubtopicDetails subtopic;
+  SubjectDetails subject;
+  SetDetails setDetails;
+  ReportDetails reportDetails;
   TestResultScreen({
-    @required this.title,
+    @required this.subtopic,
+    @required this.setDetails,
+    @required this.questionsDetails,
+    @required this.subject,
+    @required this.reportDetails,
   });
   @override
   _TestResultScreenState createState() => _TestResultScreenState();
 }
 
 class _TestResultScreenState extends State<TestResultScreen> {
-  bool isProgress = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,9 +65,12 @@ class _TestResultScreenState extends State<TestResultScreen> {
                     //delay to give ripple effect
                     await Future.delayed(
                         Duration(milliseconds: AppStrings.delay));
+
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (BuildContext context) => QuizResultScreen(),
+                        builder: (BuildContext context) => QuizResultScreen(
+                          questionsDetails: widget.questionsDetails,
+                        ),
                       ),
                     );
                   },
@@ -97,50 +110,13 @@ class _TestResultScreenState extends State<TestResultScreen> {
   }
 
   Widget myProgressView() {
-    return GestureDetector(
-      onTap: () {
-        isProgress = !isProgress;
-        _notify();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.chartBgColor,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        padding: EdgeInsets.all(8),
-        child: isProgress ? progressView() : noProgressView(),
-      ),
-    );
-  }
-
-  Widget noProgressView() {
     return Container(
-      alignment: Alignment.center,
-      child: Column(
-        children: [
-          SvgPicture.asset(AppAssets.sad),
-          SizedBox(
-            height: 8,
-          ),
-          Text(
-            "No progress found",
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.5),
-            ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          Text(
-            "give a test to see progress",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+      decoration: BoxDecoration(
+        color: AppColors.chartBgColor,
+        borderRadius: BorderRadius.circular(16),
       ),
+      padding: EdgeInsets.all(8),
+      child: progressView(),
     );
   }
 
@@ -151,7 +127,11 @@ class _TestResultScreenState extends State<TestResultScreen> {
           height: 8,
         ),
         Text(
-          widget.title,
+          widget.subject.name +
+              " / " +
+              widget.subtopic.name +
+              " / " +
+              widget.setDetails.name,
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -168,8 +148,21 @@ class _TestResultScreenState extends State<TestResultScreen> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    SvgPicture.asset(AppAssets.calculatorWhite),
-                    Utility.pieChart(),
+                    Container(
+                      height: (MediaQuery.of(context).size.width / 2) / 3,
+                      width: (MediaQuery.of(context).size.width / 2) / 3,
+                      child: Utility.imageLoader(
+                        baseUrl: AppStrings.subjectImage,
+                        url: widget.subject.image,
+                        placeholder: AppAssets.subjectPlaceholder,
+                      ),
+                    ),
+                    Utility.pieChart(
+                      values: [
+                        widget.reportDetails.incorrect.toDouble(),
+                        widget.reportDetails.correct.toDouble(),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -195,14 +188,16 @@ class _TestResultScreenState extends State<TestResultScreen> {
                   ),
                   Utility.correctIncorrectView(
                     color: AppColors.myProgressCorrectcolor,
-                    title: "Incorrect: 5",
+                    title: "Incorrect: " +
+                        widget.reportDetails.incorrect.toString(),
                   ),
                   SizedBox(
                     height: 8,
                   ),
                   Utility.correctIncorrectView(
                     color: AppColors.myProgressIncorrectcolor,
-                    title: "Correct: 120",
+                    title:
+                        "Correct: " + widget.reportDetails.correct.toString(),
                   ),
                   SizedBox(
                     height: 8,
@@ -216,14 +211,17 @@ class _TestResultScreenState extends State<TestResultScreen> {
                   ),
                   Utility.averageView(
                     assetName: AppAssets.avgAccuracy,
-                    title: "Avg. Accuracy = 82%",
+                    title: "Avg. Accuracy = " +
+                        widget.reportDetails.accuracy.toString() +
+                        "%",
                   ),
                   SizedBox(
                     height: 8,
                   ),
                   Utility.averageView(
                     assetName: AppAssets.avgTime,
-                    title: "Avg. Time/Question = 1:15",
+                    title:
+                        "Avg. Time/Question = " + widget.reportDetails.avgTime,
                   ),
                 ],
               ),
@@ -250,7 +248,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
         ),
         children: [
           TextSpan(
-            text: "10:33",
+            text: Utility.getHMS(widget.reportDetails.timeTaken),
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,

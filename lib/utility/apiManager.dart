@@ -31,7 +31,10 @@ class ApiManager {
     }
   }
 
-  postCall({@required String url, @required Map request}) async {
+  postCall({
+    @required String url,
+    @required Map request,
+  }) async {
     print(url);
     print(request);
     var headers = Map<String, String>();

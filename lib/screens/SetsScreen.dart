@@ -153,8 +153,8 @@ class _SetsScreenState extends State<SetsScreen> {
               builder: (BuildContext context) => customer == null
                   ? AskingForProgressScreen()
                   : InstructionsScreen(
-                      subtopicName: widget.subtopic.name,
-                      subjectName: widget.subject.name,
+                      subtopic: widget.subtopic,
+                      subject: widget.subject,
                       setDetails: setsList[index],
                     ),
             ),
@@ -178,9 +178,11 @@ class _SetsScreenState extends State<SetsScreen> {
                 ),
               ),
               IconButton(
-                icon: SvgPicture.asset(index == 1 || index == 2
-                    ? AppAssets.check
-                    : AppAssets.uncheck),
+                icon: SvgPicture.asset(
+                    // index == 1 || index == 2
+                    // ? AppAssets.check
+                    // :
+                    AppAssets.uncheck),
                 onPressed: null,
               )
             ],

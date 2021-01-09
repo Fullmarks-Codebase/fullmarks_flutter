@@ -1,20 +1,28 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fullmarks/models/QuestionReportRequest.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/models/ReportsResponse.dart';
 import 'package:fullmarks/models/SetsResponse.dart';
+import 'package:fullmarks/models/SubjectsResponse.dart';
+import 'package:fullmarks/models/SubtopicResponse.dart';
 import 'package:fullmarks/screens/TestResultScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class TestScreen extends StatefulWidget {
-  String subtopicName;
-  String subjectName;
+  SubtopicDetails subtopic;
+  SubjectDetails subject;
   SetDetails setDetails;
   List<QuestionDetails> questionsDetails;
   TestScreen({
-    @required this.subtopicName,
-    @required this.subjectName,
+    @required this.subtopic,
+    @required this.subject,
     @required this.setDetails,
     @required this.questionsDetails,
   });
@@ -26,12 +34,61 @@ class _TestScreenState extends State<TestScreen> {
   int currentQuestion = 0;
   ScrollController questionsNumberController;
   PageController questionController;
+  //for time taken
+  Timer timer;
+  int milliseconds;
+  final List<ValueChanged<ElapsedTime>> timerListeners =
+      <ValueChanged<ElapsedTime>>[];
+  final Stopwatch stopwatch = Stopwatch();
+  final int timerMillisecondsRefreshRate = 30;
+  int seconds = 0;
+  bool _isLoading = false;
 
   @override
   void initState() {
     questionsNumberController = ScrollController();
     questionController = PageController();
+    timer = Timer.periodic(
+        Duration(milliseconds: timerMillisecondsRefreshRate), callback);
+    timerListeners.add(onTick);
+    stopwatch.start();
     super.initState();
+  }
+
+  void onTick(ElapsedTime elapsed) {
+    if (elapsed.seconds != seconds) {
+      if (mounted)
+        setState(() {
+          seconds = elapsed.seconds;
+        });
+      //individual question time taken in seconds
+      widget.questionsDetails[currentQuestion].timeTaken =
+          widget.questionsDetails[currentQuestion].timeTaken + 1;
+    }
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    timer = null;
+    super.dispose();
+  }
+
+  void callback(Timer timer) {
+    if (milliseconds != stopwatch.elapsedMilliseconds) {
+      milliseconds = stopwatch.elapsedMilliseconds;
+      final int seconds = (milliseconds / 1000).truncate();
+      final int minutes = (seconds / 60).truncate();
+      final int hours = (minutes / 60).truncate();
+      final ElapsedTime elapsedTime = ElapsedTime(
+        seconds: seconds,
+        minutes: minutes,
+        hours: hours,
+      );
+      for (final listener in timerListeners) {
+        listener(elapsedTime);
+      }
+    }
   }
 
   @override
@@ -41,6 +98,7 @@ class _TestScreenState extends State<TestScreen> {
         children: [
           Utility.setSvgFullScreen(context, AppAssets.commonBg),
           body(),
+          _isLoading ? Utility.progress(context) : Container()
         ],
       ),
     );
@@ -51,9 +109,9 @@ class _TestScreenState extends State<TestScreen> {
       children: [
         Utility.appbar(
           context,
-          text: widget.subjectName +
+          text: widget.subject.name +
               " / " +
-              widget.subtopicName +
+              widget.subtopic.name +
               " / " +
               widget.setDetails.name,
           isHome: false,
@@ -350,22 +408,12 @@ class _TestScreenState extends State<TestScreen> {
                   Utility.showSubmitQuizDialog(
                     context: context,
                     onSubmitPress: () async {
+                      stopwatch.stop();
                       //delay to give ripple effect
                       await Future.delayed(
                           Duration(milliseconds: AppStrings.delay));
                       Navigator.pop(context);
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => TestResultScreen(
-                            title: widget.subjectName +
-                                " / " +
-                                widget.subtopicName +
-                                " / " +
-                                widget.setDetails.name,
-                          ),
-                        ),
-                        (Route<dynamic> route) => false,
-                      );
+                      submitQuestions();
                     },
                   );
                 } else {
@@ -384,6 +432,63 @@ class _TestScreenState extends State<TestScreen> {
         ],
       ),
     );
+  }
+
+  submitQuestions() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      List<QuestionReportAnswers> questionReportsAnswersList = List();
+
+      await Future.forEach(widget.questionsDetails, (QuestionDetails element) {
+        questionReportsAnswersList.add(
+          QuestionReportAnswers(
+            userId: Utility.getCustomer().id.toString(),
+            questionId: element.id.toString(),
+            correctAnswer: Utility.getQuestionCorrectAnswer(element).toString(),
+            timeTaken: element.timeTaken.toString(),
+            userAnswer: element.selectedAnswer.toString(),
+          ),
+        );
+      });
+
+      var request = Map<String, dynamic>();
+      request["answers"] = jsonEncode(questionReportsAnswersList);
+
+      //api call
+      ReportsResponse response = ReportsResponse.fromJson(
+        await ApiManager(context).postCall(
+          url: AppStrings.reports,
+          request: request,
+        ),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      Utility.showToast(response.message);
+
+      if (response.code == 200) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) => TestResultScreen(
+              questionsDetails: widget.questionsDetails,
+              subtopic: widget.subtopic,
+              subject: widget.subject,
+              setDetails: widget.setDetails,
+              reportDetails: response.result,
+            ),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   _notify() {
@@ -486,7 +591,7 @@ class _TestScreenState extends State<TestScreen> {
         text: "Time Elapsed : ",
         children: [
           TextSpan(
-            text: "10:33",
+            text: Utility.getHMS(seconds),
             style: TextStyle(
               fontWeight: FontWeight.bold,
             ),
@@ -495,4 +600,16 @@ class _TestScreenState extends State<TestScreen> {
       ),
     );
   }
+}
+
+class ElapsedTime {
+  final int seconds;
+  final int minutes;
+  final int hours;
+
+  ElapsedTime({
+    this.seconds,
+    this.minutes,
+    this.hours,
+  });
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/models/SetsResponse.dart';
+import 'package:fullmarks/models/SubjectsResponse.dart';
+import 'package:fullmarks/models/SubtopicResponse.dart';
 import 'package:fullmarks/screens/TestScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
@@ -11,12 +13,12 @@ import 'package:fullmarks/utility/Utiity.dart';
 import 'package:lottie/lottie.dart';
 
 class InstructionsScreen extends StatefulWidget {
-  String subtopicName;
-  String subjectName;
+  SubtopicDetails subtopic;
+  SubjectDetails subject;
   SetDetails setDetails;
   InstructionsScreen({
-    @required this.subtopicName,
-    @required this.subjectName,
+    @required this.subtopic,
+    @required this.subject,
     @required this.setDetails,
   });
   @override
@@ -299,8 +301,8 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (BuildContext context) => TestScreen(
-                        subtopicName: widget.subtopicName,
-                        subjectName: widget.subjectName,
+                        subtopic: widget.subtopic,
+                        subject: widget.subject,
                         setDetails: widget.setDetails,
                         questionsDetails: questionsDetails,
                       ),

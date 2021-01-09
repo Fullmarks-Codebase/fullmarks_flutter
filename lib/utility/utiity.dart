@@ -5,6 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/screens/LoginScreen.dart';
@@ -1196,5 +1197,26 @@ class Utility {
         ],
       ),
     );
+  }
+
+  static int getQuestionCorrectAnswer(QuestionDetails questionDetails) {
+    return questionDetails.ansOneStatus
+        ? 0
+        : questionDetails.ansTwoStatus
+            ? 1
+            : questionDetails.ansThreeStatus
+                ? 2
+                : questionDetails.ansFourStatus
+                    ? 3
+                    : -1;
+  }
+
+  static String getHMS(int seconds) {
+    final int minutes = (seconds / 60).truncate();
+    final int hours = (minutes / 60).truncate();
+    String secondsStr = (seconds % 60).toString().padLeft(2, '0');
+    String minutesStr = (minutes % 60).toString().padLeft(2, '0');
+    String hoursStr = (hours % 60).toString().padLeft(2, '0');
+    return "$hoursStr:$minutesStr:$secondsStr";
   }
 }

@@ -44,10 +44,13 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
             (widget.totalDiscussions - 1) == widget.index
                 ? widget.isDetails
                     ? Container()
-                    : Utility.roundShadowButton(
-                        context: context,
-                        assetName: AppAssets.upArrow,
-                        onPressed: widget.onUpArrowTap,
+                    : Container(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Utility.roundShadowButton(
+                          context: context,
+                          assetName: AppAssets.upArrow,
+                          onPressed: widget.onUpArrowTap,
+                        ),
                       )
                 : Container()
           ],

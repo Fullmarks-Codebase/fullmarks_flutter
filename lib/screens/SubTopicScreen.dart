@@ -20,7 +20,7 @@ class SubTopicScreen extends StatefulWidget {
 }
 
 class _SubTopicScreenState extends State<SubTopicScreen> {
-  bool isProgress = true;
+  bool isProgress = false;
   Customer customer;
   bool _isLoading = false;
   List<SubtopicDetails> subtopics = List();
@@ -211,19 +211,13 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
   Widget myProgressView() {
     return customer == null
         ? Utility.noUserProgressView(context)
-        : GestureDetector(
-            onTap: () {
-              isProgress = !isProgress;
-              _notify();
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.chartBgColor,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              padding: EdgeInsets.all(8),
-              child: isProgress ? progressView() : noProgressView(),
+        : Container(
+            decoration: BoxDecoration(
+              color: AppColors.chartBgColor,
+              borderRadius: BorderRadius.circular(16),
             ),
+            padding: EdgeInsets.all(8),
+            child: isProgress ? progressView() : noProgressView(),
           );
   }
 
@@ -232,6 +226,9 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
       alignment: Alignment.center,
       child: Column(
         children: [
+          SizedBox(
+            height: 8,
+          ),
           SvgPicture.asset(AppAssets.sad),
           SizedBox(
             height: 8,
@@ -252,6 +249,9 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
+          ),
+          SizedBox(
+            height: 8,
           ),
         ],
       ),
@@ -276,7 +276,6 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                     placeholder: AppAssets.subjectPlaceholder,
                   ),
                 ),
-                // SvgPicture.asset(AppAssets.calculatorWhite),
                 Utility.pieChart(),
               ],
             ),

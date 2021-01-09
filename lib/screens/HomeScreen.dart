@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
@@ -15,8 +16,10 @@ import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
+import 'package:fullmarks/utility/FirebaseMessagingService.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
+import '../main.dart';
 import 'AskingForProgressScreen.dart';
 import 'DiscussionScreen.dart';
 
@@ -28,7 +31,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> scafoldKey = GlobalKey();
   ScrollController controller;
-  bool isProgress = true;
+  bool isProgress = false;
   List<SubjectDetails> subjects = List();
   bool _isLoading = false;
   Customer customer;
@@ -37,11 +40,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    _requestPermissions();
+    FirebaseMessagingService().getMessage();
     controller = ScrollController();
     _getUser();
     _getSubjects();
     _notify();
     super.initState();
+  }
+
+  void _requestPermissions() {
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
   }
 
   _getUser() {
@@ -223,6 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 },
+                iscomingsoon: true,
               ),
               drawerItemView(
                 assetName: AppAssets.drawerMyProfile,
@@ -268,6 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                   mockTestTap();
                 },
+                iscomingsoon: true,
               ),
               drawerItemView(
                 assetName: AppAssets.drawerLiveQuiz,
@@ -279,6 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                   liveQuizTap();
                 },
+                iscomingsoon: true,
               ),
               drawerItemView(
                 assetName: AppAssets.drawerDiscussion,
@@ -290,6 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                   discussionTap();
                 },
+                iscomingsoon: true,
               ),
               drawerItemView(
                 assetName: AppAssets.drawerMyBuddies,
@@ -306,6 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 },
+                iscomingsoon: true,
               ),
               drawerItemView(
                 assetName: AppAssets.drawerShareApp,
@@ -316,6 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                 },
+                iscomingsoon: true,
               ),
               drawerItemView(
                 assetName: AppAssets.drawerRateApp,
@@ -326,6 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
                 },
+                iscomingsoon: true,
               ),
               drawerItemView(
                 assetName: AppAssets.drawerLogout,
@@ -356,10 +387,11 @@ class _HomeScreenState extends State<HomeScreen> {
     @required String assetName,
     @required String text,
     @required Function onTap,
+    bool iscomingsoon = false,
   }) {
     return FlatButton(
       padding: EdgeInsets.zero,
-      onPressed: onTap,
+      onPressed: iscomingsoon ? () {} : onTap,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 16),
         child: Row(
@@ -380,6 +412,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: 16,
               ),
             ),
+            Spacer(),
+            iscomingsoon
+                ? Text(
+                    AppStrings.comingSoon,
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 10,
+                    ),
+                  )
+                : Container(),
+            SizedBox(
+              width: 4,
+            )
           ],
         ),
       ),
@@ -455,19 +500,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Duration(milliseconds: AppStrings.delay));
                           },
                         ),
-                        Utility.roundShadowButton(
-                          context: context,
-                          assetName: AppAssets.upArrow,
-                          onPressed: () async {
-                            //delay to give ripple effect
-                            await Future.delayed(
-                                Duration(milliseconds: AppStrings.delay));
-                            controller.animateTo(
-                              0,
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.ease,
-                            );
-                          },
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Utility.roundShadowButton(
+                            context: context,
+                            assetName: AppAssets.upArrow,
+                            onPressed: () async {
+                              //delay to give ripple effect
+                              await Future.delayed(
+                                  Duration(milliseconds: AppStrings.delay));
+                              controller.animateTo(
+                                0,
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.ease,
+                              );
+                            },
+                          ),
                         )
                       ],
                     ),
@@ -513,7 +561,7 @@ class _HomeScreenState extends State<HomeScreen> {
       options: CarouselOptions(
         initialPage: 0,
         enableInfiniteScroll: false,
-        height: 150.0,
+        height: 170.0, //150
         viewportFraction: 0.85,
       ),
       items: [
@@ -580,52 +628,69 @@ class _HomeScreenState extends State<HomeScreen> {
         color: color,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            flex: 1,
-            child: isPng ? Image.asset(assetName) : SvgPicture.asset(assetName),
-          ),
-          SizedBox(
-            width: 4,
-          ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              children: [
-                text.trim().length == 0
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(
-                          5,
-                          (index) => SvgPicture.asset(AppAssets.star),
-                        ),
-                      )
-                    : Text(
-                        text,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                SizedBox(
-                  height: 16,
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: isPng
+                    ? Image.asset(assetName)
+                    : SvgPicture.asset(assetName),
+              ),
+              SizedBox(
+                width: 4,
+              ),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    text.trim().length == 0
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: List.generate(
+                              5,
+                              (index) => SvgPicture.asset(AppAssets.star),
+                            ),
+                          )
+                        : Text(
+                            text,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Utility.button(
+                      context,
+                      // onPressed: onTap,
+                      onPressed: () {},
+                      text: buttonText,
+                      gradientColor1: Color(0xFF76B5FF),
+                      gradientColor2: Color(0xFF4499FF),
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      fontSize: 14,
+                      height: 40,
+                    ),
+                  ],
                 ),
-                Utility.button(
-                  context,
-                  onPressed: onTap,
-                  text: buttonText,
-                  gradientColor1: Color(0xFF76B5FF),
-                  gradientColor2: Color(0xFF4499FF),
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  fontSize: 14,
-                  height: 40,
-                ),
-              ],
+              )
+            ],
+          ),
+          Container(
+            alignment: Alignment.center,
+            child: Text(
+              AppStrings.comingSoon,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+              ),
             ),
           )
         ],
@@ -735,20 +800,14 @@ class _HomeScreenState extends State<HomeScreen> {
             margin: EdgeInsets.symmetric(horizontal: 16),
             child: Utility.noUserProgressView(context),
           )
-        : GestureDetector(
-            onTap: () {
-              isProgress = !isProgress;
-              _notify();
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.chartBgColor,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              padding: EdgeInsets.all(8),
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              child: isProgress ? progressView() : noProgressView(),
+        : Container(
+            decoration: BoxDecoration(
+              color: AppColors.chartBgColor,
+              borderRadius: BorderRadius.circular(16),
             ),
+            padding: EdgeInsets.all(8),
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            child: isProgress ? progressView() : noProgressView(),
           );
   }
 
@@ -757,6 +816,9 @@ class _HomeScreenState extends State<HomeScreen> {
       alignment: Alignment.center,
       child: Column(
         children: [
+          SizedBox(
+            height: 8,
+          ),
           SvgPicture.asset(AppAssets.sad),
           SizedBox(
             height: 8,
@@ -777,6 +839,19 @@ class _HomeScreenState extends State<HomeScreen> {
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
+          ),
+          SizedBox(
+            height: 4,
+          ),
+          Text(
+            AppStrings.comingSoon,
+            style: TextStyle(
+              color: Colors.white54,
+              fontSize: 11,
+            ),
+          ),
+          SizedBox(
+            height: 8,
           ),
         ],
       ),

@@ -8,6 +8,7 @@ class AppStrings {
   static String changeClass = baseUrl + "customer/changeClass";
   static String sets = baseUrl + "subjects/topics/sets";
   static String questions = baseUrl + "questions";
+  static String reports = baseUrl + "report/add";
 
   //image base url
   static String customQuestion = baseUrl + "images/user_questions/question/";
@@ -22,6 +23,7 @@ class AppStrings {
 
   //constant strings
   static String noInternet = "No Internet Connection";
+  static String comingSoon = "Coming Soon...";
 
   //preference keys
   static String userPreference = "USER_APP_PREFERENCE";
