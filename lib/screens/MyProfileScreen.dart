@@ -262,7 +262,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 height: 8,
               ),
               nameClassView(),
-              Utility.leaderBoardView(),
+              // Utility.leaderBoardView(),
               accountDetailsView(),
               profileDetails()
             ],

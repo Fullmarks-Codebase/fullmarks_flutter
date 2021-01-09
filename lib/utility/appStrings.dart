@@ -23,7 +23,7 @@ class AppStrings {
 
   //constant strings
   static String noInternet = "No Internet Connection";
-  static String comingSoon = "Coming Soon...";
+  // static String comingSoon = "Coming Soon...";
 
   //preference keys
   static String userPreference = "USER_APP_PREFERENCE";

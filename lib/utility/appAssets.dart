@@ -170,4 +170,5 @@ class AppAssets {
   static String askingForProgress = "assets/askingForProgress.png";
   static String subjectPlaceholder = "assets/subjectPlaceholder.png";
   static String subjectPlaceholderWhite = "assets/subjectPlaceholderWhite.png";
+  static String comingSoon = "assets/comingSoon.png";
 }
