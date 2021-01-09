@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
@@ -12,7 +12,6 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:fullmarks/widgets/otp_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class VerificationScreen extends StatefulWidget {
   String phoneNumber;
@@ -190,6 +189,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
       request["phoneNumber"] = widget.phoneNumber;
       request["phoneId"] = phoneId;
       request["phoneSign"] = "true";
+      request["registrationToken"] = await FirebaseMessaging().getToken();
       //api call
       UserResponse response = UserResponse.fromJson(
         await ApiManager(context)
