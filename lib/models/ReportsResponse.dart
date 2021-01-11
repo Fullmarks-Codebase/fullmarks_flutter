@@ -25,12 +25,12 @@ class ReportsResponse {
 }
 
 class ReportDetails {
-  int correct;
-  int incorrect;
+  String correct;
+  String incorrect;
   String accuracy;
-  int timeTaken;
+  String timeTaken;
   String avgTime;
-  int totalMarks;
+  String totalMarks;
 
   ReportDetails(
       {this.correct,
@@ -41,12 +41,12 @@ class ReportDetails {
       this.totalMarks});
 
   ReportDetails.fromJson(Map<String, dynamic> json) {
-    correct = json['correct'] ?? 0;
-    incorrect = json['incorrect'] ?? 0;
-    accuracy = json['accuracy'] ?? "0";
-    timeTaken = json['time_taken'] ?? 0;
-    avgTime = json['avg_time'] ?? "";
-    totalMarks = json['total_marks'] ?? 0;
+    correct = json['correct'].toString() ?? "";
+    incorrect = json['incorrect'].toString() ?? "";
+    accuracy = json['accuracy'].toString() ?? "";
+    timeTaken = json['time_taken'].toString() ?? "";
+    avgTime = json['avg_time'].toString() ?? "";
+    totalMarks = json['total_marks'].toString() ?? "";
   }
 
   Map<String, dynamic> toJson() {

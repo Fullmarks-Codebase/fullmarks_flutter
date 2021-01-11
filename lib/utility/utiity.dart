@@ -13,6 +13,7 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:lottie/lottie.dart';
 import 'package:package_info/package_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'AppAssets.dart';
 import 'AppColors.dart';
@@ -100,13 +101,13 @@ class Utility {
     );
   }
 
-  // static launchURL(String url) async {
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   } else {
-  //     throw 'Could not launch $url';
-  //   }
-  // }
+  static launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   static Widget setSvgFullScreen(BuildContext context, String assetName) {
     return Container(
@@ -520,7 +521,7 @@ class Utility {
   }
 
   static Widget pieChart({
-    List<double> values = const [75, 25],
+    List<double> values = const [75, 25], //incorrect - correct
   }) {
     return PieChart(
       PieChartData(

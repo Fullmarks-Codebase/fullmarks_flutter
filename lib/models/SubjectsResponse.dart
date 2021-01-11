@@ -36,16 +36,19 @@ class SubjectDetails {
   int updatedBy;
   String createdAt;
   String updatedAt;
+  String completed;
 
-  SubjectDetails(
-      {this.id,
-      this.name,
-      this.detail,
-      this.image,
-      this.createdBy,
-      this.updatedBy,
-      this.createdAt,
-      this.updatedAt});
+  SubjectDetails({
+    this.id,
+    this.name,
+    this.detail,
+    this.image,
+    this.createdBy,
+    this.updatedBy,
+    this.createdAt,
+    this.updatedAt,
+    this.completed,
+  });
 
   SubjectDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
@@ -56,6 +59,7 @@ class SubjectDetails {
     updatedBy = json['updatedBy'] ?? 0;
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
+    completed = json['completed'] ?? "0";
   }
 
   Map<String, dynamic> toJson() {
@@ -68,6 +72,7 @@ class SubjectDetails {
     data['updatedBy'] = this.updatedBy;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
+    data['completed'] = this.completed;
     return data;
   }
 }

@@ -33,7 +33,7 @@ class Customer {
   String otp;
   String dob;
   String userProfileImage;
-  String gender;
+  int gender;
   String createdAt;
   String updatedAt;
   String token;
@@ -62,7 +62,7 @@ class Customer {
     otp = json['otp'] ?? "";
     dob = json['dob'] ?? "";
     userProfileImage = json['userProfileImage'] ?? "";
-    gender = json['gender'] ?? "";
+    gender = json['gender'] ?? -1;
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
     token = json['token'] ?? "";

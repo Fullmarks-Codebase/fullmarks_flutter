@@ -159,8 +159,8 @@ class _TestResultScreenState extends State<TestResultScreen> {
                     ),
                     Utility.pieChart(
                       values: [
-                        widget.reportDetails.incorrect.toDouble(),
-                        widget.reportDetails.correct.toDouble(),
+                        double.tryParse(widget.reportDetails.incorrect),
+                        double.tryParse(widget.reportDetails.correct),
                       ],
                     ),
                   ],
@@ -248,7 +248,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
         ),
         children: [
           TextSpan(
-            text: Utility.getHMS(widget.reportDetails.timeTaken),
+            text: Utility.getHMS(int.tryParse(widget.reportDetails.timeTaken)),
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,

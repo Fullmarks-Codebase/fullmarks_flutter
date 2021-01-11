@@ -553,16 +553,16 @@ class _TestScreenState extends State<TestScreen> {
       minWidth: 50,
       color: currentQuestion == index
           ? AppColors.appColor
-          : index == 3 || index == 5
-              ? AppColors.strongCyan
-              : Colors.white,
+          : widget.questionsDetails[index].selectedAnswer == -1
+              ? Colors.white
+              : AppColors.strongCyan,
       shape: CircleBorder(
         side: BorderSide(
           color: currentQuestion == index
               ? AppColors.appColor
-              : index == 3 || index == 5
-                  ? AppColors.strongCyan
-                  : Colors.black,
+              : widget.questionsDetails[index].selectedAnswer == -1
+                  ? Colors.black
+                  : AppColors.strongCyan,
         ),
       ),
       onPressed: () async {
@@ -575,9 +575,9 @@ class _TestScreenState extends State<TestScreen> {
         style: TextStyle(
           color: currentQuestion == index
               ? Colors.white
-              : index == 3 || index == 5
-                  ? Colors.white
-                  : Colors.black,
+              : widget.questionsDetails[index].selectedAnswer == -1
+                  ? Colors.black
+                  : Colors.white,
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),

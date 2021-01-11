@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/SubjectReportResponse.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/models/SubtopicResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
@@ -20,19 +21,51 @@ class SubTopicScreen extends StatefulWidget {
 }
 
 class _SubTopicScreenState extends State<SubTopicScreen> {
-  bool isProgress = false;
   Customer customer;
   bool _isLoading = false;
   List<SubtopicDetails> subtopics = List();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
+  SubjectReportDetails subjectReportDetails;
 
   @override
   void initState() {
     customer = Utility.getCustomer();
     _getSubtopic();
+    if (customer != null) _getSubjectProgress();
     _notify();
     super.initState();
+  }
+
+  _getSubjectProgress() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["classId"] = customer.classGrades.id.toString();
+      request["subjectId"] = widget.subject.id.toString();
+      //api call
+      SubjectReportResponse response = SubjectReportResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.subjectReport, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        if (response.result.length > 0) {
+          subjectReportDetails = response.result.first;
+        }
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   _getSubtopic() async {
@@ -77,6 +110,7 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
 
   Future<Null> _handleRefresh() async {
     _getSubtopic();
+    _getSubjectProgress();
     await Future.delayed(Duration(milliseconds: AppStrings.delay));
     return null;
   }
@@ -217,7 +251,11 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
               borderRadius: BorderRadius.circular(16),
             ),
             padding: EdgeInsets.all(8),
-            child: isProgress ? progressView() : noProgressView(),
+            child: subjectReportDetails == null
+                ? noProgressView()
+                : subjectReportDetails.correct != ""
+                    ? progressView()
+                    : noProgressView(),
           );
   }
 
@@ -276,7 +314,12 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                     placeholder: AppAssets.subjectPlaceholder,
                   ),
                 ),
-                Utility.pieChart(),
+                Utility.pieChart(
+                  values: [
+                    double.tryParse(subjectReportDetails.incorrect),
+                    double.tryParse(subjectReportDetails.correct),
+                  ],
+                ),
               ],
             ),
           ),
@@ -302,14 +345,14 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
               ),
               Utility.correctIncorrectView(
                 color: AppColors.myProgressCorrectcolor,
-                title: "Incorrect: 5",
+                title: "Incorrect: " + subjectReportDetails.incorrect,
               ),
               SizedBox(
                 height: 8,
               ),
               Utility.correctIncorrectView(
                 color: AppColors.myProgressIncorrectcolor,
-                title: "Correct: 120",
+                title: "Correct: " + subjectReportDetails.correct,
               ),
               SizedBox(
                 height: 8,
@@ -323,14 +366,14 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
               ),
               Utility.averageView(
                 assetName: AppAssets.avgAccuracy,
-                title: "Avg. Accuracy = 82%",
+                title: "Avg. Accuracy = ${subjectReportDetails.accuracy}%",
               ),
               SizedBox(
                 height: 8,
               ),
               Utility.averageView(
                 assetName: AppAssets.avgTime,
-                title: "Avg. Time/Question = 1:15",
+                title: "Avg. Time/Question = ${subjectReportDetails.avgTime}",
               ),
             ],
           ),

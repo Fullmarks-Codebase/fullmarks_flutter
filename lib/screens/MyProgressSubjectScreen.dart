@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:fullmarks/models/SetReportResponse.dart';
+import 'package:fullmarks/models/SubjectsResponse.dart';
+import 'package:fullmarks/models/UserResponse.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class MyProgressSubjectScreen extends StatefulWidget {
-  String title;
+  SubjectDetails subject;
   MyProgressSubjectScreen({
-    @required this.title,
+    @required this.subject,
   });
   @override
   _MyProgressSubjectScreenState createState() =>
@@ -14,6 +19,59 @@ class MyProgressSubjectScreen extends StatefulWidget {
 }
 
 class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
+  bool _isLoading = false;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+  Customer customer;
+  List<SetReportDetails> setReportDetails = List();
+
+  @override
+  void initState() {
+    customer = Utility.getCustomer();
+    _getSetProgress();
+    super.initState();
+  }
+
+  Future<Null> _handleRefresh() async {
+    _getSetProgress();
+    await Future.delayed(Duration(milliseconds: AppStrings.delay));
+    return null;
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
+  _getSetProgress() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["classId"] = customer.classGrades.id.toString();
+      request["subjectId"] = widget.subject.id.toString();
+      //api call
+      SetReportResponse response = SetReportResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.setReport, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        setReportDetails = response.result;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +89,7 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
       children: [
         Utility.appbar(
           context,
-          text: widget.title,
+          text: widget.subject.name,
         ),
         myProgressSubjectList(),
       ],
@@ -40,16 +98,36 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
 
   Widget myProgressSubjectList() {
     return Expanded(
-      child: ListView.builder(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-        ),
-        itemCount: 3,
-        itemBuilder: (BuildContext context, int index) {
-          return myProgressSubjectItemView(index);
-        },
-      ),
+      child: _isLoading
+          ? Utility.progress(context)
+          : RefreshIndicator(
+              key: _refreshIndicatorKey,
+              onRefresh: _handleRefresh,
+              child: setReportDetails.length == 0
+                  ? ListView(
+                      padding: EdgeInsets.all(16),
+                      physics: AlwaysScrollableScrollPhysics(),
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height -
+                              ((AppBar().preferredSize.height * 2) + 100),
+                          child: Utility.emptyView("No Report"),
+                        ),
+                      ],
+                    )
+                  : ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                      ),
+                      itemCount: setReportDetails.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return myProgressSubjectItemView(index);
+                      },
+                    ),
+            ),
     );
   }
 
@@ -73,7 +151,7 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Algebra",
+                    setReportDetails[index].subject.name,
                     style: TextStyle(
                       color: AppColors.whiteColor,
                       fontSize: 18,
@@ -81,7 +159,7 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
                     ),
                   ),
                   Text(
-                    "Set " + (index + 1).toString(),
+                    setReportDetails[index].setDetails.name,
                     style: TextStyle(
                       color: AppColors.whiteColor,
                       fontSize: 18,
@@ -105,7 +183,13 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
                         Container(
                           width: MediaQuery.of(context).size.width / 4,
                           height: MediaQuery.of(context).size.width / 4,
-                          child: Utility.pieChart(),
+                          child: Utility.pieChart(
+                            values: [
+                              double.tryParse(
+                                  setReportDetails[index].incorrect),
+                              double.tryParse(setReportDetails[index].correct),
+                            ],
+                          ),
                         ),
                         SizedBox(
                           width: 8,
@@ -116,7 +200,8 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
                           children: [
                             Utility.correctIncorrectView(
                               color: AppColors.myProgressCorrectcolor,
-                              title: "Incorrect: 5",
+                              title: "Incorrect: " +
+                                  setReportDetails[index].incorrect,
                               fontSize: 14,
                             ),
                             SizedBox(
@@ -124,7 +209,8 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
                             ),
                             Utility.correctIncorrectView(
                               color: AppColors.myProgressIncorrectcolor,
-                              title: "Correct: 120",
+                              title:
+                                  "Correct: " + setReportDetails[index].correct,
                               fontSize: 14,
                             ),
                           ],
@@ -137,14 +223,16 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
                   ),
                   Utility.averageView(
                     assetName: AppAssets.avgAccuracy,
-                    title: "Avg. Accuracy = 82%",
+                    title:
+                        "Avg. Accuracy = ${setReportDetails[index].accuracy}%",
                   ),
                   SizedBox(
                     height: 8,
                   ),
                   Utility.averageView(
                     assetName: AppAssets.avgTime,
-                    title: "Avg. Time/Question = 1:15",
+                    title: "Avg. Time/Question = " +
+                        setReportDetails[index].avgTime,
                   ),
                 ],
               ),

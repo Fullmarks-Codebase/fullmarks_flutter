@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/ReportsResponse.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/ChangeGradeScreen.dart';
@@ -18,6 +21,7 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/FirebaseMessagingService.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:share/share.dart';
 
 import '../main.dart';
 import 'AskingForProgressScreen.dart';
@@ -31,12 +35,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> scafoldKey = GlobalKey();
   ScrollController controller;
-  bool isProgress = false;
   List<SubjectDetails> subjects = List();
   bool _isLoading = false;
   Customer customer;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
+  ReportDetails overallReportDetails;
 
   @override
   void initState() {
@@ -45,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
     controller = ScrollController();
     _getUser();
     _getSubjects();
+    if (customer != null) _getOverallProgress();
     _notify();
     super.initState();
   }
@@ -81,6 +86,12 @@ class _HomeScreenState extends State<HomeScreen> {
       _notify();
       //api request
       var request = Map<String, dynamic>();
+      if (customer == null) {
+        request["guest"] = "true";
+      } else {
+        request["userId"] = customer.id.toString();
+        request["id"] = customer.classGrades.id.toString();
+      }
       //api call
       SubjectsResponse response = SubjectsResponse.fromJson(
         await ApiManager(context)
@@ -92,6 +103,34 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (response.code == 200) {
         subjects = response.result;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  _getOverallProgress() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["classId"] = customer.classGrades.id.toString();
+      //api call
+      ReportsResponse response = ReportsResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.overallReport, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        overallReportDetails = response.result;
         _notify();
       }
     } else {
@@ -263,6 +302,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                   _getUser();
+                  _getSubjects();
+                  if (customer != null) _getOverallProgress();
                 },
               ),
               drawerItemView(
@@ -280,6 +321,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                   _getUser();
+                  _getSubjects();
+                  if (customer != null) _getOverallProgress();
                 },
               ),
               drawerItemView(
@@ -343,6 +386,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   await Future.delayed(
                       Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
+                  shareApp();
                 },
               ),
               drawerItemView(
@@ -353,6 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   await Future.delayed(
                       Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
+                  rateApp();
                 },
               ),
               drawerItemView(
@@ -373,8 +418,18 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  shareApp() {
+    Share.share(AppStrings.shareAppText);
+  }
+
+  rateApp() {
+    Utility.launchURL(
+        Platform.isAndroid ? AppStrings.playStore : AppStrings.appstore);
+  }
+
   Future<Null> _handleRefresh() async {
     _getSubjects();
+    if (customer != null) _getOverallProgress();
     //delay to give ripple effect
     await Future.delayed(Duration(milliseconds: AppStrings.delay));
     return null;
@@ -478,6 +533,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             //delay to give ripple effect
                             await Future.delayed(
                                 Duration(milliseconds: AppStrings.delay));
+                            shareApp();
                           },
                         ),
                         SizedBox(
@@ -493,6 +549,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             //delay to give ripple effect
                             await Future.delayed(
                                 Duration(milliseconds: AppStrings.delay));
+                            rateApp();
                           },
                         ),
                         Container(
@@ -766,7 +823,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: FittedBox(
                 child: Text(
-                  "0% Completed",
+                  subjects[index].completed + "% Completed",
                   style: TextStyle(
                     color: AppColors.appColor,
                     fontWeight: FontWeight.w500,
@@ -801,7 +858,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             padding: EdgeInsets.all(8),
             margin: EdgeInsets.symmetric(horizontal: 16),
-            child: isProgress ? progressView() : noProgressView(),
+            child: overallReportDetails == null
+                ? noProgressView()
+                : overallReportDetails.correct != ""
+                    ? progressView()
+                    : noProgressView(),
           );
   }
 
@@ -845,7 +906,12 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           child: Container(
             height: (MediaQuery.of(context).size.width / 2),
-            child: Utility.pieChart(),
+            child: Utility.pieChart(
+              values: [
+                double.tryParse(overallReportDetails.incorrect),
+                double.tryParse(overallReportDetails.correct)
+              ],
+            ),
           ),
         ),
         SizedBox(
@@ -869,14 +935,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Utility.correctIncorrectView(
                 color: AppColors.myProgressCorrectcolor,
-                title: "Incorrect: 5",
+                title:
+                    "Incorrect: " + overallReportDetails.incorrect.toString(),
               ),
               SizedBox(
                 height: 8,
               ),
               Utility.correctIncorrectView(
                 color: AppColors.myProgressIncorrectcolor,
-                title: "Correct: 120",
+                title: "Correct: " + overallReportDetails.correct.toString(),
               ),
               SizedBox(
                 height: 8,
@@ -890,14 +957,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Utility.averageView(
                 assetName: AppAssets.avgAccuracy,
-                title: "Avg. Accuracy = 82%",
+                title: "Avg. Accuracy = ${overallReportDetails.accuracy}%",
               ),
               SizedBox(
                 height: 8,
               ),
               Utility.averageView(
                 assetName: AppAssets.avgTime,
-                title: "Avg. Time/Question = 1:15",
+                title: "Avg. Time/Question = ${overallReportDetails.avgTime}",
               ),
             ],
           ),

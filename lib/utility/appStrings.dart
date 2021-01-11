@@ -9,6 +9,9 @@ class AppStrings {
   static String sets = baseUrl + "subjects/topics/sets";
   static String questions = baseUrl + "questions";
   static String reports = baseUrl + "report/add";
+  static String overallReport = baseUrl + "report/overall";
+  static String subjectReport = baseUrl + "report/subject";
+  static String setReport = baseUrl + "report/set";
 
   //image base url
   static String customQuestion = baseUrl + "images/user_questions/question/";
@@ -23,7 +26,6 @@ class AppStrings {
 
   //constant strings
   static String noInternet = "No Internet Connection";
-  // static String comingSoon = "Coming Soon...";
 
   //preference keys
   static String userPreference = "USER_APP_PREFERENCE";
@@ -35,4 +37,11 @@ class AppStrings {
   static int female = 1;
 
   static int delay = 150;
+
+  static String playStore =
+      "https://play.google.com/store/apps/details?id=e.fullmarks.com"; //change this
+  static String appstore =
+      "https://apps.apple.com/in/app/apple-store/id375380948"; //change this
+  static String shareAppText =
+      "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace. $playStore $appstore";
 }

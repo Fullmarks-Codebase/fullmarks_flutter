@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/UserResponse.dart';
@@ -10,6 +12,9 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'ChangeGradeScreen.dart';
 
 class MyProfileScreen extends StatefulWidget {
   @override
@@ -19,6 +24,12 @@ class MyProfileScreen extends StatefulWidget {
 class _MyProfileScreenState extends State<MyProfileScreen> {
   Customer customer;
   bool _isLoading = false;
+  File _image;
+  final _picker = ImagePicker();
+  // TextEditingController _usernameController = TextEditingController();
+  // TextEditingController _usernameController = TextEditingController();
+  // TextEditingController _usernameController = TextEditingController();
+  // TextEditingController _usernameController = TextEditingController();
 
   @override
   void initState() {
@@ -47,10 +58,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       _notify();
 
       if (response.code == 200) {
-        if (response.result.length < 0) {
-          customer = response.result.first;
-          PreferenceUtils.setString(
-              AppStrings.userPreference, jsonEncode(customer.toJson()));
+        if (response.result.length > 0) {
+          Customer tempCustomer = response.result.first;
+          tempCustomer.token = customer.token;
+          await PreferenceUtils.setString(
+              AppStrings.userPreference, jsonEncode(tempCustomer.toJson()));
+          customer = Utility.getCustomer();
           _notify();
         }
       }
@@ -167,7 +180,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 width: 16,
               ),
               Text(
-                customer.gender == "" ? "-" : customer.gender,
+                customer.gender == AppStrings.male
+                    ? "Male"
+                    : customer.gender == AppStrings.female
+                        ? "Female"
+                        : "-",
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -230,14 +247,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   ),
                 ),
               ),
-              SizedBox(
-                width: 16,
-              ),
-              Container(
-                height: 15,
-                width: 15,
-                child: SvgPicture.asset(AppAssets.pencil),
-              ),
             ],
           ),
         ],
@@ -285,31 +294,45 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              AppAssets.class1,
-              color: Colors.white,
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Text(
-              customer.classGrades.name,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
+        GestureDetector(
+          onTap: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChangeGradeScreen(),
               ),
+            );
+            _getUser();
+          },
+          child: Container(
+            color: Colors.transparent,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  AppAssets.class1,
+                  color: Colors.white,
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  customer.classGrades.name,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.white,
+                  ),
+                  onPressed: null,
+                )
+              ],
             ),
-            IconButton(
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.white,
-              ),
-              onPressed: null,
-            )
-          ],
+          ),
         ),
       ],
     );
@@ -354,32 +377,87 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           color: AppColors.appColor,
                           width: 2,
                         ),
-                        image: DecorationImage(
-                          image: AssetImage(AppAssets.dummyUser),
-                        ),
+                        image: _image == null
+                            ? DecorationImage(
+                                image: NetworkImage(AppStrings.userImage +
+                                    customer.userProfileImage),
+                              )
+                            : Image.file(_image),
                       ),
                     ),
           Positioned(
             right: 10,
-            child: Container(
-              height: 35,
-              width: 35,
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppColors.myProgressIncorrectcolor,
-                  width: 2,
+            child: GestureDetector(
+              onTap: () {
+                _onProfilePicTap();
+              },
+              child: Container(
+                height: 35,
+                width: 35,
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.myProgressIncorrectcolor,
+                    width: 2,
+                  ),
                 ),
-              ),
-              child: SvgPicture.asset(
-                AppAssets.pencil,
+                child: SvgPicture.asset(
+                  AppAssets.pencil,
+                ),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  _onProfilePicTap() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) {
+        return CupertinoActionSheet(
+          title: Text("Select Profile Picture"),
+          message: Text("Select from"),
+          actions: [
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                _getImage(ImageSource.camera);
+              },
+              child: Text("Camera"),
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                _getImage(ImageSource.gallery);
+              },
+              child: Text("Gallery"),
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Cancel"),
+          ),
+        );
+      },
+    );
+  }
+
+  _getImage(ImageSource source) async {
+    _picker.getImage(source: source).then((value) {
+      if (value != null) {
+        _image = File(value.path);
+      } else {
+        print('No image selected.');
+      }
+      _notify();
+    }).catchError((onError) {
+      print(onError);
+    });
   }
 }

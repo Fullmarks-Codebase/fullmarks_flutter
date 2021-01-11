@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/SetReportResponse.dart';
 import 'package:fullmarks/models/SetsResponse.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/models/SubtopicResponse.dart';
@@ -30,6 +31,7 @@ class _SetsScreenState extends State<SetsScreen> {
       new GlobalKey<RefreshIndicatorState>();
   bool _isLoading = false;
   List<SetDetails> setsList = List();
+  List<SetReportDetails> setReportDetails;
 
   @override
   void initState() {
@@ -47,6 +49,9 @@ class _SetsScreenState extends State<SetsScreen> {
       _notify();
       //api request
       var request = Map<String, dynamic>();
+      if (customer != null) {
+        request["userId"] = customer.id.toString();
+      }
       request["topicId"] = widget.subtopic.id.toString();
       //api call
       SetsResponse response = SetsResponse.fromJson(
@@ -178,11 +183,9 @@ class _SetsScreenState extends State<SetsScreen> {
                 ),
               ),
               IconButton(
-                icon: SvgPicture.asset(
-                    // index == 1 || index == 2
-                    // ? AppAssets.check
-                    // :
-                    AppAssets.uncheck),
+                icon: SvgPicture.asset(setsList[index].submitted
+                    ? AppAssets.check
+                    : AppAssets.uncheck),
                 onPressed: null,
               )
             ],

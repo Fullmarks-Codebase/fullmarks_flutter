@@ -37,17 +37,20 @@ class SetDetails {
   int topicId;
   int subjectId;
   int classId;
+  bool submitted;
 
-  SetDetails(
-      {this.id,
-      this.name,
-      this.createdBy,
-      this.updatedBy,
-      this.createdAt,
-      this.updatedAt,
-      this.topicId,
-      this.subjectId,
-      this.classId});
+  SetDetails({
+    this.id,
+    this.name,
+    this.createdBy,
+    this.updatedBy,
+    this.createdAt,
+    this.updatedAt,
+    this.topicId,
+    this.subjectId,
+    this.submitted,
+    this.classId,
+  });
 
   SetDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
@@ -59,6 +62,7 @@ class SetDetails {
     topicId = json['topicId'] ?? 0;
     subjectId = json['subjectId'] ?? 0;
     classId = json['classId'] ?? 0;
+    submitted = json['submitted'] ?? false;
   }
 
   Map<String, dynamic> toJson() {
@@ -72,6 +76,7 @@ class SetDetails {
     data['topicId'] = this.topicId;
     data['subjectId'] = this.subjectId;
     data['classId'] = this.classId;
+    data['submitted'] = this.submitted;
     return data;
   }
 }
