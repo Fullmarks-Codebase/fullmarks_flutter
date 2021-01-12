@@ -119,6 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _notify();
       //api request
       var request = Map<String, dynamic>();
+      if (customer != null) request["userId"] = customer.id.toString();
       request["classId"] = customer.classGrades.id.toString();
       //api call
       ReportsResponse response = ReportsResponse.fromJson(
@@ -170,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 2,
                   ),
                   image: DecorationImage(
+                    fit: BoxFit.cover,
                     image: NetworkImage(
                         AppStrings.userImage + customer.userProfileImage),
                   ),
@@ -860,7 +862,9 @@ class _HomeScreenState extends State<HomeScreen> {
             margin: EdgeInsets.symmetric(horizontal: 16),
             child: overallReportDetails == null
                 ? noProgressView()
-                : overallReportDetails.correct != ""
+                : overallReportDetails.correct != "" &&
+                        overallReportDetails.correct != "null" &&
+                        overallReportDetails.correct != null
                     ? progressView()
                     : noProgressView(),
           );
@@ -894,6 +898,9 @@ class _HomeScreenState extends State<HomeScreen> {
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
+          ),
+          SizedBox(
+            height: 8,
           ),
         ],
       ),

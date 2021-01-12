@@ -76,6 +76,9 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
       _notify();
       //api request
       var request = Map<String, dynamic>();
+      if (customer != null) {
+        request["userId"] = customer.id.toString();
+      }
       request["subjectId"] = widget.subject.id.toString();
       //api call
       SubtopicResponse response = SubtopicResponse.fromJson(
@@ -215,7 +218,7 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                       height: 4,
                     ),
                     Text(
-                      "0% Completed",
+                      subtopics[index].completed + "% Completed",
                       style: TextStyle(
                         color: AppColors.subtopicItemBorderColor,
                       ),
@@ -253,7 +256,9 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
             padding: EdgeInsets.all(8),
             child: subjectReportDetails == null
                 ? noProgressView()
-                : subjectReportDetails.correct != ""
+                : subjectReportDetails.correct != "" &&
+                        subjectReportDetails.correct != "null" &&
+                        subjectReportDetails.correct != null
                     ? progressView()
                     : noProgressView(),
           );

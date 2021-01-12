@@ -36,16 +36,19 @@ class SubtopicDetails {
   String createdAt;
   String updatedAt;
   int subjectId;
+  String completed;
 
-  SubtopicDetails(
-      {this.id,
-      this.name,
-      this.detail,
-      this.createdBy,
-      this.updatedBy,
-      this.createdAt,
-      this.updatedAt,
-      this.subjectId});
+  SubtopicDetails({
+    this.id,
+    this.name,
+    this.detail,
+    this.createdBy,
+    this.updatedBy,
+    this.createdAt,
+    this.updatedAt,
+    this.completed,
+    this.subjectId,
+  });
 
   SubtopicDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
@@ -56,6 +59,7 @@ class SubtopicDetails {
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
     subjectId = json['subjectId'] ?? 0;
+    completed = json['completed'] ?? "0";
   }
 
   Map<String, dynamic> toJson() {
@@ -68,6 +72,7 @@ class SubtopicDetails {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['subjectId'] = this.subjectId;
+    data['completed'] = this.completed;
     return data;
   }
 }

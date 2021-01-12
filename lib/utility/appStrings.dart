@@ -2,6 +2,7 @@ class AppStrings {
   static String baseUrl = "http://104.131.14.251:3001/";
   static String login = baseUrl + "app/customer/checkin";
   static String customer = baseUrl + "customer/getSingleCustomer";
+  static String customerUpdate = baseUrl + "customer/update";
   static String subjects = baseUrl + "subjects/onlySubjects";
   static String subTopics = baseUrl + "subjects/onlyTopics";
   static String getClass = baseUrl + "class";
@@ -43,5 +44,5 @@ class AppStrings {
   static String appstore =
       "https://apps.apple.com/in/app/apple-store/id375380948"; //change this
   static String shareAppText =
-      "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace. $playStore $appstore";
+      "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore \nDownload iOS app - $appstore";
 }

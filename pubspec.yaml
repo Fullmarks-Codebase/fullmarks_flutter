@@ -38,6 +38,7 @@ dependencies:
   font_awesome_flutter: ^8.10.1
   http: ^0.12.2
   image_picker: ^0.6.7+21
+  intl: ^0.16.1
   lottie: ^0.7.0+1
   package_info: ^0.4.3+2
   permission_handler: ^5.0.1+1

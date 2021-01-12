@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/models/UsersResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
@@ -12,7 +13,10 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:http_parser/http_parser.dart';
 
 import 'ChangeGradeScreen.dart';
 
@@ -26,15 +30,23 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   bool _isLoading = false;
   File _image;
   final _picker = ImagePicker();
-  // TextEditingController _usernameController = TextEditingController();
-  // TextEditingController _usernameController = TextEditingController();
-  // TextEditingController _usernameController = TextEditingController();
-  // TextEditingController _usernameController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  bool isEdit = false;
+  int maleFemale = -1;
+  String dob = "-";
 
   @override
   void initState() {
     customer = Utility.getCustomer();
     _notify();
+    _phoneController.text = customer.phoneNumber;
+    _usernameController.text =
+        customer.username == "" ? "-" : customer.username;
+    _emailController.text = customer.email == "" ? "-" : customer.email;
+    maleFemale = customer.gender;
+    dob = customer.dob == "" ? "-" : customer.dob;
     _getUser();
     super.initState();
   }
@@ -102,124 +114,284 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   Widget profileDetails() {
     return Container(
-      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.only(
+        left: 16,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  "Profile Detail",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+          Container(
+            padding: EdgeInsets.only(
+              right: 4,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Profile Detail",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                height: 15,
-                width: 15,
-                child: SvgPicture.asset(AppAssets.pencil),
-              )
-            ],
+                ClipOval(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      child: Container(
+                        height: 15,
+                        width: 15,
+                        margin: EdgeInsets.all(16),
+                        child: SvgPicture.asset(
+                            isEdit ? AppAssets.checkBlue : AppAssets.pencil),
+                      ),
+                      onTap: () async {
+                        //delay to give ripple effect
+                        await Future.delayed(
+                            Duration(milliseconds: AppStrings.delay));
+                        if (isEdit) _updateProfile();
+                        isEdit = !isEdit;
+                        _notify();
+                      },
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          textfield(
+            controller: _usernameController,
+            icon: AppAssets.drawerMyProfile,
+            enabled: isEdit,
+          ),
+          textfield(
+            controller: _emailController,
+            icon: AppAssets.email,
+            enabled: isEdit,
           ),
           SizedBox(
-            height: 16,
+            height: 8,
           ),
-          Row(
-            children: [
-              Container(
-                height: 15,
-                width: 15,
-                child: SvgPicture.asset(AppAssets.drawerMyProfile),
+          GestureDetector(
+            onTap: () {
+              if (isEdit) {
+                maleFemale = maleFemale == AppStrings.male
+                    ? AppStrings.female
+                    : AppStrings.male;
+                _notify();
+              }
+            },
+            child: Container(
+              color: Colors.transparent,
+              child: Row(
+                children: [
+                  Container(
+                    height: 17,
+                    width: 17,
+                    child: SvgPicture.asset(AppAssets.gender),
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  Text(
+                    maleFemale == AppStrings.male
+                        ? "Male"
+                        : maleFemale == AppStrings.female
+                            ? "Female"
+                            : "-",
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(
-                width: 16,
-              ),
-              Text(
-                customer.username == "" ? "-" : customer.username,
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          Row(
-            children: [
-              Container(
-                height: 15,
-                width: 15,
-                child: SvgPicture.asset(AppAssets.email),
-              ),
-              SizedBox(
-                width: 16,
-              ),
-              Text(
-                customer.email == "" ? "-" : customer.email,
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ],
+            ),
           ),
           SizedBox(
-            height: 16,
+            height: 20,
           ),
-          Row(
-            children: [
-              Container(
-                height: 15,
-                width: 15,
-                child: SvgPicture.asset(AppAssets.gender),
+          GestureDetector(
+            onTap: () {
+              if (isEdit) {
+                _selectDate();
+              }
+            },
+            child: Container(
+              child: Row(
+                children: [
+                  Container(
+                    height: 17,
+                    width: 17,
+                    child: SvgPicture.asset(AppAssets.birthday),
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  Text(
+                    getDob(),
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(
-                width: 16,
-              ),
-              Text(
-                customer.gender == AppStrings.male
-                    ? "Male"
-                    : customer.gender == AppStrings.female
-                        ? "Female"
-                        : "-",
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          Row(
-            children: [
-              Container(
-                height: 15,
-                width: 15,
-                child: SvgPicture.asset(AppAssets.birthday),
-              ),
-              SizedBox(
-                width: 16,
-              ),
-              Text(
-                customer.dob == "" ? "-" : customer.dob,
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),
     );
   }
 
+  _updateProfilePicture() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //headers
+      var headers = Map<String, String>();
+      headers["Accept"] = "application/json";
+      if (Utility.getCustomer() != null) {
+        headers["Authorization"] = Utility.getCustomer().token;
+      }
+      //api request
+      var uri = Uri.parse(AppStrings.customerUpdate);
+      var request = MultipartRequest('PUT', uri);
+      request.headers.addAll(headers);
+      request.fields["id"] = customer.id.toString();
+      if (_image != null) {
+        request.files.add(
+          await MultipartFile.fromPath(
+            'userProfileImage',
+            _image.path,
+            contentType: MediaType('image', _image.path.split(".").last),
+          ),
+        );
+      }
+      //api call
+      Response response = await Response.fromStream(await request.send());
+      //hide progress
+      _isLoading = false;
+      _notify();
+      print(response.body);
+      if (response.statusCode == 200) {
+        UserResponse userResponse =
+            UserResponse.fromJson(jsonDecode(response.body));
+        Utility.showToast(userResponse.message);
+        Customer tempCustomer = userResponse.result;
+        tempCustomer.token = customer.token;
+        await PreferenceUtils.setString(
+            AppStrings.userPreference, jsonEncode(tempCustomer.toJson()));
+        customer = Utility.getCustomer();
+        _notify();
+      } else {
+        CommonResponse commonResponse =
+            CommonResponse.fromJson(jsonDecode(response.body));
+        Utility.showToast(commonResponse.message);
+      }
+    } else {
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  _updateProfile() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["id"] = customer.id.toString();
+      if (_usernameController.text.trim() != "-")
+        request["username"] = _usernameController.text.trim();
+      if (_emailController.text.trim() != "-")
+        request["email"] = _emailController.text.trim();
+      if (maleFemale != -1) request["gender"] = maleFemale.toString();
+      if (dob != "-") request["dob"] = dob;
+      //api call
+      UserResponse response = UserResponse.fromJson(
+        await ApiManager(context)
+            .putCall(url: AppStrings.customerUpdate, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      Utility.showToast(response.message);
+
+      if (response.code == 200) {
+        Customer tempCustomer = response.result;
+        tempCustomer.token = customer.token;
+        await PreferenceUtils.setString(
+            AppStrings.userPreference, jsonEncode(tempCustomer.toJson()));
+        customer = Utility.getCustomer();
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  String getDob() {
+    try {
+      return dob == "-"
+          ? dob
+          : DateFormat("dd MMMM, yyyy")
+              .format(DateFormat("M-dd-yyyy").parse(dob));
+    } catch (e) {
+      return "-";
+    }
+  }
+
+  _selectDate() async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(DateTime.now().year - 25),
+        lastDate: DateTime.now());
+    dob = "${picked.month}-${picked.day}-${picked.year}";
+    _notify();
+  }
+
+  Widget textfield({
+    @required TextEditingController controller,
+    @required String icon,
+    @required bool enabled,
+  }) {
+    return Row(
+      children: [
+        Container(
+          height: 17,
+          width: 17,
+          child: SvgPicture.asset(icon),
+        ),
+        SizedBox(
+          width: 16,
+        ),
+        Expanded(
+          child: TextField(
+            enabled: enabled,
+            controller: controller,
+            decoration: InputDecoration(
+              border: enabled ? null : InputBorder.none,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 16,
+        ),
+      ],
+    );
+  }
+
   Widget accountDetailsView() {
     return Container(
-      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(
+        horizontal: 16,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -231,23 +403,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             ),
           ),
           SizedBox(
-            height: 16,
+            height: 8,
           ),
-          Row(
-            children: [
-              SvgPicture.asset(AppAssets.mobile),
-              SizedBox(
-                width: 16,
-              ),
-              Expanded(
-                child: Text(
-                  customer.phoneNumber,
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
+          textfield(
+            controller: _phoneController,
+            icon: AppAssets.mobile,
+            enabled: false,
           ),
         ],
       ),
@@ -272,8 +433,10 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               ),
               nameClassView(),
               // Utility.leaderBoardView(),
-              accountDetailsView(),
-              profileDetails()
+              SizedBox(
+                height: 16,
+              ),
+              bottomView(),
             ],
           ),
         ),
@@ -282,12 +445,27 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     );
   }
 
+  Widget bottomView() {
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            children: [
+              accountDetailsView(),
+              profileDetails(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget nameClassView() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          customer.username == "" ? "-" : customer.username,
+          customer.username == "" ? customer.phoneNumber : customer.username,
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,
@@ -377,12 +555,15 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           color: AppColors.appColor,
                           width: 2,
                         ),
-                        image: _image == null
-                            ? DecorationImage(
-                                image: NetworkImage(AppStrings.userImage +
-                                    customer.userProfileImage),
-                              )
-                            : Image.file(_image),
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: _image == null
+                              ? NetworkImage(AppStrings.userImage +
+                                  customer.userProfileImage)
+                              : FileImage(
+                                  _image,
+                                ),
+                        ),
                       ),
                     ),
           Positioned(
@@ -452,6 +633,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     _picker.getImage(source: source).then((value) {
       if (value != null) {
         _image = File(value.path);
+        _notify();
+        _updateProfilePicture();
       } else {
         print('No image selected.');
       }

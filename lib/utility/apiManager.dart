@@ -53,6 +53,28 @@ class ApiManager {
     return await json.decode(response.body);
   }
 
+  putCall({
+    @required String url,
+    @required Map request,
+  }) async {
+    print(url);
+    print(request);
+    var headers = Map<String, String>();
+    headers["Accept"] = "application/json";
+    if (Utility.getCustomer() != null) {
+      headers["Authorization"] = Utility.getCustomer().token;
+    }
+    print(headers);
+    http.Response response =
+        await http.put(url, body: request, headers: headers);
+    print(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 403) {
+      logout();
+    }
+    return await json.decode(response.body);
+  }
+
   deleteCall({@required String url}) async {
     print(url);
     var headers = Map<String, String>();

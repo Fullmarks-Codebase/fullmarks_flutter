@@ -48,9 +48,9 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>This app needs access to calendars</string>
 	<key>NSCameraUsageDescription</key>
-	<string>This app needs access to camera</string>
+	<string>This app needs access to camera to upload profile picture</string>
 	<key>NSContactsUsageDescription</key>
-	<string>This app needs access to contacts</string>
+	<string>This app needs access to contacts to play quiz</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs access to microphone</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
@@ -58,7 +58,7 @@
 	<key>NSMotionUsageDescription</key>
 	<string>This app needs access to motion</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to photos</string>
+	<string>This app needs access to photos tp upload profile picture</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>This app needs access to reminders</string>
 	<key>CFBundleURLTypes</key>
