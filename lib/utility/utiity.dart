@@ -1060,8 +1060,8 @@ class Utility {
                     Container(
                       height: 12,
                       width: 12,
-                      child: SvgPicture.asset(
-                        AppAssets.sci,
+                      child: Image.asset(
+                        AppAssets.imagePlaceholder,
                         color: AppColors.appColor,
                       ),
                     ),

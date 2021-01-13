@@ -198,7 +198,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                 ),
                 Expanded(
                   flex: 10,
-                  child: SvgPicture.asset(AppAssets.maths),
+                  child: Image.asset(AppAssets.subjectPlaceholder),
                 ),
                 Expanded(
                   flex: 10,

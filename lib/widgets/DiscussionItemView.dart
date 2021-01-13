@@ -69,7 +69,7 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
         top: 16,
       ),
       child: Image.asset(
-        AppAssets.dummyQuestionImage,
+        AppAssets.imagePlaceholder,
       ),
     );
   }

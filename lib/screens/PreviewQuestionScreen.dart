@@ -141,7 +141,7 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
         bottom: 16,
       ),
       child: Image.asset(
-        AppAssets.dummyQuestionImage,
+        AppAssets.imagePlaceholder,
       ),
     );
   }
