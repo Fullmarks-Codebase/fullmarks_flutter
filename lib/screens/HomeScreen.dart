@@ -20,6 +20,7 @@ import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/FirebaseMessagingService.dart';
+import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:share/share.dart';
 
@@ -237,10 +238,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SizedBox(
                                   width: 8,
                                 ),
-                                Text(
-                                  customer.classGrades.name,
-                                  style: TextStyle(
-                                    color: Colors.black.withOpacity(0.5),
+                                Expanded(
+                                  child: Text(
+                                    customer.classGrades.name,
+                                    style: TextStyle(
+                                      color: Colors.black.withOpacity(0.5),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -793,11 +796,12 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 4,
             ),
             Expanded(
-              child: Utility.imageLoader(
-                baseUrl: AppStrings.subjectImage,
-                url: subjects[index].image,
-                placeholder: AppAssets.subjectPlaceholder,
+              child: SvgPicture.network(
+                AppStrings.subjectImage + subjects[index].image,
                 fit: BoxFit.contain,
+                placeholderBuilder: (context) {
+                  return Image.asset(AppAssets.subjectPlaceholder);
+                },
               ),
             ),
             SizedBox(
@@ -810,32 +814,37 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
+              textAlign: TextAlign.center,
             ),
             SizedBox(
               height: 4,
             ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 6,
-                vertical: 4,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: FittedBox(
-                child: Text(
-                  subjects[index].completed + "% Completed",
-                  style: TextStyle(
-                    color: AppColors.appColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 4,
-            ),
+            PreferenceUtils.getBool(AppStrings.skipPreference)
+                ? Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: FittedBox(
+                      child: Text(
+                        subjects[index].completed + "% Completed",
+                        style: TextStyle(
+                          color: AppColors.appColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(),
+            PreferenceUtils.getBool(AppStrings.skipPreference)
+                ? SizedBox(
+                    height: 4,
+                  )
+                : Container(),
           ],
         ),
       ),
@@ -1032,23 +1041,37 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Spacer(),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(
-                  top: 16,
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      Utility.getUsername(),
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
+              GestureDetector(
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyProfileScreen(),
                     ),
-                    getUserImageView(50),
-                  ],
+                  );
+                  _getUser();
+                  _getSubjects();
+                  if (customer != null) _getOverallProgress();
+                },
+                child: Container(
+                  color: Colors.transparent,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(
+                    top: 16,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        Utility.getUsername(),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      getUserImageView(50),
+                    ],
+                  ),
                 ),
               )
             ],

@@ -177,10 +177,12 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
             Container(
               alignment: Alignment.center,
               width: MediaQuery.of(context).size.width / 2.5,
-              child: Utility.imageLoader(
-                baseUrl: AppStrings.classImage,
-                url: gradesList[index].classImage,
-                placeholder: AppAssets.imagePlaceholder,
+              child: SvgPicture.network(
+                AppStrings.classImage + gradesList[index].classImage,
+                fit: BoxFit.contain,
+                placeholderBuilder: (context) {
+                  return Image.asset(AppAssets.subjectPlaceholder);
+                },
               ),
             ),
           ],

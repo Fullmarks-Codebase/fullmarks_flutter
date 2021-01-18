@@ -13,6 +13,8 @@ import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:fullmarks/widgets/otp_screen.dart';
 
+import 'HomeScreen.dart';
+
 class VerificationScreen extends StatefulWidget {
   String phoneNumber;
   VerificationScreen({
@@ -254,7 +256,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
   void moveToNextScreen(context) {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (BuildContext context) => IntroSliderScreen(),
+          builder: (BuildContext context) =>
+              PreferenceUtils.getBool(AppStrings.introSliderPreference)
+                  ? HomeScreen()
+                  : IntroSliderScreen(),
         ),
         (Route<dynamic> route) => false);
   }

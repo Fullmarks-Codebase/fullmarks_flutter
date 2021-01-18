@@ -46,7 +46,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         customer.username == "" ? "-" : customer.username;
     _emailController.text = customer.email == "" ? "-" : customer.email;
     maleFemale = customer.gender;
-    dob = customer.dob == "" ? "-" : customer.dob;
+    dob = customer.dob == "" ? "-" : customer.dob.substring(0, 10);
     _getUser();
     super.initState();
   }
@@ -340,7 +340,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       return dob == "-"
           ? dob
           : DateFormat("dd MMMM, yyyy")
-              .format(DateFormat("M-dd-yyyy").parse(dob));
+              .format(DateFormat("yyyy-MM-dd").parse(dob));
     } catch (e) {
       return "-";
     }
@@ -352,7 +352,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         initialDate: DateTime.now(),
         firstDate: DateTime(DateTime.now().year - 25),
         lastDate: DateTime.now());
-    dob = "${picked.month}-${picked.day}-${picked.year}";
+    dob = "${picked.year}-${picked.month}-${picked.day}";
     _notify();
   }
 
@@ -465,7 +465,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          customer.username == "" ? customer.phoneNumber : customer.username,
+          Utility.getUsername(),
           style: TextStyle(
             color: Colors.white,
             fontSize: 22,

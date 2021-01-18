@@ -150,7 +150,9 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () async {
             //delay to give ripple effect
             await Future.delayed(Duration(milliseconds: AppStrings.delay));
-            PreferenceUtils.setBool(AppStrings.skipPreference, true);
+            //default bool value in shared preference is true
+            //so make it false
+            PreferenceUtils.setBool(AppStrings.skipPreference, false);
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (BuildContext context) =>

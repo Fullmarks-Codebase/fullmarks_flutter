@@ -1137,7 +1137,7 @@ class Utility {
     return customer == null
         ? ""
         : customer.username == ""
-            ? customer.phoneNumber
+            ? "User" + customer.id.toString()
             : customer.username;
   }
 

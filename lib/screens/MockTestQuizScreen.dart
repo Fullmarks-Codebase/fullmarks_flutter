@@ -206,12 +206,12 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
           children: [
             Image.asset(
               index == 0
-                  ? AppAssets.answerImage1
+                  ? AppAssets.imagePlaceholder
                   : index == 1
-                      ? AppAssets.answerImage2
+                      ? AppAssets.imagePlaceholder
                       : index == 2
-                          ? AppAssets.answerImage3
-                          : AppAssets.answerImage4,
+                          ? AppAssets.imagePlaceholder
+                          : AppAssets.imagePlaceholder,
             ),
             Container(
               padding: EdgeInsets.symmetric(
@@ -294,7 +294,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
         top: 16,
       ),
       child: Image.asset(
-        AppAssets.dummyQuestionImage,
+        AppAssets.imagePlaceholder,
       ),
     );
   }

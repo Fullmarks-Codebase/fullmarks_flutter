@@ -107,15 +107,24 @@ class _TestScreenState extends State<TestScreen> {
   Widget body() {
     return Column(
       children: [
-        Utility.appbar(
-          context,
-          text: widget.subject.name +
-              " / " +
-              widget.subtopic.name +
-              " / " +
-              widget.setDetails.name,
-          isHome: false,
-        ),
+        Utility.appbar(context,
+            text: widget.subject.name +
+                " / " +
+                widget.subtopic.name +
+                " / " +
+                widget.setDetails.name,
+            isHome: false, onBackPressed: () {
+          Utility.showSubmitQuizDialog(
+            context: context,
+            onSubmitPress: () async {
+              stopwatch.stop();
+              //delay to give ripple effect
+              await Future.delayed(Duration(milliseconds: AppStrings.delay));
+              Navigator.pop(context);
+              submitQuestions();
+            },
+          );
+        }),
         timeElapsedView(),
         questionNumberView(),
         Expanded(

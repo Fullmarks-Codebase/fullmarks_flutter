@@ -59,7 +59,7 @@ class SubjectDetails {
     updatedBy = json['updatedBy'] ?? 0;
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
-    completed = json['completed'] ?? "0";
+    completed = json['completed'].toString() ?? "0";
   }
 
   Map<String, dynamic> toJson() {

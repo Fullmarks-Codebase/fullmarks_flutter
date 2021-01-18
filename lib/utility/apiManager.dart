@@ -116,8 +116,6 @@ class ApiManager {
   logout() {
     //remove user preference
     PreferenceUtils.remove(AppStrings.userPreference);
-    //remove intro slider seen preference
-    PreferenceUtils.remove(AppStrings.introSliderPreference);
 
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(

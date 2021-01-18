@@ -169,7 +169,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
         children: [
           widget.isEdit
               ? Image.asset(
-                  AppAssets.dummyQuestionImage,
+                  AppAssets.imagePlaceholder,
                   fit: BoxFit.fitHeight,
                   height: 180,
                 )
