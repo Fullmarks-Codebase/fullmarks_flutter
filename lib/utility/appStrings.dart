@@ -7,12 +7,15 @@ class AppStrings {
   static String subTopics = baseUrl + "subjects/onlyTopics";
   static String getClass = baseUrl + "class";
   static String changeClass = baseUrl + "customer/changeClass";
+  static String changeClassGuest = baseUrl + "customer/guestClassChange";
   static String sets = baseUrl + "subjects/topics/sets";
   static String questions = baseUrl + "questions";
   static String reports = baseUrl + "report/add";
   static String overallReport = baseUrl + "report/overall";
   static String subjectReport = baseUrl + "report/subject";
   static String setReport = baseUrl + "report/set";
+  static String guestLogin = baseUrl + "customer/guest";
+  static String testResult = baseUrl + "report/myReport";
 
   //image base url
   static String customQuestion = baseUrl + "images/user_questions/question/";
@@ -31,12 +34,13 @@ class AppStrings {
   //preference keys
   static String userPreference = "USER_APP_PREFERENCE";
   static String introSliderPreference = "INTRO_SLIDER_APP_PREFERENCE";
-  static String skipPreference = "SKIP_APP_PREFERENCE";
+  static String guestUserPreference = "GUEST_USER_APP_PREFERENCE";
 
   //api constants
   static int male = 0;
   static int female = 1;
 
+  //splash effect delay
   static int delay = 150;
 
   static String playStore =

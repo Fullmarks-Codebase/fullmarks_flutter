@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/screens/LoginScreen.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:http/http.dart' as http;
@@ -116,6 +115,9 @@ class ApiManager {
   logout() {
     //remove user preference
     PreferenceUtils.remove(AppStrings.userPreference);
+
+    //remove guest user preference
+    PreferenceUtils.remove(AppStrings.guestUserPreference);
 
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(

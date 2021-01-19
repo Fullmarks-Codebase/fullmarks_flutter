@@ -5,6 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fullmarks/models/GuestUserResponse.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/HomeScreen.dart';
@@ -1141,6 +1142,14 @@ class Utility {
             : customer.username;
   }
 
+  static GuestUserDetails getGuest() {
+    if (PreferenceUtils.getString(AppStrings.guestUserPreference) == "") {
+      return null;
+    }
+    return GuestUserDetails.fromJson(
+        jsonDecode(PreferenceUtils.getString(AppStrings.guestUserPreference)));
+  }
+
   static Customer getCustomer() {
     if (PreferenceUtils.getString(AppStrings.userPreference) == "") {
       return null;
@@ -1213,6 +1222,7 @@ class Utility {
   }
 
   static String getHMS(int seconds) {
+    if (seconds == null) return "";
     final int minutes = (seconds / 60).truncate();
     final int hours = (minutes / 60).truncate();
     String secondsStr = (seconds % 60).toString().padLeft(2, '0');

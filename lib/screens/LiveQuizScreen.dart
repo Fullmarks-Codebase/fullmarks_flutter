@@ -361,7 +361,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
     Customer customer = Utility.getCustomer();
     return customer == null
         ? dummyUserView(size)
-        : customer.userProfileImage == ""
+        : customer.thumbnail == ""
             ? dummyUserView(size)
             : Container(
                 height: size,
@@ -374,7 +374,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                   ),
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: NetworkImage(customer.userProfileImage),
+                    image: NetworkImage(customer.thumbnail),
                   ),
                 ),
               );

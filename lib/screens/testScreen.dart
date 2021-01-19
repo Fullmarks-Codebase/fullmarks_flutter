@@ -452,20 +452,27 @@ class _TestScreenState extends State<TestScreen> {
       //api request
       List<QuestionReportAnswers> questionReportsAnswersList = List();
 
-      await Future.forEach(widget.questionsDetails, (QuestionDetails element) {
-        questionReportsAnswersList.add(
-          QuestionReportAnswers(
-            userId: Utility.getCustomer().id.toString(),
-            questionId: element.id.toString(),
-            correctAnswer: Utility.getQuestionCorrectAnswer(element).toString(),
-            timeTaken: element.timeTaken.toString(),
-            userAnswer: element.selectedAnswer.toString(),
-          ),
-        );
-      });
-
       var request = Map<String, dynamic>();
-      request["answers"] = jsonEncode(questionReportsAnswersList);
+
+      if (Utility.getCustomer() == null) {
+        request["guest"] = "true";
+        request["id"] = Utility.getGuest().id.toString();
+      } else {
+        await Future.forEach(widget.questionsDetails,
+            (QuestionDetails element) {
+          questionReportsAnswersList.add(
+            QuestionReportAnswers(
+              userId: Utility.getCustomer().id.toString(),
+              questionId: element.id.toString(),
+              correctAnswer:
+                  Utility.getQuestionCorrectAnswer(element).toString(),
+              timeTaken: element.timeTaken.toString(),
+              userAnswer: element.selectedAnswer.toString(),
+            ),
+          );
+        });
+        request["answers"] = jsonEncode(questionReportsAnswersList);
+      }
 
       //api call
       ReportsResponse response = ReportsResponse.fromJson(
@@ -488,7 +495,8 @@ class _TestScreenState extends State<TestScreen> {
               subtopic: widget.subtopic,
               subject: widget.subject,
               setDetails: widget.setDetails,
-              reportDetails: response.result,
+              reportDetails:
+                  Utility.getCustomer() == null ? null : response.result,
             ),
           ),
           (Route<dynamic> route) => false,

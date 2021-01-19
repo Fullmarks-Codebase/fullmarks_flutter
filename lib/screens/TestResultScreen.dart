@@ -10,6 +10,7 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
+import 'AskingForProgressScreen.dart';
 import 'HomeScreen.dart';
 
 class TestResultScreen extends StatefulWidget {
@@ -55,7 +56,13 @@ class _TestResultScreenState extends State<TestResultScreen> {
             margin: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
-                myProgressView(),
+                widget.reportDetails?.correct == null ||
+                        widget.reportDetails?.correct == "null"
+                    ? Container(
+                        margin: EdgeInsets.symmetric(horizontal: 16),
+                        child: Utility.noUserProgressView(context),
+                      )
+                    : myProgressView(),
                 Spacer(),
                 Utility.button(
                   context,
@@ -66,13 +73,25 @@ class _TestResultScreenState extends State<TestResultScreen> {
                     await Future.delayed(
                         Duration(milliseconds: AppStrings.delay));
 
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => QuizResultScreen(
-                          questionsDetails: widget.questionsDetails,
+                    if (widget.reportDetails?.correct == null ||
+                        widget.reportDetails?.correct == "null") {
+                      //if guest ask for login to view solution
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              AskingForProgressScreen(),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      //if customer then view solution
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => QuizResultScreen(
+                            questionsDetails: widget.questionsDetails,
+                          ),
+                        ),
+                      );
+                    }
                   },
                   text: "View Solution",
                 ),

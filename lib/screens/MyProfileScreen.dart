@@ -477,7 +477,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ChangeGradeScreen(),
+                builder: (context) => ChangeGradeScreen(
+                  isFirstTime: false,
+                ),
               ),
             );
             _getUser();
@@ -544,7 +546,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         children: [
           customer == null
               ? dummyUserView((MediaQuery.of(context).size.height / 3.5) / 2)
-              : customer.userProfileImage == ""
+              : customer.thumbnail == ""
                   ? dummyUserView(
                       (MediaQuery.of(context).size.height / 3.5) / 2)
                   : Container(
@@ -558,8 +560,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image: _image == null
-                              ? NetworkImage(AppStrings.userImage +
-                                  customer.userProfileImage)
+                              ? NetworkImage(
+                                  AppStrings.userImage + customer.thumbnail)
                               : FileImage(
                                   _image,
                                 ),

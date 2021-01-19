@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/GuestUserResponse.dart';
+import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/models/ReportsResponse.dart';
 import 'package:fullmarks/models/SetReportResponse.dart';
 import 'package:fullmarks/models/SetsResponse.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
@@ -13,6 +16,7 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 import 'AskingForProgressScreen.dart';
+import 'TestResultScreen.dart';
 
 class SetsScreen extends StatefulWidget {
   SubtopicDetails subtopic;
@@ -32,10 +36,12 @@ class _SetsScreenState extends State<SetsScreen> {
   bool _isLoading = false;
   List<SetDetails> setsList = List();
   List<SetReportDetails> setReportDetails;
+  GuestUserDetails guest;
 
   @override
   void initState() {
     customer = Utility.getCustomer();
+    guest = Utility.getGuest();
     _getSets();
     _notify();
     super.initState();
@@ -52,6 +58,7 @@ class _SetsScreenState extends State<SetsScreen> {
       if (customer != null) {
         request["userId"] = customer.id.toString();
       }
+      request["calledFrom"] = "app";
       request["topicId"] = widget.subtopic.id.toString();
       //api call
       SetsResponse response = SetsResponse.fromJson(
@@ -153,17 +160,28 @@ class _SetsScreenState extends State<SetsScreen> {
         onPressed: () async {
           //delay to give ripple effect
           await Future.delayed(Duration(milliseconds: AppStrings.delay));
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (BuildContext context) => customer == null
-                  ? AskingForProgressScreen()
-                  : InstructionsScreen(
-                      subtopic: widget.subtopic,
-                      subject: widget.subject,
-                      setDetails: setsList[index],
-                    ),
-            ),
-          );
+          if (setsList[index].submitted) {
+            //if quiz is submitted then view result
+            getTestResult(setsList[index]);
+          } else {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext context) => customer == null
+                    ? guest.played >= 2 //its guest
+                        ? AskingForProgressScreen() //if two quiz played
+                        : InstructionsScreen(
+                            subtopic: widget.subtopic,
+                            subject: widget.subject,
+                            setDetails: setsList[index],
+                          )
+                    : InstructionsScreen(
+                        subtopic: widget.subtopic,
+                        subject: widget.subject,
+                        setDetails: setsList[index],
+                      ),
+              ),
+            );
+          }
         },
         child: Container(
           padding: EdgeInsets.symmetric(
@@ -193,5 +211,54 @@ class _SetsScreenState extends State<SetsScreen> {
         ),
       ),
     );
+  }
+
+  getTestResult(SetDetails setDetails) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["setId"] = setDetails.id.toString();
+      //api call
+      ReportsResponse response = ReportsResponse.fromJson(
+        await ApiManager(context).postCall(
+          url: AppStrings.testResult,
+          request: request,
+        ),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        List<QuestionDetails> questionsDetails = List();
+        await Future.forEach(response.result.reportDetail,
+            (ReportDetail element) {
+          element.question.selectedAnswer = int.tryParse(element.userAnswer);
+          questionsDetails.add(element.question);
+        });
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) => TestResultScreen(
+              questionsDetails: questionsDetails,
+              subtopic: widget.subtopic,
+              subject: widget.subject,
+              setDetails: setDetails,
+              reportDetails:
+                  Utility.getCustomer() == null ? null : response.result,
+            ),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        Utility.showToast(response.message);
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 }

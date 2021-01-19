@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/GuestUserResponse.dart';
 import 'package:fullmarks/models/ReportsResponse.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
@@ -42,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
   ReportDetails overallReportDetails;
+  GuestUserDetails guest;
 
   @override
   void initState() {
@@ -49,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     FirebaseMessagingService().getMessage();
     controller = ScrollController();
     _getUser();
+    if (guest != null) guestLogin();
     _getSubjects();
     if (customer != null) _getOverallProgress();
     _notify();
@@ -76,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _getUser() {
     customer = Utility.getCustomer();
+    guest = Utility.getGuest();
     _notify();
   }
 
@@ -89,10 +94,12 @@ class _HomeScreenState extends State<HomeScreen> {
       var request = Map<String, dynamic>();
       if (customer == null) {
         request["guest"] = "true";
+        request["guestId"] = guest.id.toString();
       } else {
         request["userId"] = customer.id.toString();
         request["id"] = customer.classGrades.id.toString();
       }
+      request["calledFrom"] = "app";
       //api call
       SubjectsResponse response = SubjectsResponse.fromJson(
         await ApiManager(context)
@@ -159,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Customer customer = Utility.getCustomer();
     return customer == null
         ? dummyUserView(size)
-        : customer.userProfileImage == ""
+        : customer.thumbnail == ""
             ? dummyUserView(size)
             : Container(
                 margin: EdgeInsets.all(16),
@@ -173,8 +180,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: NetworkImage(
-                        AppStrings.userImage + customer.userProfileImage),
+                    image:
+                        NetworkImage(AppStrings.userImage + customer.thumbnail),
                   ),
                 ),
               );
@@ -322,7 +329,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ChangeGradeScreen(),
+                      builder: (context) => ChangeGradeScreen(
+                        isFirstTime: false,
+                      ),
                     ),
                   );
                   _getUser();
@@ -773,6 +782,31 @@ class _HomeScreenState extends State<HomeScreen> {
           );
   }
 
+  guestLogin() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      request["imei"] = Utility.getGuest().imei;
+
+      //api call
+      GuestUserResponse response = GuestUserResponse.fromJson(
+        await ApiManager(context).postCall(
+          url: AppStrings.guestLogin,
+          request: request,
+        ),
+      );
+
+      if (response.code == 200) {
+        await PreferenceUtils.setString(AppStrings.guestUserPreference,
+            jsonEncode(response.result.toJson()));
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
   Widget subjectItemView(int index) {
     return FlatButton(
       padding: EdgeInsets.zero,
@@ -819,7 +853,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: 4,
             ),
-            PreferenceUtils.getBool(AppStrings.skipPreference)
+            Utility.getCustomer() != null
                 ? Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: 6,
@@ -840,7 +874,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   )
                 : Container(),
-            PreferenceUtils.getBool(AppStrings.skipPreference)
+            Utility.getCustomer() != null
                 ? SizedBox(
                     height: 4,
                   )
@@ -993,30 +1027,46 @@ class _HomeScreenState extends State<HomeScreen> {
     return customer == null
         ? SafeArea(
             bottom: false,
-            child: Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.only(
-                bottom: 16,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Class - Seven',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18,
+            child: GestureDetector(
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChangeGradeScreen(
+                      isFirstTime: false,
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.black,
+                );
+                _getUser();
+                _getSubjects();
+                if (customer != null) _getOverallProgress();
+              },
+              child: Container(
+                color: Colors.transparent,
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(
+                  bottom: 16,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      guest.classGrades.name,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18,
+                      ),
                     ),
-                    onPressed: null,
-                  )
-                ],
+                    IconButton(
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.black,
+                      ),
+                      onPressed: null,
+                    )
+                  ],
+                ),
               ),
             ),
           )

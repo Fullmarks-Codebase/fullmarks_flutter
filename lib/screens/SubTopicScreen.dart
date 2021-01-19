@@ -47,6 +47,7 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
       var request = Map<String, dynamic>();
       request["classId"] = customer.classGrades.id.toString();
       request["subjectId"] = widget.subject.id.toString();
+      request["calledFrom"] = "app";
       //api call
       SubjectReportResponse response = SubjectReportResponse.fromJson(
         await ApiManager(context)
@@ -217,12 +218,14 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                     SizedBox(
                       height: 4,
                     ),
-                    Text(
-                      subtopics[index].completed + "% Completed",
-                      style: TextStyle(
-                        color: AppColors.subtopicItemBorderColor,
-                      ),
-                    ),
+                    Utility.getCustomer() != null
+                        ? Text(
+                            subtopics[index].completed + "% Completed",
+                            style: TextStyle(
+                              color: AppColors.subtopicItemBorderColor,
+                            ),
+                          )
+                        : Container(),
                   ],
                 ),
               ),

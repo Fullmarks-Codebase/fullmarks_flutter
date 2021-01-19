@@ -8,6 +8,7 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
+import 'ChangeGradeScreen.dart';
 import 'HomeScreen.dart';
 import 'LoginScreen.dart';
 
@@ -35,17 +36,24 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Widget getRoute() {
-    if (PreferenceUtils.getString(AppStrings.userPreference) == "") {
+    if (Utility.getCustomer() == null) {
       //if not login
       return LoginScreen();
     } else {
       //if login
-      if (PreferenceUtils.getBool(AppStrings.introSliderPreference)) {
-        //if intro slider seen
-        return HomeScreen();
+      //check if class is not selected
+      if (Utility.getCustomer().classGrades == null) {
+        return ChangeGradeScreen(
+          isFirstTime: true,
+        );
       } else {
-        //if intro slider not seen
-        return IntroSliderScreen();
+        if (PreferenceUtils.getBool(AppStrings.introSliderPreference)) {
+          //if intro slider seen
+          return HomeScreen();
+        } else {
+          //if intro slider not seen
+          return IntroSliderScreen();
+        }
       }
     }
   }

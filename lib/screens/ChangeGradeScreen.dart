@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/ClassResponse.dart';
 import 'package:fullmarks/models/CommonResponse.dart';
+import 'package:fullmarks/models/GuestUserResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/models/UsersResponse.dart';
+import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
@@ -14,6 +16,10 @@ import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class ChangeGradeScreen extends StatefulWidget {
+  bool isFirstTime;
+  ChangeGradeScreen({
+    @required this.isFirstTime,
+  });
   @override
   _ChangeGradeScreenState createState() => _ChangeGradeScreenState();
 }
@@ -24,13 +30,19 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
       new GlobalKey<RefreshIndicatorState>();
   bool _isLoading = false;
   Customer customer;
+  GuestUserDetails guest;
 
   @override
   void initState() {
-    customer = Utility.getCustomer();
+    getCustomerGuest();
     _getClass();
-    _notify();
     super.initState();
+  }
+
+  getCustomerGuest() {
+    customer = Utility.getCustomer();
+    guest = Utility.getGuest();
+    _notify();
   }
 
   _getClass() async {
@@ -93,6 +105,12 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
         Utility.appbar(
           context,
           text: "Choose Grade",
+          isBack: customer == null
+              ? guest.classGrades != null
+              : customer.classGrades != null,
+          isHome: customer == null
+              ? guest.classGrades != null
+              : customer.classGrades != null,
         ),
         gradeList(),
       ],
@@ -151,12 +169,19 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
       onTap: () async {
         //delay to give ripple effect
         await Future.delayed(Duration(milliseconds: AppStrings.delay));
-        _changeGrade(gradesList[index].id.toString());
+        if (customer == null) {
+          _changeGradeGuest(gradesList[index].id.toString());
+        } else {
+          _changeGradeCustomer(gradesList[index].id.toString());
+        }
         _notify();
       },
       child: Container(
         decoration: BoxDecoration(
-          color: customer.classGrades.id == gradesList[index].id
+          color: (customer == null
+                      ? guest.classGrades?.id
+                      : customer.classGrades?.id) ==
+                  gradesList[index].id
               ? AppColors.strongCyan
               : AppColors.appColor,
           borderRadius: BorderRadius.circular(16),
@@ -191,7 +216,37 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
     );
   }
 
-  _changeGrade(String classId) async {
+  _changeGradeGuest(String classId) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["id"] = guest.id.toString();
+      request["classId"] = classId;
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context)
+            .putCall(url: AppStrings.changeClassGuest, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      Utility.showToast(response.message);
+
+      if (response.code == 200) {
+        _getGuest();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  _changeGradeCustomer(String classId) async {
     //check internet connection available or not
     if (await ApiManager.checkInternet()) {
       //show progress
@@ -213,7 +268,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
       Utility.showToast(response.message);
 
       if (response.code == 200) {
-        _getUser();
+        _getCustomer();
       }
     } else {
       //show message that internet is not available
@@ -221,7 +276,49 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
     }
   }
 
-  _getUser() async {
+  _getGuest() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["imei"] = guest.imei;
+
+      //api call
+      GuestUserResponse response = GuestUserResponse.fromJson(
+        await ApiManager(context).postCall(
+          url: AppStrings.guestLogin,
+          request: request,
+        ),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      Utility.showToast(response.message);
+
+      if (response.code == 200) {
+        await PreferenceUtils.setString(AppStrings.guestUserPreference,
+            jsonEncode(response.result.toJson()));
+        guest = response.result;
+        _notify();
+        if (widget.isFirstTime) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (BuildContext context) => HomeScreen(),
+              ),
+              (Route<dynamic> route) => false);
+        }
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  _getCustomer() async {
     //check internet connection available or not
     if (await ApiManager.checkInternet()) {
       //show progress
@@ -247,6 +344,13 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
               AppStrings.userPreference, jsonEncode(tempCustomer.toJson()));
           customer = Utility.getCustomer();
           _notify();
+          if (widget.isFirstTime) {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => HomeScreen(),
+                ),
+                (Route<dynamic> route) => false);
+          }
         }
       }
     } else {

@@ -33,6 +33,7 @@ class Customer {
   String otp;
   String dob;
   String userProfileImage;
+  String thumbnail;
   int gender;
   String createdAt;
   String updatedAt;
@@ -47,6 +48,7 @@ class Customer {
     this.otp,
     this.dob,
     this.userProfileImage,
+    this.thumbnail,
     this.gender,
     this.createdAt,
     this.updatedAt,
@@ -62,6 +64,7 @@ class Customer {
     otp = json['otp'] ?? "";
     dob = json['dob'] ?? "";
     userProfileImage = json['userProfileImage'] ?? "";
+    thumbnail = json['thumbnail'] ?? "";
     gender = json['gender'] ?? -1;
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
@@ -79,6 +82,7 @@ class Customer {
     data['otp'] = this.otp;
     data['dob'] = this.dob;
     data['userProfileImage'] = this.userProfileImage;
+    data['thumbnail'] = this.thumbnail;
     data['gender'] = this.gender;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;

@@ -1,3 +1,5 @@
+import 'package:fullmarks/models/QuestionsResponse.dart';
+
 class ReportsResponse {
   int code;
   String message;
@@ -31,14 +33,17 @@ class ReportDetails {
   String timeTaken;
   String avgTime;
   String totalMarks;
+  List<ReportDetail> reportDetail;
 
-  ReportDetails(
-      {this.correct,
-      this.incorrect,
-      this.accuracy,
-      this.timeTaken,
-      this.avgTime,
-      this.totalMarks});
+  ReportDetails({
+    this.correct,
+    this.incorrect,
+    this.accuracy,
+    this.timeTaken,
+    this.avgTime,
+    this.totalMarks,
+    this.reportDetail,
+  });
 
   ReportDetails.fromJson(Map<String, dynamic> json) {
     correct = json['correct'].toString() ?? "";
@@ -47,6 +52,12 @@ class ReportDetails {
     timeTaken = json['time_taken'].toString() ?? "";
     avgTime = json['avg_time'].toString() ?? "";
     totalMarks = json['total_marks'].toString() ?? "";
+    if (json['reportDetail'] != null) {
+      reportDetail = new List<ReportDetail>();
+      json['reportDetail'].forEach((v) {
+        reportDetail.add(new ReportDetail.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -57,6 +68,82 @@ class ReportDetails {
     data['time_taken'] = this.timeTaken;
     data['avg_time'] = this.avgTime;
     data['total_marks'] = this.totalMarks;
+    if (this.reportDetail != null) {
+      data['reportDetail'] = this.reportDetail.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class ReportDetail {
+  int id;
+  String userAnswer;
+  int timeTaken;
+  String correctAnswer;
+  String createdAt;
+  String updatedAt;
+  int userId;
+  int classId;
+  int subjectId;
+  int topicId;
+  int setId;
+  int questionId;
+  int reportId;
+  QuestionDetails question;
+
+  ReportDetail(
+      {this.id,
+      this.userAnswer,
+      this.timeTaken,
+      this.correctAnswer,
+      this.createdAt,
+      this.updatedAt,
+      this.userId,
+      this.classId,
+      this.subjectId,
+      this.topicId,
+      this.setId,
+      this.questionId,
+      this.reportId,
+      this.question});
+
+  ReportDetail.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    userAnswer = json['user_answer'];
+    timeTaken = json['time_taken'];
+    correctAnswer = json['correct_answer'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+    userId = json['userId'];
+    classId = json['classId'];
+    subjectId = json['subjectId'];
+    topicId = json['topicId'];
+    setId = json['setId'];
+    questionId = json['questionId'];
+    reportId = json['reportId'];
+    question = json['question'] != null
+        ? new QuestionDetails.fromJson(json['question'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['user_answer'] = this.userAnswer;
+    data['time_taken'] = this.timeTaken;
+    data['correct_answer'] = this.correctAnswer;
+    data['createdAt'] = this.createdAt;
+    data['updatedAt'] = this.updatedAt;
+    data['userId'] = this.userId;
+    data['classId'] = this.classId;
+    data['subjectId'] = this.subjectId;
+    data['topicId'] = this.topicId;
+    data['setId'] = this.setId;
+    data['questionId'] = this.questionId;
+    data['reportId'] = this.reportId;
+    if (this.question != null) {
+      data['question'] = this.question.toJson();
+    }
     return data;
   }
 }

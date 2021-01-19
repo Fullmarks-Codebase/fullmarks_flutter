@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fullmarks/models/UserResponse.dart';
+import 'package:fullmarks/screens/ChangeGradeScreen.dart';
 import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppColors.dart';
@@ -34,6 +35,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   String otp = "";
   String _verificationId;
   int _forceResendingToken;
+  Customer loggedinCustomer;
 
   @override
   void initState() {
@@ -203,8 +205,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
       if (response.code == 200) {
         Utility.showToast(response.message);
-        PreferenceUtils.setString(
+        loggedinCustomer = response.result;
+        await PreferenceUtils.setString(
             AppStrings.userPreference, jsonEncode(response.result.toJson()));
+        _notify();
         return null;
       } else {
         return response.message;
@@ -254,14 +258,24 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   // action to be performed after OTP validation is success
   void moveToNextScreen(context) {
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (BuildContext context) =>
-              PreferenceUtils.getBool(AppStrings.introSliderPreference)
-                  ? HomeScreen()
-                  : IntroSliderScreen(),
-        ),
-        (Route<dynamic> route) => false);
+    if (loggedinCustomer.classGrades == null) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) => ChangeGradeScreen(
+              isFirstTime: true,
+            ),
+          ),
+          (Route<dynamic> route) => false);
+    } else {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) =>
+                PreferenceUtils.getBool(AppStrings.introSliderPreference)
+                    ? HomeScreen()
+                    : IntroSliderScreen(),
+          ),
+          (Route<dynamic> route) => false);
+    }
   }
 
   _notify() {

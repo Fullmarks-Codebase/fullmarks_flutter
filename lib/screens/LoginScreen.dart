@@ -1,14 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fullmarks/models/GuestUserResponse.dart';
 import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/screens/VerificationScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:imei_plugin/imei_plugin.dart';
 
+import 'ChangeGradeScreen.dart';
 import 'HomeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -152,20 +158,63 @@ class _LoginScreenState extends State<LoginScreen> {
             await Future.delayed(Duration(milliseconds: AppStrings.delay));
             //default bool value in shared preference is true
             //so make it false
-            PreferenceUtils.setBool(AppStrings.skipPreference, false);
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      PreferenceUtils.getBool(AppStrings.introSliderPreference)
-                          ? HomeScreen()
-                          : IntroSliderScreen(),
-                ),
-                (Route<dynamic> route) => false);
+            guestLogin();
           },
           text: "Skip This Step",
         ),
       ),
     );
+  }
+
+  guestLogin() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["imei"] = await ImeiPlugin.getImei();
+
+      //api call
+      GuestUserResponse response = GuestUserResponse.fromJson(
+        await ApiManager(context).postCall(
+          url: AppStrings.guestLogin,
+          request: request,
+        ),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      Utility.showToast(response.message);
+
+      if (response.code == 200) {
+        await PreferenceUtils.setString(AppStrings.guestUserPreference,
+            jsonEncode(response.result.toJson()));
+        if (response.result.classGrades == null) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (BuildContext context) => ChangeGradeScreen(
+                  isFirstTime: true,
+                ),
+              ),
+              (Route<dynamic> route) => false);
+        } else {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    PreferenceUtils.getBool(AppStrings.introSliderPreference)
+                        ? HomeScreen()
+                        : IntroSliderScreen(),
+              ),
+              (Route<dynamic> route) => false);
+        }
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   Widget body() {
