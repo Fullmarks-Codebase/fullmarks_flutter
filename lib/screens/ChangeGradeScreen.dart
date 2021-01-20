@@ -15,6 +15,8 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
+import 'IntroSliderScreen.dart';
+
 class ChangeGradeScreen extends StatefulWidget {
   bool isFirstTime;
   ChangeGradeScreen({
@@ -305,11 +307,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
         guest = response.result;
         _notify();
         if (widget.isFirstTime) {
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (BuildContext context) => HomeScreen(),
-              ),
-              (Route<dynamic> route) => false);
+          gotoNext();
         }
       }
     } else {
@@ -345,11 +343,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
           customer = Utility.getCustomer();
           _notify();
           if (widget.isFirstTime) {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (BuildContext context) => HomeScreen(),
-                ),
-                (Route<dynamic> route) => false);
+            gotoNext();
           }
         }
       }
@@ -357,5 +351,16 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
       //show message that internet is not available
       Utility.showToast(AppStrings.noInternet);
     }
+  }
+
+  gotoNext() {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (BuildContext context) =>
+              PreferenceUtils.getBool(AppStrings.introSliderPreference)
+                  ? HomeScreen()
+                  : IntroSliderScreen(),
+        ),
+        (Route<dynamic> route) => false);
   }
 }

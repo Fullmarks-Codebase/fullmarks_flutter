@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
-import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -163,14 +162,20 @@ class _OtpScreenState extends State<OtpScreen>
           ],
         ),
         SafeArea(
-          child: Utility.roundShadowButton(
-            context: context,
-            assetName: AppAssets.backArrow,
-            onPressed: () async {
-              //delay to give ripple effect
-              await Future.delayed(Duration(milliseconds: AppStrings.delay));
-              Navigator.pop(context);
-            },
+          child: Row(
+            children: [
+              Utility.roundShadowButton(
+                context: context,
+                assetName: AppAssets.backArrow,
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
+                  Navigator.pop(context);
+                },
+              ),
+              Spacer()
+            ],
           ),
         ),
       ],
