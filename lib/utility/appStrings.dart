@@ -16,6 +16,9 @@ class AppStrings {
   static String setReport = baseUrl + "report/set";
   static String guestLogin = baseUrl + "customer/guest";
   static String testResult = baseUrl + "report/myReport";
+  static String getNotification = baseUrl + "notification/getAll";
+  static String readNotification = baseUrl + "notification/read";
+  static String countNotification = baseUrl + "notification/count";
 
   //image base url
   static String customQuestion = baseUrl + "images/user_questions/question/";

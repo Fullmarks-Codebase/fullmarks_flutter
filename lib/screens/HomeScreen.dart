@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/GuestUserResponse.dart';
+import 'package:fullmarks/models/NotificationCountResponse.dart';
 import 'package:fullmarks/models/ReportsResponse.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
@@ -45,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
       new GlobalKey<RefreshIndicatorState>();
   ReportDetails overallReportDetails;
   GuestUserDetails guest;
+  int notificationCount = 0;
 
   @override
   void initState() {
@@ -54,7 +56,10 @@ class _HomeScreenState extends State<HomeScreen> {
     _getUser();
     if (guest != null) guestLogin();
     _getSubjects();
-    if (customer != null) _getOverallProgress();
+    if (customer != null) {
+      _getOverallProgress();
+      _getNotificationCount();
+    }
     _notify();
     super.initState();
   }
@@ -271,10 +276,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               await Future.delayed(
                                   Duration(milliseconds: AppStrings.delay));
                               Navigator.pop(context);
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    NotificationListScreen(),
-                              ));
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      NotificationListScreen(),
+                                ),
+                              );
+                              _getNotificationCount();
                             },
                           ),
                         ),
@@ -443,7 +451,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<Null> _handleRefresh() async {
     _getSubjects();
-    if (customer != null) _getOverallProgress();
+    if (customer != null) {
+      _getOverallProgress();
+      _getNotificationCount();
+    }
     //delay to give ripple effect
     await Future.delayed(Duration(milliseconds: AppStrings.delay));
     return null;
@@ -1080,6 +1091,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 padding: EdgeInsets.only(top: 16),
                 child: Utility.roundShadowButton(
+                  isBadge: notificationCount != 0,
                   context: context,
                   assetName: AppAssets.drawer,
                   onPressed: () async {
@@ -1126,5 +1138,26 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           );
+  }
+
+  _getNotificationCount() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      //api call
+      NotificationCountResponse response = NotificationCountResponse.fromJson(
+        await ApiManager(context)
+            .getCall(url: AppStrings.countNotification, request: request),
+      );
+
+      if (response.code == 200) {
+        notificationCount = response.result;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 }

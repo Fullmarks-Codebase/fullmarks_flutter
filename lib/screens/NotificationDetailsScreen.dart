@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:fullmarks/models/NotificationResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class NotificationDetailsScreen extends StatefulWidget {
+  NotificationDetails notificationDetail;
+  NotificationDetailsScreen({
+    @required this.notificationDetail,
+  });
   @override
   _NotificationDetailsScreenState createState() =>
       _NotificationDetailsScreenState();
@@ -24,6 +29,8 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
 
   Widget body() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Utility.appbar(
           context,
@@ -42,7 +49,7 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Notification Title",
+            widget.notificationDetail.title,
             style: TextStyle(
               color: AppColors.appColor,
               fontSize: 16,
@@ -53,7 +60,7 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
             height: 4,
           ),
           Text(
-            "A day ago",
+            widget.notificationDetail.createdAt,
             style: TextStyle(
               color: Colors.black54,
             ),
@@ -62,7 +69,7 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
             height: 8,
           ),
           Text(
-            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna",
+            widget.notificationDetail.body,
             style: TextStyle(
               color: Colors.black,
             ),

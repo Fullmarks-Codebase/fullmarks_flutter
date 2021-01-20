@@ -140,30 +140,44 @@ class Utility {
     @required BuildContext context,
     @required String assetName,
     @required Function() onPressed,
+    bool isBadge = false,
   }) {
     return Container(
       margin: EdgeInsets.only(
         left: 8,
         right: 8,
       ),
-      child: ClipOval(
-        child: Material(
-          shape: CircleBorder(
-            side: BorderSide(
-              color:
-                  assetName == null ? Colors.transparent : AppColors.appColor,
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          ClipOval(
+            child: Material(
+              shape: CircleBorder(
+                side: BorderSide(
+                  color: assetName == null
+                      ? Colors.transparent
+                      : AppColors.appColor,
+                ),
+              ),
+              color: assetName == null ? Colors.transparent : Colors.white,
+              child: InkWell(
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  child: assetName == null
+                      ? Container()
+                      : SvgPicture.asset(assetName),
+                ),
+                onTap: assetName == null ? null : onPressed,
+              ),
             ),
           ),
-          color: assetName == null ? Colors.transparent : Colors.white,
-          child: InkWell(
-            child: Container(
-              padding: EdgeInsets.all(10),
-              child:
-                  assetName == null ? Container() : SvgPicture.asset(assetName),
-            ),
-            onTap: assetName == null ? null : onPressed,
-          ),
-        ),
+          isBadge
+              ? Positioned(
+                  right: 0,
+                  child: SvgPicture.asset(AppAssets.redDot),
+                )
+              : Container()
+        ],
       ),
     );
     // return SafeArea(

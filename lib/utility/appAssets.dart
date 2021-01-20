@@ -19,6 +19,8 @@ class AppAssets {
   static String class1 = "assets/class1.svg";
   static String discussionForum = "assets/discussionForum.svg";
   static String drawer = "assets/drawer.svg";
+  static String unreadDrawer = "assets/unreadDrawer.svg";
+  static String redDot = "assets/redDot.svg";
   static String drawerBg = "assets/drawerBg.svg";
   static String drawerChangeGrade = "assets/drawerChangeGrade.svg";
   static String drawerDiscussion = "assets/drawerDiscussion.svg";
