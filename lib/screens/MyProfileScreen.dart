@@ -231,7 +231,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     width: 16,
                   ),
                   Text(
-                    isEdit ? "Tap to change" : getDob(),
+                    dob == "" && isEdit ? "Tap to change" : getDob(),
                     style: TextStyle(
                       fontSize: 16,
                     ),
