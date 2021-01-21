@@ -14,6 +14,7 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:http/http.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:http_parser/http_parser.dart';
@@ -35,18 +36,17 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   TextEditingController _emailController = TextEditingController();
   bool isEdit = false;
   int maleFemale = -1;
-  String dob = "-";
+  String dob = "";
 
   @override
   void initState() {
     customer = Utility.getCustomer();
     _notify();
     _phoneController.text = customer.phoneNumber;
-    _usernameController.text =
-        customer.username == "" ? "-" : customer.username;
-    _emailController.text = customer.email == "" ? "-" : customer.email;
+    _usernameController.text = customer.username == "" ? "" : customer.username;
+    _emailController.text = customer.email == "" ? "" : customer.email;
     maleFemale = customer.gender;
-    dob = customer.dob == "" ? "-" : customer.dob.substring(0, 10);
+    dob = customer.dob == "" ? "" : customer.dob.substring(0, 10);
     _getUser();
     super.initState();
   }
@@ -199,7 +199,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         ? "Male"
                         : maleFemale == AppStrings.female
                             ? "Female"
-                            : "-",
+                            : isEdit
+                                ? "Tap to change"
+                                : "",
                     style: TextStyle(
                       fontSize: 16,
                     ),
@@ -229,7 +231,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     width: 16,
                   ),
                   Text(
-                    getDob(),
+                    isEdit ? "Tap to change" : getDob(),
                     style: TextStyle(
                       fontSize: 16,
                     ),
@@ -304,12 +306,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       //api request
       var request = Map<String, dynamic>();
       request["id"] = customer.id.toString();
-      if (_usernameController.text.trim() != "-")
+      if (_usernameController.text.trim() != "")
         request["username"] = _usernameController.text.trim();
-      if (_emailController.text.trim() != "-")
+      if (_emailController.text.trim() != "")
         request["email"] = _emailController.text.trim();
       if (maleFemale != -1) request["gender"] = maleFemale.toString();
-      if (dob != "-") request["dob"] = dob;
+      if (dob != "") request["dob"] = dob;
       //api call
       UserResponse response = UserResponse.fromJson(
         await ApiManager(context)
@@ -337,12 +339,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   String getDob() {
     try {
-      return dob == "-"
+      return dob == ""
           ? dob
           : DateFormat("dd MMMM, yyyy")
               .format(DateFormat("yyyy-MM-dd").parse(dob));
     } catch (e) {
-      return "-";
+      return "";
     }
   }
 
@@ -636,7 +638,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       if (value != null) {
         _image = File(value.path);
         _notify();
-        _updateProfilePicture();
+        _cropImage();
       } else {
         print('No image selected.');
       }
@@ -644,5 +646,28 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     }).catchError((onError) {
       print(onError);
     });
+  }
+
+  Future<Null> _cropImage() async {
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: _image.path,
+        aspectRatioPresets: [CropAspectRatioPreset.square],
+        compressQuality: 80,
+        cropStyle: CropStyle.circle,
+        androidUiSettings: AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: AppColors.appColor,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+    if (croppedFile != null) {
+      _image = croppedFile;
+      _notify();
+      _updateProfilePicture();
+    }
   }
 }
