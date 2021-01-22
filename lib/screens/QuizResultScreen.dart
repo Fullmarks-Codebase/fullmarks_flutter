@@ -122,12 +122,35 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
               fontWeight: FontWeight.w500,
             ),
           ),
+          widget.questionsDetails[index].questionImage == ""
+              ? Container()
+              : questionImageView(index),
           Column(
             children: List.generate(4, (answerIndex) {
               return textAnswerItemView(index, answerIndex);
             }),
           )
         ],
+      ),
+    );
+  }
+
+  Widget questionImageView(int index) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      height: 200,
+      margin: EdgeInsets.only(
+        top: 16,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Utility.imageLoader(
+          baseUrl: AppStrings.questionImage,
+          url: widget.questionsDetails[index].questionImage,
+          placeholder: AppAssets.imagePlaceholder,
+        ),
       ),
     );
   }

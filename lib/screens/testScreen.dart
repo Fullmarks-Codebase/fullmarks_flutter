@@ -93,15 +93,32 @@ class _TestScreenState extends State<TestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Utility.setSvgFullScreen(context, AppAssets.commonBg),
-          body(),
-          _isLoading ? Utility.progress(context) : Container()
-        ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Utility.setSvgFullScreen(context, AppAssets.commonBg),
+            body(),
+            _isLoading ? Utility.progress(context) : Container()
+          ],
+        ),
       ),
     );
+  }
+
+  Future<bool> _onBackPressed() {
+    return Utility.showSubmitQuizDialog(
+          context: context,
+          onSubmitPress: () async {
+            stopwatch.stop();
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
+            Navigator.pop(context);
+            submitQuestions();
+          },
+        ) ??
+        false;
   }
 
   Widget body() {

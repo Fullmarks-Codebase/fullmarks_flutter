@@ -316,10 +316,12 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                 Container(
                   height: (MediaQuery.of(context).size.width / 2) / 3,
                   width: (MediaQuery.of(context).size.width / 2) / 3,
-                  child: Utility.imageLoader(
-                    baseUrl: AppStrings.subjectImage,
-                    url: widget.subject.image,
-                    placeholder: AppAssets.subjectPlaceholder,
+                  child: SvgPicture.network(
+                    AppStrings.subjectImage + widget.subject.image,
+                    fit: BoxFit.contain,
+                    placeholderBuilder: (context) {
+                      return Image.asset(AppAssets.subjectPlaceholder);
+                    },
                   ),
                 ),
                 Utility.pieChart(

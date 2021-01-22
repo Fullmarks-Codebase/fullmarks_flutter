@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/models/ReportsResponse.dart';
 import 'package:fullmarks/models/SetsResponse.dart';
@@ -33,14 +34,26 @@ class TestResultScreen extends StatefulWidget {
 class _TestResultScreenState extends State<TestResultScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Utility.setSvgFullScreen(context, AppAssets.commonBg),
-          body(),
-        ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Utility.setSvgFullScreen(context, AppAssets.commonBg),
+            body(),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<bool> _onBackPressed() {
+    return Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (BuildContext context) => HomeScreen(),
+            ),
+            (Route<dynamic> route) => false) ??
+        false;
   }
 
   Widget body() {
@@ -170,10 +183,12 @@ class _TestResultScreenState extends State<TestResultScreen> {
                     Container(
                       height: (MediaQuery.of(context).size.width / 2) / 3,
                       width: (MediaQuery.of(context).size.width / 2) / 3,
-                      child: Utility.imageLoader(
-                        baseUrl: AppStrings.subjectImage,
-                        url: widget.subject.image,
-                        placeholder: AppAssets.subjectPlaceholder,
+                      child: SvgPicture.network(
+                        AppStrings.subjectImage + widget.subject.image,
+                        fit: BoxFit.contain,
+                        placeholderBuilder: (context) {
+                          return Image.asset(AppAssets.subjectPlaceholder);
+                        },
                       ),
                     ),
                     Utility.pieChart(

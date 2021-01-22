@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/SubjectReportResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/MyProgressSubjectScreen.dart';
@@ -162,10 +163,13 @@ class _MyProgressScreenState extends State<MyProgressScreen> {
                     Container(
                       height: (MediaQuery.of(context).size.width / 2) / 3,
                       width: (MediaQuery.of(context).size.width / 2) / 3,
-                      child: Utility.imageLoader(
-                        baseUrl: AppStrings.subjectImage,
-                        url: subjectReportDetails[index].subject.image,
-                        placeholder: AppAssets.subjectPlaceholder,
+                      child: SvgPicture.network(
+                        AppStrings.subjectImage +
+                            subjectReportDetails[index].subject.image,
+                        fit: BoxFit.contain,
+                        placeholderBuilder: (context) {
+                          return Image.asset(AppAssets.subjectPlaceholder);
+                        },
                       ),
                     ),
                     SizedBox(
