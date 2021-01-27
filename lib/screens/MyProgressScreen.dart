@@ -163,13 +163,19 @@ class _MyProgressScreenState extends State<MyProgressScreen> {
                     Container(
                       height: (MediaQuery.of(context).size.width / 2) / 3,
                       width: (MediaQuery.of(context).size.width / 2) / 3,
-                      child: SvgPicture.network(
-                        AppStrings.subjectImage +
-                            subjectReportDetails[index].subject.image,
+                      // child: SvgPicture.network(
+                      //   AppStrings.subjectImage +
+                      //       subjectReportDetails[index].subject.image,
+                      //   fit: BoxFit.contain,
+                      //   placeholderBuilder: (context) {
+                      //     return Image.asset(AppAssets.subjectPlaceholder);
+                      //   },
+                      // ),
+                      child: Utility.imageLoader(
+                        baseUrl: AppStrings.subjectImage,
+                        url: subjectReportDetails[index].subject.image,
+                        placeholder: AppAssets.subjectPlaceholder,
                         fit: BoxFit.contain,
-                        placeholderBuilder: (context) {
-                          return Image.asset(AppAssets.subjectPlaceholder);
-                        },
                       ),
                     ),
                     SizedBox(

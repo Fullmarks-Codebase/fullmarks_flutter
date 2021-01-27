@@ -841,12 +841,18 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 4,
             ),
             Expanded(
-              child: SvgPicture.network(
-                AppStrings.subjectImage + subjects[index].image,
+              // child: SvgPicture.network(
+              //   AppStrings.subjectImage + subjects[index].image,
+              //   fit: BoxFit.contain,
+              //   placeholderBuilder: (context) {
+              //     return Image.asset(AppAssets.subjectPlaceholder);
+              //   },
+              // ),
+              child: Utility.imageLoader(
+                baseUrl: AppStrings.subjectImage,
+                url: subjects[index].image,
+                placeholder: AppAssets.subjectPlaceholder,
                 fit: BoxFit.contain,
-                placeholderBuilder: (context) {
-                  return Image.asset(AppAssets.subjectPlaceholder);
-                },
               ),
             ),
             SizedBox(

@@ -81,6 +81,7 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
         request["userId"] = customer.id.toString();
       }
       request["subjectId"] = widget.subject.id.toString();
+      request["calledFrom"] = "app";
       //api call
       SubtopicResponse response = SubtopicResponse.fromJson(
         await ApiManager(context)
@@ -316,12 +317,18 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                 Container(
                   height: (MediaQuery.of(context).size.width / 2) / 3,
                   width: (MediaQuery.of(context).size.width / 2) / 3,
-                  child: SvgPicture.network(
-                    AppStrings.subjectImage + widget.subject.image,
+                  // child: SvgPicture.network(
+                  //   AppStrings.subjectImage + widget.subject.image,
+                  //   fit: BoxFit.contain,
+                  //   placeholderBuilder: (context) {
+                  //     return Image.asset(AppAssets.subjectPlaceholder);
+                  //   },
+                  // ),
+                  child: Utility.imageLoader(
+                    baseUrl: AppStrings.subjectImage,
+                    url: widget.subject.image,
+                    placeholder: AppAssets.subjectPlaceholder,
                     fit: BoxFit.contain,
-                    placeholderBuilder: (context) {
-                      return Image.asset(AppAssets.subjectPlaceholder);
-                    },
                   ),
                 ),
                 Utility.pieChart(
