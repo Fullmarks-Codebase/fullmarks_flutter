@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "331846892029-6pjjjcp6ahlg0k6lrmtofpsv9gr9hgod.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fullmarks",
+            "certificate_hash": "da76e8afc014b8171af6bc630b75d3a7d1f5163f"
+          }
+        },
+        {
+          "client_id": "331846892029-cru62cujia6ag7rj29jpfnbjjr8c8trh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fullmarks",
+            "certificate_hash": "afb3f57c82c8799177c9abb9344bbb03d2cae834"
+          }
+        },
+        {
           "client_id": "331846892029-t33v8osiuu77igi3i4cs7dsmekd0v8rv.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -30,6 +46,57 @@
             {
               "client_id": "331846892029-t33v8osiuu77igi3i4cs7dsmekd0v8rv.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "331846892029-3h1ocmtbte75o6v30fhoslhc76ln7si0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "e.fullmarks.com"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:331846892029:android:fb4b11bc9aa32869060194",
+        "android_client_info": {
+          "package_name": "e.fullmarks.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "331846892029-02e9c8muq6kjc89v97st6fcrdk2u6mur.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "e.fullmarks.com",
+            "certificate_hash": "afb3f57c82c8799177c9abb9344bbb03d2cae834"
+          }
+        },
+        {
+          "client_id": "331846892029-t33v8osiuu77igi3i4cs7dsmekd0v8rv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAFOGjXWUdHrUUMSKC-vuPJRZiX8lLzYQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "331846892029-t33v8osiuu77igi3i4cs7dsmekd0v8rv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "331846892029-3h1ocmtbte75o6v30fhoslhc76ln7si0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "e.fullmarks.com"
+              }
             }
           ]
         }
