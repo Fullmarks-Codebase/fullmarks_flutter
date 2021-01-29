@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class AppStrings {
   static String baseUrl = "http://104.131.14.251:3001/";
   static String login = baseUrl + "app/customer/checkin";
@@ -19,6 +21,13 @@ class AppStrings {
   static String getNotification = baseUrl + "notification/getAll";
   static String readNotification = baseUrl + "notification/read";
   static String countNotification = baseUrl + "notification/count";
+  static String getCustomQuiz = baseUrl + "live/custom/getNames";
+  static String addCustomQuiz = baseUrl + "live/custom/add";
+  static String addCustomQuestions = baseUrl + "live/custom/questions/add";
+  static String updateCustomQuestions =
+      baseUrl + "live/custom/questions/update";
+  static String getCustomQuestions = baseUrl + "live/custom/getQuestions";
+  static String deleteCustomQuestions = baseUrl + "live/custom/questions/";
 
   //image base url
   static String customQuestion = baseUrl + "images/user_questions/question/";
@@ -52,4 +61,6 @@ class AppStrings {
       "https://apps.apple.com/in/app/apple-store/id375380948"; //change this
   static String shareAppText =
       "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore \nDownload iOS app - $appstore";
+
+  static int phase = kDebugMode ? 2 : 1;
 }

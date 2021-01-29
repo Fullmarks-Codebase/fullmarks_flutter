@@ -54,6 +54,8 @@ class QuestionDetails {
   int classId;
   int selectedAnswer;
   int timeTaken;
+  int customMasterId;
+  int time;
 
   QuestionDetails({
     this.id,
@@ -82,6 +84,8 @@ class QuestionDetails {
     this.classId,
     this.selectedAnswer,
     this.timeTaken,
+    this.time,
+    this.customMasterId,
   });
 
   QuestionDetails.fromJson(Map<String, dynamic> json) {
@@ -111,6 +115,8 @@ class QuestionDetails {
     classId = json['classId'] ?? 0;
     selectedAnswer = json['selectedAnswer'] ?? -1;
     timeTaken = json['timeTaken'] ?? 0;
+    time = json['time'] ?? 0;
+    customMasterId = json['customMasterId'] ?? 0;
   }
 
   Map<String, dynamic> toJson() {
@@ -141,6 +147,8 @@ class QuestionDetails {
     data['classId'] = this.classId;
     data['selectedAnswer'] = this.selectedAnswer;
     data['timeTaken'] = this.timeTaken;
+    data['time'] = this.time;
+    data['customMasterId'] = this.customMasterId;
     return data;
   }
 }

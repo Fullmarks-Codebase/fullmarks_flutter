@@ -82,7 +82,7 @@ class _StartAddQuestionScreenState extends State<StartAddQuestionScreen> {
                         //delay to give ripple effect
                         await Future.delayed(
                             Duration(milliseconds: AppStrings.delay));
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => AddQuestionScreen(

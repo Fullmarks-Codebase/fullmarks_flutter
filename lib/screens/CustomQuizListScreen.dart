@@ -1,18 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/CommonResponse.dart';
+import 'package:fullmarks/models/CustomQuestionResponse.dart';
+import 'package:fullmarks/models/CustomQuizResponse.dart';
+import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/screens/AddQuestionScreen.dart';
 import 'package:fullmarks/screens/PreviewQuestionScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class CustomQuizListScreen extends StatefulWidget {
+  CustomQuizDetails quiz;
+  CustomQuizListScreen({
+    @required this.quiz,
+  });
   @override
   _CustomQuizListScreenState createState() => _CustomQuizListScreenState();
 }
 
 class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
+  ScrollController controller;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+  bool _isLoading = false;
+  List<QuestionDetails> questionsDetails = List();
+
+  @override
+  void initState() {
+    controller = ScrollController();
+    _getQuestions();
+    super.initState();
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,12 +61,47 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
     );
   }
 
+  _getQuestions() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["customMasterId"] = widget.quiz.id.toString();
+      //api call
+      CustomQuestionResponse response = CustomQuestionResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.getCustomQuestions, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        questionsDetails = response.result;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  Future<Null> _handleRefresh() async {
+    _getQuestions();
+    //delay to give ripple effect
+    await Future.delayed(Duration(milliseconds: AppStrings.delay));
+    return null;
+  }
+
   Widget body() {
     return Column(
       children: [
         Utility.appbar(
           context,
-          text: "Quiz Name",
+          text: widget.quiz.name,
           isHome: false,
           textColor: Colors.white,
         ),
@@ -70,6 +132,8 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                     MaterialPageRoute(
                       builder: (context) => AddQuestionScreen(
                         isEdit: false,
+                        questionDetails: null,
+                        quizDetails: widget.quiz,
                       ),
                     ),
                   );
@@ -104,14 +168,47 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
 
   Widget questionsList() {
     return Expanded(
-      child: ListView.builder(
-        padding: EdgeInsets.symmetric(
-          horizontal: 16,
+      child: _isLoading
+          ? Utility.progress(context)
+          : questionsDetails.length == 0
+              ? Utility.emptyView(
+                  "No Questions",
+                  textColor: Colors.white,
+                )
+              : RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: _handleRefresh,
+                  child: ListView.builder(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    itemCount: questionsDetails.length,
+                    itemBuilder: (context, index) {
+                      return questionsItemView(index);
+                    },
+                  ),
+                ),
+    );
+  }
+
+  Widget questionImageView(int index) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      height: 200,
+      margin: EdgeInsets.only(
+        left: 16,
+        right: 16,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Utility.imageLoader(
+          baseUrl: AppStrings.customQuestion,
+          url: questionsDetails[index].questionImage,
+          placeholder: AppAssets.imagePlaceholder,
         ),
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return questionsItemView(index);
-        },
       ),
     );
   }
@@ -148,17 +245,22 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
           SizedBox(
             height: 8,
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "Which one of the following has maximum number of atoms?",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
+          questionsDetails[index].question.length != 0
+              ? Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    questionsDetails[index].question,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )
+              : questionsDetails[index].questionImage.length != 0
+                  ? questionImageView(index)
+                  : Container(),
           SizedBox(
             height: 16,
           ),
@@ -189,7 +291,7 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                         width: 8,
                       ),
                       Text(
-                        "30 Sec",
+                        questionsDetails[index].time.toString() + " Sec",
                         style: TextStyle(
                           color: AppColors.appColor,
                           fontSize: 16,
@@ -204,7 +306,9 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PreviewQuestionScreen(),
+                      builder: (context) => PreviewQuestionScreen(
+                        questionDetails: questionsDetails[index],
+                      ),
                     ),
                   );
                 }),
@@ -219,6 +323,8 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                       MaterialPageRoute(
                         builder: (context) => AddQuestionScreen(
                           isEdit: true,
+                          questionDetails: questionsDetails[index],
+                          quizDetails: null,
                         ),
                       ),
                     );
@@ -235,6 +341,7 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                       await Future.delayed(
                           Duration(milliseconds: AppStrings.delay));
                       Navigator.pop(context);
+                      _deleteQuestion(index);
                     },
                   );
                 }),
@@ -244,6 +351,35 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
         ],
       ),
     );
+  }
+
+  _deleteQuestion(int index) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context).deleteCall(
+          url: AppStrings.deleteCustomQuestions +
+              questionsDetails[index].id.toString(),
+        ),
+      );
+
+      Utility.showToast(response.message);
+
+      if (response.code == 200) {
+        _getQuestions();
+      } else {
+        //hide progress
+        _isLoading = false;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   Widget questionItemViewButton(String assetName, Function onTap) {

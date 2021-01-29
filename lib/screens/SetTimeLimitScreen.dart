@@ -6,13 +6,15 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class SetTimeLimitScreen extends StatefulWidget {
+  String questionSeconds;
+  SetTimeLimitScreen({
+    @required this.questionSeconds,
+  });
   @override
   _SetTimeLimitScreenState createState() => _SetTimeLimitScreenState();
 }
 
 class _SetTimeLimitScreenState extends State<SetTimeLimitScreen> {
-  int selectedIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,7 +122,7 @@ class _SetTimeLimitScreenState extends State<SetTimeLimitScreen> {
             onPressed: () async {
               //delay to give ripple effect
               await Future.delayed(Duration(milliseconds: AppStrings.delay));
-              Navigator.pop(context);
+              Navigator.pop(context, widget.questionSeconds);
             },
             text: "Done",
             bgColor: AppColors.myProgressCorrectcolor,
@@ -139,7 +141,7 @@ class _SetTimeLimitScreenState extends State<SetTimeLimitScreen> {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          selectedIndex = index;
+          widget.questionSeconds = time;
           _notify();
         },
         child: Container(
@@ -150,7 +152,7 @@ class _SetTimeLimitScreenState extends State<SetTimeLimitScreen> {
               horizontal: 16,
             ),
             decoration: BoxDecoration(
-              color: selectedIndex == index
+              color: widget.questionSeconds == time
                   ? AppColors.myProgressIncorrectcolor
                   : Colors.white,
               borderRadius: BorderRadius.circular(30),

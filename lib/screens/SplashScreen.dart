@@ -29,10 +29,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   gotoHome() {
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (BuildContext context) => getRoute(),
-        ),
-        (Route<dynamic> route) => false);
+      MaterialPageRoute(
+        builder: (BuildContext context) => getRoute(),
+      ),
+      (Route<dynamic> route) => false,
+    );
   }
 
   Widget getRoute() {

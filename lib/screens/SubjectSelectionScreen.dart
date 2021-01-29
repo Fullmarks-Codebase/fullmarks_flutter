@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/CreateQuizLobbyScreen.dart';
 import 'package:fullmarks/screens/RandomQuizMatchScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
@@ -23,11 +24,18 @@ class SubjectSelectionScreen extends StatefulWidget {
 class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
   List<SubjectDetails> subjects = List();
   bool _isLoading = false;
+  Customer customer;
 
   @override
   void initState() {
+    _getUser();
     _getSubjects();
     super.initState();
+  }
+
+  _getUser() {
+    customer = Utility.getCustomer();
+    _notify();
   }
 
   _notify() {
@@ -43,6 +51,9 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       _notify();
       //api request
       var request = Map<String, dynamic>();
+      request["userId"] = customer.id.toString();
+      request["id"] = customer.classGrades.id.toString();
+      request["calledFrom"] = "app";
       //api call
       SubjectsResponse response = SubjectsResponse.fromJson(
         await ApiManager(context)
@@ -177,6 +188,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                 baseUrl: AppStrings.subjectImage,
                 url: subjects[index].image,
                 placeholder: AppAssets.subjectPlaceholder,
+                fit: BoxFit.contain,
               ),
             ),
             SizedBox(
@@ -189,7 +201,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
-              maxLines: 1,
+              textAlign: TextAlign.center,
             ),
           ],
         ),

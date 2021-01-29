@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class PreviewQuestionScreen extends StatefulWidget {
+  QuestionDetails questionDetails;
+  PreviewQuestionScreen({
+    @required this.questionDetails,
+  });
   @override
   _PreviewQuestionScreenState createState() => _PreviewQuestionScreenState();
 }
@@ -61,30 +67,37 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
           ),
           child: Column(
             children: [
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(
-                  right: 16,
-                  left: 16,
-                  top: 16,
-                ),
-                child: Text(
-                  "Question 1",
-                  style: TextStyle(
-                    color: AppColors.appColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.all(16),
-                child: Divider(
-                  thickness: 2,
-                ),
-              ),
-              questionImageView(),
-              questionText(),
+              widget.questionDetails.question.length == 0
+                  ? Container()
+                  : Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.only(
+                        right: 16,
+                        left: 16,
+                        top: 16,
+                      ),
+                      child: Text(
+                        widget.questionDetails.question,
+                        style: TextStyle(
+                          color: AppColors.appColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+              widget.questionDetails.question.length == 0
+                  ? SizedBox(
+                      height: 16,
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(8),
+                      child: Divider(
+                        thickness: 2,
+                      ),
+                    ),
+              widget.questionDetails.questionImage.length == 0
+                  ? Container()
+                  : questionImageView(),
               SizedBox(
                 height: 16,
               ),
@@ -117,49 +130,85 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
       ),
       alignment: Alignment.center,
       decoration: Utility.defaultAnswerDecoration(),
-      child: Text(
-        index == 0
-            ? "(A) 123"
-            : index == 1
-                ? "(B) 456"
-                : index == 2
-                    ? "(C) 789"
-                    : "(D) 0",
-        style: TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
-        textAlign: TextAlign.center,
+      child: Column(
+        children: [
+          Text(
+            index == 0
+                ? "(A) " + widget.questionDetails.ansOne
+                : index == 1
+                    ? "(B) " + widget.questionDetails.ansTwo
+                    : index == 2
+                        ? "(C) " + widget.questionDetails.ansThree
+                        : "(D) " + widget.questionDetails.ansFour,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          (index == 0
+                  ? widget.questionDetails.ansOneImage == ""
+                  : index == 1
+                      ? widget.questionDetails.ansTwoImage == ""
+                      : index == 2
+                          ? widget.questionDetails.ansThreeImage == ""
+                          : widget.questionDetails.ansFourImage == "")
+              ? Container()
+              : SizedBox(
+                  height: 8,
+                ),
+          (index == 0
+                  ? widget.questionDetails.ansOneImage == ""
+                  : index == 1
+                      ? widget.questionDetails.ansTwoImage == ""
+                      : index == 2
+                          ? widget.questionDetails.ansThreeImage == ""
+                          : widget.questionDetails.ansFourImage == "")
+              ? Container()
+              : Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  height: 200,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Utility.imageLoader(
+                      baseUrl: AppStrings.customAnswers,
+                      url: index == 0
+                          ? widget.questionDetails.ansOneImage
+                          : index == 1
+                              ? widget.questionDetails.ansTwoImage
+                              : index == 2
+                                  ? widget.questionDetails.ansThreeImage
+                                  : widget.questionDetails.ansFourImage,
+                      placeholder: AppAssets.imagePlaceholder,
+                    ),
+                  ),
+                )
+        ],
       ),
     );
   }
 
   Widget questionImageView() {
     return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      height: 200,
       margin: EdgeInsets.only(
-        bottom: 16,
-      ),
-      child: Image.asset(
-        AppAssets.imagePlaceholder,
-      ),
-    );
-  }
-
-  Widget questionText() {
-    return Container(
-      padding: EdgeInsets.only(
-        right: 16,
         left: 16,
+        right: 16,
       ),
-      child: Text(
-        "Which one of the following has maximum number of atoms?",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Utility.imageLoader(
+          baseUrl: AppStrings.customQuestion,
+          url: widget.questionDetails.questionImage,
+          placeholder: AppAssets.imagePlaceholder,
         ),
-        textAlign: TextAlign.center,
       ),
     );
   }
@@ -190,7 +239,7 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
               width: 8,
             ),
             Text(
-              "30",
+              widget.questionDetails.time.toString(),
               style: TextStyle(
                 color: AppColors.appColor,
                 fontSize: 22,

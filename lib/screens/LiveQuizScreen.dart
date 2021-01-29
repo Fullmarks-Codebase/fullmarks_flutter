@@ -374,7 +374,8 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                   ),
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: NetworkImage(customer.thumbnail),
+                    image:
+                        NetworkImage(AppStrings.userImage + customer.thumbnail),
                   ),
                 ),
               );

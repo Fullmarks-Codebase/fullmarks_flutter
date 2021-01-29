@@ -93,11 +93,14 @@ class Utility {
           );
   }
 
-  static Widget emptyView(String text) {
+  static Widget emptyView(String text, {Color textColor = Colors.black}) {
     return Center(
       child: Text(
         text,
         textAlign: TextAlign.center,
+        style: TextStyle(
+          color: textColor,
+        ),
       ),
     );
   }

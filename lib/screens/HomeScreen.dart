@@ -369,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                   liveQuizTap();
                 },
-                iscomingsoon: true,
+                iscomingsoon: AppStrings.phase == 1,
               ),
               drawerItemView(
                 assetName: AppAssets.drawerDiscussion,
@@ -398,7 +398,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 },
-                iscomingsoon: true,
+                iscomingsoon: AppStrings.phase == 1,
               ),
               drawerItemView(
                 assetName: AppAssets.drawerShareApp,
@@ -655,7 +655,7 @@ class _HomeScreenState extends State<HomeScreen> {
             await Future.delayed(Duration(milliseconds: AppStrings.delay));
             liveQuizTap();
           },
-          isComingSoon: true,
+          isComingSoon: AppStrings.phase == 1,
         ),
         horizontalItemView(
           color: AppColors.mockTestColor,

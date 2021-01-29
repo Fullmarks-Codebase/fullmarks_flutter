@@ -233,14 +233,15 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
         await ApiManager(context)
             .putCall(url: AppStrings.changeClassGuest, request: request),
       );
-      //hide progress
-      _isLoading = false;
-      _notify();
 
       Utility.showToast(response.message);
 
       if (response.code == 200) {
         _getGuest();
+      } else {
+        //hide progress
+        _isLoading = false;
+        _notify();
       }
     } else {
       //show message that internet is not available
@@ -263,14 +264,15 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
         await ApiManager(context)
             .postCall(url: AppStrings.changeClass, request: request),
       );
-      //hide progress
-      _isLoading = false;
-      _notify();
 
       Utility.showToast(response.message);
 
       if (response.code == 200) {
         _getCustomer();
+      } else {
+        //hide progress
+        _isLoading = false;
+        _notify();
       }
     } else {
       //show message that internet is not available
