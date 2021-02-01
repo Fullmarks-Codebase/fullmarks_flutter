@@ -96,50 +96,50 @@ class _LoginScreenState extends State<LoginScreen> {
               text: "Verify",
             ),
           ),
-          SizedBox(
-            height: 16,
-          ),
-          Text(
-            "Or Get started with",
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Utility.button(
-                    context,
-                    bgColor: AppColors.fbColor,
-                    onPressed: () async {
-                      //delay to give ripple effect
-                      await Future.delayed(
-                          Duration(milliseconds: AppStrings.delay));
-                    },
-                    assetName: AppAssets.facebook,
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  child: Utility.button(
-                    context,
-                    bgColor: AppColors.googleColor,
-                    onPressed: () async {
-                      //delay to give ripple effect
-                      await Future.delayed(
-                          Duration(milliseconds: AppStrings.delay));
-                    },
-                    assetName: AppAssets.google,
-                  ),
-                ),
-              ],
-            ),
-          )
+          // SizedBox(
+          //   height: 16,
+          // ),
+          // Text(
+          //   "Or Get started with",
+          //   textAlign: TextAlign.center,
+          // ),
+          // SizedBox(
+          //   height: 16,
+          // ),
+          // Container(
+          //   padding: EdgeInsets.symmetric(horizontal: 20),
+          //   child: Row(
+          //     children: [
+          //       Expanded(
+          //         child: Utility.button(
+          //           context,
+          //           bgColor: AppColors.fbColor,
+          //           onPressed: () async {
+          //             //delay to give ripple effect
+          //             await Future.delayed(
+          //                 Duration(milliseconds: AppStrings.delay));
+          //           },
+          //           assetName: AppAssets.facebook,
+          //         ),
+          //       ),
+          //       SizedBox(
+          //         width: 20,
+          //       ),
+          //       Expanded(
+          //         child: Utility.button(
+          //           context,
+          //           bgColor: AppColors.googleColor,
+          //           onPressed: () async {
+          //             //delay to give ripple effect
+          //             await Future.delayed(
+          //                 Duration(milliseconds: AppStrings.delay));
+          //           },
+          //           assetName: AppAssets.google,
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );
