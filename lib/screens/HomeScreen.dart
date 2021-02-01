@@ -445,8 +445,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   rateApp() {
-    Utility.launchURL(
-        Platform.isAndroid ? AppStrings.playStore : AppStrings.appstore);
+    Utility.launchURL(AppStrings.playStore);
+    // Platform.isAndroid ? AppStrings.playStore : AppStrings.appstore);
   }
 
   Future<Null> _handleRefresh() async {

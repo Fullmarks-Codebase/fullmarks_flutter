@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>331846892029-3h1ocmtbte75o6v30fhoslhc76ln7si0.apps.googleusercontent.com</string>
+	<string>331846892029-7pjeh6gdej7i0bq8h80dbctsqcmaah2b.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.331846892029-3h1ocmtbte75o6v30fhoslhc76ln7si0</string>
+	<string>com.googleusercontent.apps.331846892029-7pjeh6gdej7i0bq8h80dbctsqcmaah2b</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>331846892029-02e9c8muq6kjc89v97st6fcrdk2u6mur.apps.googleusercontent.com</string>
+	<string>331846892029-6pjjjcp6ahlg0k6lrmtofpsv9gr9hgod.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyB7LUjNCQJk366vFLlp9ASJ-wCai55h07o</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>e.fullmarks.com</string>
+	<string>app.fullmarks.com</string>
 	<key>PROJECT_ID</key>
 	<string>full-marks-app</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:331846892029:ios:2e5b49ebbfb93b21060194</string>
+	<string>1:331846892029:ios:de2b25874b927630060194</string>
 	<key>DATABASE_URL</key>
 	<string>https://full-marks-app.firebaseio.com</string>
 </dict>

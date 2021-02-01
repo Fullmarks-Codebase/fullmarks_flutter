@@ -87,6 +87,8 @@ class _StartAddQuestionScreenState extends State<StartAddQuestionScreen> {
                           MaterialPageRoute(
                             builder: (context) => AddQuestionScreen(
                               isEdit: false,
+                              questionDetails: null,
+                              quizDetails: null,
                             ),
                           ),
                         );

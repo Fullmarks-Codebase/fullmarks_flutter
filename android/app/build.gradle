@@ -33,20 +33,20 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "e.fullmarks.com"
+        applicationId "app.fullmarks.com"
         minSdkVersion 16
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 4
-        versionName "2.0.1"
+        versionCode 1
+        versionName "1.0.0"
     }
 
     signingConfigs {
         release {
-            storeFile file("/Users/webbrains/Webbrains/JKS/webbrains.jks")
-            storePassword "webbrains"
-            keyAlias "webbrains"
-            keyPassword "webbrains"
+            storeFile file("/Users/webbrains/Webbrains/JKS/fullmarks.jks")
+            storePassword "fullmarks"
+            keyAlias "fullmarks"
+            keyPassword "fullmarks"
         }
     }
     buildTypes {

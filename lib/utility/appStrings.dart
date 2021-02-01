@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 class AppStrings {
-  static String baseUrl = "http://104.131.14.251:3001/";
+  static String baseUrl = "http://e-fullmarks.in/";
+  // static String baseUrl = "http://104.131.14.251:3001/";
   static String login = baseUrl + "app/customer/checkin";
   static String customer = baseUrl + "customer/getSingleCustomer";
   static String customerUpdate = baseUrl + "customer/update";
@@ -30,15 +31,18 @@ class AppStrings {
   static String deleteCustomQuestions = baseUrl + "live/custom/questions/";
 
   //image base url
-  static String customQuestion = baseUrl + "images/user_questions/question/";
-  static String customAnswers = baseUrl + "images/user_questions/answers/";
-  static String userImage = baseUrl + "images/user/";
-  static String classImage = baseUrl + "images/class/";
-  static String subjectImage = baseUrl + "images/subjects/";
-  static String questionImage = baseUrl + "images/questions/question/";
-  static String answersImage = baseUrl + "images/questions/answers/";
-  static String commentImage = baseUrl + "images/posts/comments/";
-  static String postImage = baseUrl + "images/posts/post/";
+  static String imageBaseUrl =
+      "https://e-fullmarks.s3.us-east-2.amazonaws.com/";
+  static String customQuestion =
+      imageBaseUrl + "images/user_questions/question/";
+  static String customAnswers = imageBaseUrl + "images/user_questions/answers/";
+  static String userImage = imageBaseUrl + "images/user/";
+  static String classImage = imageBaseUrl + "images/class/";
+  static String subjectImage = imageBaseUrl + "images/subjects/";
+  static String questionImage = imageBaseUrl + "images/questions/question/";
+  static String answersImage = imageBaseUrl + "images/questions/answers/";
+  static String commentImage = imageBaseUrl + "images/posts/comments/";
+  static String postImage = imageBaseUrl + "images/posts/post/";
 
   //constant strings
   static String noInternet = "No Internet Connection";
@@ -56,11 +60,12 @@ class AppStrings {
   static int delay = 150;
 
   static String playStore =
-      "https://play.google.com/store/apps/details?id=e.fullmarks.com"; //change this
-  static String appstore =
-      "https://apps.apple.com/in/app/apple-store/id375380948"; //change this
+      "https://play.google.com/store/apps/details?id=app.fullmarks.com"; //change this
+  // static String appstore =
+  //     "https://apps.apple.com/in/app/apple-store/id375380948"; //change this
   static String shareAppText =
-      "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore \nDownload iOS app - $appstore";
+      "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore";
+  // "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore \nDownload iOS app - $appstore";
 
   static int phase = kDebugMode ? 2 : 1;
 }
