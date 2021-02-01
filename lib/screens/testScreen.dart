@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:fullmarks/models/QuestionReportRequest.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
@@ -44,6 +45,8 @@ class _TestScreenState extends State<TestScreen> {
   int seconds = 0;
   bool _isLoading = false;
 
+  RewardedVideoAd rewardAd = RewardedVideoAd.instance;
+
   @override
   void initState() {
     questionsNumberController = ScrollController();
@@ -52,6 +55,18 @@ class _TestScreenState extends State<TestScreen> {
         Duration(milliseconds: timerMillisecondsRefreshRate), callback);
     timerListeners.add(onTick);
     stopwatch.start();
+    rewardAd.load(adUnitId: AppStrings.adUnitId).then((value) {
+      print("Reward ad load");
+      print(value);
+    });
+    rewardAd.listener =
+        (RewardedVideoAdEvent event, {String rewardType, int rewardAmount}) {
+      print("Reward ad listener");
+      print(event);
+      if (event == RewardedVideoAdEvent.closed) {
+        submitQuestions();
+      }
+    };
     super.initState();
   }
 
@@ -138,7 +153,7 @@ class _TestScreenState extends State<TestScreen> {
               //delay to give ripple effect
               await Future.delayed(Duration(milliseconds: AppStrings.delay));
               Navigator.pop(context);
-              submitQuestions();
+              showRewardAd();
             },
           );
         }),
@@ -439,7 +454,7 @@ class _TestScreenState extends State<TestScreen> {
                       await Future.delayed(
                           Duration(milliseconds: AppStrings.delay));
                       Navigator.pop(context);
-                      submitQuestions();
+                      showRewardAd();
                     },
                   );
                 } else {
@@ -458,6 +473,16 @@ class _TestScreenState extends State<TestScreen> {
         ],
       ),
     );
+  }
+
+  showRewardAd() async {
+    rewardAd.show().then((value) {
+      print("Reward ad show");
+      print(value);
+      if (!value) {
+        submitQuestions();
+      }
+    });
   }
 
   submitQuestions() async {

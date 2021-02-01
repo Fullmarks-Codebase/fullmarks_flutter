@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 class AppStrings {
-  static String baseUrl = "http://e-fullmarks.in/";
-  // static String baseUrl = "http://104.131.14.251:3001/";
+  // static String baseUrl = "http://e-fullmarks.in/";
+  static String baseUrl = "http://104.131.14.251:3001/";
   static String login = baseUrl + "app/customer/checkin";
   static String customer = baseUrl + "customer/getSingleCustomer";
   static String customerUpdate = baseUrl + "customer/update";
@@ -31,8 +31,9 @@ class AppStrings {
   static String deleteCustomQuestions = baseUrl + "live/custom/questions/";
 
   //image base url
-  static String imageBaseUrl =
-      "https://e-fullmarks.s3.us-east-2.amazonaws.com/";
+  static String imageBaseUrl = baseUrl;
+  // static String imageBaseUrl =
+  //     "https://e-fullmarks.s3.us-east-2.amazonaws.com/";
   static String customQuestion =
       imageBaseUrl + "images/user_questions/question/";
   static String customAnswers = imageBaseUrl + "images/user_questions/answers/";
@@ -68,4 +69,9 @@ class AppStrings {
   // "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore \nDownload iOS app - $appstore";
 
   static int phase = kDebugMode ? 2 : 1;
+
+  //admob
+  //https://developers.google.com/admob/android/test-ads
+  static String appId = "ca-app-pub-3940256099942544~3347511713";
+  static String adUnitId = "ca-app-pub-3940256099942544/5224354917";
 }

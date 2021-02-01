@@ -12,6 +12,11 @@ PODS:
   - Firebase/Messaging (6.33.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 4.7.0)
+  - firebase_admob (0.10.3):
+    - Firebase/CoreOnly (~> 6.33.0)
+    - firebase_core
+    - Flutter
+    - Google-Mobile-Ads-SDK
   - firebase_auth (0.18.4-1):
     - Firebase/Auth (~> 6.33.0)
     - Firebase/CoreOnly (~> 6.33.0)
@@ -66,8 +71,18 @@ PODS:
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
+  - Google-Mobile-Ads-SDK (7.67.0):
+    - GoogleAppMeasurement (~> 6.0)
+    - GoogleUserMessagingPlatform (~> 1.1)
+  - GoogleAppMeasurement (6.9.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 6.7)
+    - GoogleUtilities/MethodSwizzler (~> 6.7)
+    - GoogleUtilities/Network (~> 6.7)
+    - "GoogleUtilities/NSData+zlib (~> 6.7)"
+    - nanopb (~> 1.30906.0)
   - GoogleDataTransport (7.5.1):
     - nanopb (~> 1.30906.0)
+  - GoogleUserMessagingPlatform (1.4.0)
   - GoogleUtilities/AppDelegateSwizzler (6.7.2):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -76,6 +91,8 @@ PODS:
     - PromisesObjC (~> 1.2)
   - GoogleUtilities/Logger (6.7.2):
     - GoogleUtilities/Environment
+  - GoogleUtilities/MethodSwizzler (6.7.2):
+    - GoogleUtilities/Logger
   - GoogleUtilities/Network (6.7.2):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
@@ -122,6 +139,7 @@ PODS:
 DEPENDENCIES:
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
   - contacts_service (from `.symlinks/plugins/contacts_service/ios`)
+  - firebase_admob (from `.symlinks/plugins/firebase_admob/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
@@ -149,7 +167,10 @@ SPEC REPOS:
     - FirebaseInstanceID
     - FirebaseMessaging
     - FMDB
+    - Google-Mobile-Ads-SDK
+    - GoogleAppMeasurement
     - GoogleDataTransport
+    - GoogleUserMessagingPlatform
     - GoogleUtilities
     - GTMSessionFetcher
     - nanopb
@@ -164,6 +185,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/connectivity/ios"
   contacts_service:
     :path: ".symlinks/plugins/contacts_service/ios"
+  firebase_admob:
+    :path: ".symlinks/plugins/firebase_admob/ios"
   firebase_auth:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
@@ -201,6 +224,7 @@ SPEC CHECKSUMS:
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   contacts_service: 849e1f84281804c8bfbec1b4c3eedcb23c5d3eca
   Firebase: 8db6f2d1b2c5e2984efba4949a145875a8f65fe5
+  firebase_admob: c3b3b8762181c9748d7e74595044641f0180816b
   firebase_auth: d5159db3873478d1ac839af7b10d2f831516136a
   firebase_core: 5d6a02f3d85acd5f8321c2d6d62877626a670659
   firebase_messaging: 0aea2cd5885b65e19ede58ee3507f485c992cc75
@@ -214,7 +238,10 @@ SPEC CHECKSUMS:
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  Google-Mobile-Ads-SDK: 8b58584890539de4527c47ef01e4da941a10bc8a
+  GoogleAppMeasurement: a6a3a066369828db64eda428cb2856dc1cdc7c4e
   GoogleDataTransport: f56af7caa4ed338dc8e138a5d7c5973e66440833
+  GoogleUserMessagingPlatform: b168e8c46cd8f92aa3e34b584c4ca78a411ce367
   GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   image_cropper: c8f9b4157933c7bb965a66d1c5e6c8fd408c6eb4

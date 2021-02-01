@@ -1,9 +1,11 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fullmarks/screens/SplashScreen.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -44,6 +46,7 @@ class ReceivedNotification {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FirebaseAdMob.instance.initialize(appId: AppStrings.appId);
   await Firebase.initializeApp();
   flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
