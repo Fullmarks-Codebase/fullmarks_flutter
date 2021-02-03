@@ -71,6 +71,12 @@
 				<string>com.googleusercontent.apps.331846892029-7pjeh6gdej7i0bq8h80dbctsqcmaah2b</string>
 			</array>
 		</dict>
+		<dict>
+	        <key>CFBundleURLSchemes</key>
+	        <array>
+	            <string>2918990245026351</string>
+	        </array>
+	    </dict>
 	</array>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
@@ -81,5 +87,16 @@
 	</array>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~3347511713</string>
+	<key>FacebookAppID</key>
+	<string>2918990245026351</string>
+	<key>FacebookDisplayName</key>
+	<string>Fullmarks: The Learning App</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+    	<string>fb-messenger-share-api</string>
+    	<string>fbauth2</string>
+    	<string>fbshareextension</string>
+	</array>	
 </dict>
 </plist>

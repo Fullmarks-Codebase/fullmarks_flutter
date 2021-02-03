@@ -1247,4 +1247,10 @@ class Utility {
     String hoursStr = (hours % 60).toString().padLeft(2, '0');
     return "$hoursStr:$minutesStr:$secondsStr";
   }
+
+  static bool isValidEmail(String email) {
+    return RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(email);
+  }
 }

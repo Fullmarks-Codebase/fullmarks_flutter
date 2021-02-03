@@ -150,9 +150,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         //delay to give ripple effect
                         await Future.delayed(
                             Duration(milliseconds: AppStrings.delay));
-                        if (isEdit) _updateProfile();
-                        isEdit = !isEdit;
-                        _notify();
+                        if (isEdit) {
+                          _updateProfile();
+                        } else {
+                          isEdit = !isEdit;
+                          _notify();
+                        }
                       },
                     ),
                   ),
@@ -168,7 +171,10 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           textfield(
             controller: _emailController,
             icon: AppAssets.email,
-            enabled: isEdit,
+            enabled:
+                customer.facebookId.length != 0 || customer.googleId.length != 0
+                    ? false
+                    : isEdit,
           ),
           SizedBox(
             height: 8,
@@ -297,7 +303,21 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     }
   }
 
-  _updateProfile() async {
+  _updateProfile() {
+    if (_emailController.text.trim() != "" &&
+        !Utility.isValidEmail(_emailController.text.trim())) {
+      Utility.showToast("Invalid email");
+    } else if (_phoneController.text.trim() != "" &&
+        _phoneController.text.trim().length != 10) {
+      Utility.showToast("Phone number must be 10 digits");
+    } else {
+      updateProfile();
+    }
+  }
+
+  updateProfile() async {
+    isEdit = !isEdit;
+    _notify();
     //check internet connection available or not
     if (await ApiManager.checkInternet()) {
       //show progress
@@ -310,6 +330,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         request["username"] = _usernameController.text.trim();
       if (_emailController.text.trim() != "")
         request["email"] = _emailController.text.trim();
+      if (_phoneController.text.trim() != "")
+        request["phoneNumber"] = _phoneController.text.trim();
       if (maleFemale != -1) request["gender"] = maleFemale.toString();
       if (dob != "") request["dob"] = dob;
       //api call
@@ -362,6 +384,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     @required TextEditingController controller,
     @required String icon,
     @required bool enabled,
+    int maxLength,
   }) {
     return Row(
       children: [
@@ -380,6 +403,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             decoration: InputDecoration(
               border: enabled ? null : InputBorder.none,
             ),
+            maxLength: maxLength,
           ),
         ),
         SizedBox(
@@ -391,17 +415,53 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   Widget accountDetailsView() {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16,
+      padding: EdgeInsets.only(
+        left: 16,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Account Details",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+          Container(
+            padding: EdgeInsets.only(
+              right: 4,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Account Details",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                ClipOval(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      child: Container(
+                        height: 15,
+                        width: 15,
+                        margin: EdgeInsets.all(16),
+                        child: SvgPicture.asset(
+                            isEdit ? AppAssets.checkBlue : AppAssets.pencil),
+                      ),
+                      onTap: () async {
+                        //delay to give ripple effect
+                        await Future.delayed(
+                            Duration(milliseconds: AppStrings.delay));
+                        if (isEdit) {
+                          _updateProfile();
+                        } else {
+                          isEdit = !isEdit;
+                          _notify();
+                        }
+                      },
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
           SizedBox(
@@ -410,7 +470,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           textfield(
             controller: _phoneController,
             icon: AppAssets.mobile,
-            enabled: false,
+            enabled: isEdit,
+            maxLength: 10,
           ),
         ],
       ),

@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:fullmarks/screens/LoginScreen.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
 import 'AppStrings.dart';
@@ -112,12 +114,22 @@ class ApiManager {
     return await json.decode(response.body);
   }
 
-  logout() {
+  logout() async {
     //remove user preference
-    PreferenceUtils.remove(AppStrings.userPreference);
+    await PreferenceUtils.remove(AppStrings.userPreference);
 
     //remove guest user preference
-    PreferenceUtils.remove(AppStrings.guestUserPreference);
+    await PreferenceUtils.remove(AppStrings.guestUserPreference);
+
+    //signout from google
+    try {
+      await GoogleSignIn().signOut();
+    } catch (e) {}
+
+    //signout from facebook
+    try {
+      await FacebookLogin().logOut();
+    } catch (e) {}
 
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(

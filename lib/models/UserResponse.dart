@@ -39,6 +39,9 @@ class Customer {
   String updatedAt;
   String token;
   ClassDetails classGrades;
+  String googleId;
+  String facebookId;
+  String phoneId;
 
   Customer({
     this.id,
@@ -54,6 +57,9 @@ class Customer {
     this.updatedAt,
     this.token,
     this.classGrades,
+    this.googleId,
+    this.facebookId,
+    this.phoneId,
   });
 
   Customer.fromJson(Map<String, dynamic> json) {
@@ -71,6 +77,9 @@ class Customer {
     token = json['token'] ?? "";
     classGrades =
         json['class'] != null ? new ClassDetails.fromJson(json['class']) : null;
+    googleId = json['googleId'] ?? "";
+    facebookId = json['facebookId'] ?? "";
+    phoneId = json['phoneId'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
@@ -90,6 +99,9 @@ class Customer {
     if (this.classGrades != null) {
       data['class'] = this.classGrades.toJson();
     }
+    data['googleId'] = this.googleId;
+    data['facebookId'] = this.facebookId;
+    data['phoneId'] = this.phoneId;
     return data;
   }
 }
