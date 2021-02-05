@@ -25,6 +25,7 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/FirebaseMessagingService.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:share/share.dart';
 
 import '../main.dart';
@@ -444,8 +445,25 @@ class _HomeScreenState extends State<HomeScreen> {
     Share.share(AppStrings.shareAppText);
   }
 
-  rateApp() {
-    Utility.launchURL(AppStrings.playStore);
+  rateApp() async {
+    final InAppReview inAppReview = InAppReview.instance;
+
+    if (await inAppReview.isAvailable()) {
+      inAppReview.requestReview().then((value) {
+        print("requestReview done");
+      }).catchError((onError) {
+        print("onError");
+        print(onError);
+      });
+    } else {
+      inAppReview.openStoreListing().then((value) {
+        print("openStoreListing done");
+      }).catchError((onError) {
+        print("onError");
+        print(onError);
+      });
+    }
+    // Utility.launchURL(AppStrings.playStore);
     // Platform.isAndroid ? AppStrings.playStore : AppStrings.appstore);
   }
 

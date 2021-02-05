@@ -173,28 +173,24 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   facebookSignin() async {
-    print("facebookSignin");
     final facebookLogin = FacebookLogin();
-    print("1");
-    FacebookLoginResult result = await facebookLogin.logIn(['email']);
-    print("2");
-
-    switch (result.status) {
-      case FacebookLoginStatus.loggedIn:
-        print("3");
-        getFacebookData(result.accessToken.token);
-        break;
-      case FacebookLoginStatus.cancelledByUser:
-        print("4");
-        Utility.showToast("Login cancelled by the user.");
-        break;
-      case FacebookLoginStatus.error:
-        print("5");
-        print(result.errorMessage);
-        Utility.showToast('Something went wrong with the login process.\n'
-            'Here\'s the error Facebook gave us: ${result.errorMessage}');
-        break;
-    }
+    facebookLogin.logIn(['email']).then((result) {
+      switch (result.status) {
+        case FacebookLoginStatus.loggedIn:
+          getFacebookData(result.accessToken.token);
+          break;
+        case FacebookLoginStatus.cancelledByUser:
+          Utility.showToast("Login cancelled by the user.");
+          break;
+        case FacebookLoginStatus.error:
+          print(result.errorMessage);
+          Utility.showToast('Something went wrong with the login process.\n'
+              'Here\'s the error Facebook gave us: ${result.errorMessage}');
+          break;
+      }
+    }).catchError((onError) {
+      print(onError);
+    });
   }
 
   getFacebookData(String token) async {
