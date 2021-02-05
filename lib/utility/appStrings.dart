@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 class AppStrings {
@@ -72,6 +74,24 @@ class AppStrings {
 
   //admob
   //https://developers.google.com/admob/android/test-ads
-  static String appId = "ca-app-pub-3940256099942544~3347511713";
-  static String adUnitId = "ca-app-pub-3940256099942544/5224354917";
+  static String appId = Platform.isAndroid
+      ? "ca-app-pub-9321524489967330~8028966399"
+      : "ca-app-pub-9321524489967330~5903983043";
+  static String adUnitId = Platform.isAndroid
+      ? "ca-app-pub-9321524489967330/1187569339"
+      : "ca-app-pub-9321524489967330/7483183246";
+
+  //firebase analytics
+  //https://github.com/FirebaseExtended/flutterfire/blob/master/packages/firebase_analytics/firebase_analytics/example/lib/main.dart
+  static String splashScreenEvent = "splashScreen";
+  static String introSliderScreenEvent = "introSliderScreen";
+  static String changeGradeScreenEvent = "changeGradeScreen";
+  static String loginScreenEvent = "loginScreen";
+  static String loginWithFacebookEvent = "loginWithFacebook";
+  static String loginWithgoogleEvent = "loginWithgoogle";
+  static String loginWithPhoneEvent = "loginWithPhone";
+  static String verificationScreenEvent = "verificationScreen";
+  static String homeScreenEvent = "homeScreen";
+  static String guestLoginEvent = "guestLogin";
+  // static String  = "";
 }

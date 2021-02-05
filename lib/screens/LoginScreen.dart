@@ -13,6 +13,7 @@ import 'package:fullmarks/screens/VerificationScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -31,6 +32,13 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   TextEditingController _phoneNumberController = TextEditingController();
   GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  @override
+  void initState() {
+    AppFirebaseAnalytics.init().logLogin();
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.loginScreenEvent);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
         request["googleId"] = value.id;
         request["googleSign"] = "true";
         request["registrationToken"] = await FirebaseMessaging().getToken();
-        checkin(request);
+        checkin(request, AppStrings.loginWithgoogleEvent);
       }
     }).catchError((onError) {
       Utility.showToast(onError.toString());
@@ -213,7 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
         request["facebookId"] = response.id;
         request["facebookSign"] = "true";
         request["registrationToken"] = await FirebaseMessaging().getToken();
-        checkin(request);
+        checkin(request, AppStrings.loginWithFacebookEvent);
       } else {
         //hide progress
         _isLoading = false;
@@ -225,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  checkin(var request) async {
+  checkin(var request, String eventName) async {
     //check internet connection available or not
     if (await ApiManager.checkInternet()) {
       //show progress
@@ -246,6 +254,10 @@ class _LoginScreenState extends State<LoginScreen> {
         await PreferenceUtils.setString(
             AppStrings.userPreference, jsonEncode(response.result.toJson()));
         _notify();
+        AppFirebaseAnalytics.init().logLogin();
+        AppFirebaseAnalytics.init().logEvent(
+          name: eventName,
+        );
         if (response.result.classGrades == null) {
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
@@ -316,6 +328,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Utility.showToast(response.message);
 
       if (response.code == 200) {
+        AppFirebaseAnalytics.init().logEvent(name: AppStrings.guestLoginEvent);
         await PreferenceUtils.setString(AppStrings.guestUserPreference,
             jsonEncode(response.result.toJson()));
         if (response.result.classGrades == null) {

@@ -21,6 +21,7 @@ import 'package:fullmarks/screens/SubTopicScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/FirebaseMessagingService.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
@@ -51,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.homeScreenEvent);
     _requestPermissions();
     FirebaseMessagingService().getMessage();
     controller = ScrollController();

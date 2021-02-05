@@ -51,6 +51,8 @@ dependencies:
   google_sign_in: ^4.5.9
   flutter_facebook_login: ^3.0.0
   in_app_review: ^1.0.4
+  firebase_crashlytics: ^0.2.4
+  firebase_analytics: ^6.3.0
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:lottie/lottie.dart';
@@ -19,6 +20,8 @@ class _IntroSliderScreenState extends State<IntroSliderScreen> {
   @override
   void initState() {
     super.initState();
+    AppFirebaseAnalytics.init()
+        .logEvent(name: AppStrings.introSliderScreenEvent);
     _init();
   }
 

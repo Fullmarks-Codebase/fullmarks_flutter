@@ -9,6 +9,7 @@ import 'package:fullmarks/screens/ChangeGradeScreen.dart';
 import 'package:fullmarks/screens/IntroSliderScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -39,6 +40,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init()
+        .logEvent(name: AppStrings.verificationScreenEvent);
     _activeCounter();
     _verifyPhoneNumber();
     super.initState();
@@ -258,6 +261,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   // action to be performed after OTP validation is success
   void moveToNextScreen(context) {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.loginWithPhoneEvent);
     if (loggedinCustomer.classGrades == null) {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(

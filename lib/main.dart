@@ -1,10 +1,13 @@
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fullmarks/screens/SplashScreen.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:rxdart/rxdart.dart';
@@ -126,6 +129,9 @@ class MyApp extends StatelessWidget {
             scaffoldBackgroundColor: AppColors.background,
           ),
           home: SplashScreen(),
+          navigatorObservers: [
+            FirebaseAnalyticsObserver(analytics: AppFirebaseAnalytics.init()),
+          ],
         ),
       ),
     );
