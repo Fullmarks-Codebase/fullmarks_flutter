@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:share/share.dart';
 
 import 'LiveQuizPlayScreen.dart';
 
@@ -59,6 +60,9 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
           text: "Join Quiz",
           textColor: Colors.white,
           homeassetName: AppAssets.share,
+          onHomePressed: () {
+            Share.share(Utility.getLiveQuizLink("123"));
+          },
         ),
         waitingView(),
         participantsView(),

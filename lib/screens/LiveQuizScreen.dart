@@ -191,8 +191,8 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                       MaterialPageRoute(
                         builder: (context) => AddFriendScreen(
                           buttonStr: "Send Request",
-                          isShare: false,
                           title: "Add a Friend",
+                          roomId: null,
                         ),
                       ),
                     );

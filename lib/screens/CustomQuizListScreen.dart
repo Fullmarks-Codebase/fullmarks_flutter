@@ -171,9 +171,20 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
       child: _isLoading
           ? Utility.progress(context)
           : questionsDetails.length == 0
-              ? Utility.emptyView(
-                  "No Questions",
-                  textColor: Colors.white,
+              ? ListView(
+                  padding: EdgeInsets.all(16),
+                  physics: AlwaysScrollableScrollPhysics(),
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height -
+                          ((AppBar().preferredSize.height * 2) + 100),
+                      child: Utility.emptyView(
+                        "No Questions",
+                        textColor: Colors.white,
+                      ),
+                    ),
+                  ],
                 )
               : RefreshIndicator(
                   key: _refreshIndicatorKey,

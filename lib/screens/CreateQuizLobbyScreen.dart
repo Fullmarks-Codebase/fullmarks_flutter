@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fullmarks/screens/AddFriendScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:share/share.dart';
 
+import 'AddFriendScreen.dart';
 import 'LiveQuizPlayScreen.dart';
 
 class CreateQuizLobbyScreen extends StatefulWidget {
@@ -186,92 +187,126 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
                   ),
                 ),
               ),
-              GestureDetector(
-                child: Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        offset: Offset(0, 1),
-                        blurRadius: 1,
-                        color: AppColors.appColor,
-                      ),
-                    ],
-                    shape: BoxShape.circle,
-                  ),
-                  child: SvgPicture.asset(AppAssets.share),
-                ),
-                onTap: () {},
-              ),
+              // GestureDetector(
+              //   child: Container(
+              //     padding: EdgeInsets.all(12),
+              //     decoration: BoxDecoration(
+              //       color: Colors.white,
+              //       boxShadow: [
+              //         BoxShadow(
+              //           offset: Offset(0, 1),
+              //           blurRadius: 1,
+              //           color: AppColors.appColor,
+              //         ),
+              //       ],
+              //       shape: BoxShape.circle,
+              //     ),
+              //     child: SvgPicture.asset(AppAssets.share),
+              //   ),
+              //   onTap: () {},
+              // ),
             ],
           ),
           SizedBox(
             height: 16,
           ),
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Utility.button(
-                    context,
-                    onPressed: () async {
-                      //delay to give ripple effect
-                      await Future.delayed(
-                          Duration(milliseconds: AppStrings.delay));
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddFriendScreen(
-                            buttonStr: "Share",
-                            isShare: true,
-                            title: "Contact",
-                          ),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      // Expanded(
+                      //   child: Utility.button(
+                      //     context,
+                      //     onPressed: () async {
+                      //       //delay to give ripple effect
+                      //       await Future.delayed(
+                      //           Duration(milliseconds: AppStrings.delay));
+                      //       Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => AddFriendScreen(
+                      //       buttonStr: "Share",
+                      //       isShare: true,
+                      //       title: "Contact",
+                      //     ),
+                      //   ),
+                      // );
+                      //     },
+                      //     assetName: AppAssets.contact,
+                      //     bgColor: AppColors.chartBgColor,
+                      //     text: "Contact",
+                      //     isPrefix: true,
+                      //     isSpacer: true,
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   width: 8,
+                      // ),
+                      Expanded(
+                        child: Utility.button(
+                          context,
+                          onPressed: () async {
+                            //delay to give ripple effect
+                            await Future.delayed(
+                                Duration(milliseconds: AppStrings.delay));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddFriendScreen(
+                                  buttonStr: "Share",
+                                  title: "My Friends",
+                                  roomId: "1020",
+                                ),
+                              ),
+                            );
+                          },
+                          assetName: AppAssets.contacts,
+                          bgColor: AppColors.chartBgColor,
+                          text: "My Friends",
+                          isPrefix: true,
+                          isSpacer: true,
+                          height: 50,
                         ),
-                      );
-                    },
-                    assetName: AppAssets.contact,
-                    bgColor: AppColors.chartBgColor,
-                    text: "Contact",
-                    isPrefix: true,
-                    isSpacer: true,
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                  child: Utility.button(
-                    context,
-                    onPressed: () async {
-                      //delay to give ripple effect
-                      await Future.delayed(
-                          Duration(milliseconds: AppStrings.delay));
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddFriendScreen(
-                            buttonStr: "Share",
-                            isShare: true,
-                            title: "My Friends",
+              ),
+              Expanded(
+                child: Container(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(0, 1),
+                            blurRadius: 1,
+                            color: AppColors.appColor,
                           ),
-                        ),
-                      );
+                        ],
+                        shape: BoxShape.circle,
+                      ),
+                      child: SvgPicture.asset(AppAssets.share),
+                    ),
+                    onTap: () {
+                      Share.share(Utility.getLiveQuizLink("1020"));
                     },
-                    assetName: AppAssets.contacts,
-                    bgColor: AppColors.chartBgColor,
-                    text: "My Friends",
-                    isPrefix: true,
-                    isSpacer: true,
                   ),
-                )
-              ],
-            ),
+                ),
+              ),
+            ],
           ),
           SizedBox(
             height: 16,

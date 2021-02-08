@@ -7,11 +7,23 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class JoinQuizScreen extends StatefulWidget {
+  String roomId;
+  JoinQuizScreen({
+    this.roomId = "",
+  });
   @override
   _JoinQuizScreenState createState() => _JoinQuizScreenState();
 }
 
 class _JoinQuizScreenState extends State<JoinQuizScreen> {
+  TextEditingController roomIdController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    roomIdController.text = widget.roomId;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,12 +70,17 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(50),
           ),
-          child: Text(
-            "139829",
+          child: TextField(
+            controller: roomIdController,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: AppColors.appColor,
-              fontSize: 30,
+              fontSize: 25,
             ),
+            decoration: InputDecoration(
+              hintText: "Enter Room Id",
+              border: InputBorder.none,
+            ),
+            keyboardType: TextInputType.number,
           ),
         ),
         Container(

@@ -241,7 +241,7 @@ class Utility {
     Color gradientColor2,
     Color textcolor = Colors.white,
     double radius = 8,
-    double padding = 16,
+    double padding = 8,
     double fontSize = 16,
     String text,
     String assetName,
@@ -252,6 +252,7 @@ class Utility {
     bool isSufix = false,
     bool isSpacer = false,
     double height = 60,
+    double borderWidth = 1.0,
   }) {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -269,9 +270,11 @@ class Utility {
         borderRadius: BorderRadius.circular(radius),
         border: Border.all(
           color: borderColor == null ? Colors.transparent : borderColor,
+          width: borderWidth,
         ),
       ),
       child: FlatButton(
+        padding: EdgeInsets.all(padding),
         child: text != null
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1150,8 +1153,10 @@ class Utility {
     );
   }
 
-  static String getUsername() {
-    Customer customer = getCustomer();
+  static String getUsername({Customer customer}) {
+    if (customer == null) {
+      customer = getCustomer();
+    }
     return customer == null
         ? ""
         : customer.username == ""
@@ -1252,5 +1257,14 @@ class Utility {
     return RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(email);
+  }
+
+  static String getLiveQuizLink(String roomId) {
+    return AppStrings.commonShareText +
+        "applink://fullmarks.app/" +
+        AppStrings.joinLiveQuizDeepLinkKey +
+        "/" +
+        roomId +
+        " to join my LIVE quiz !";
   }
 }

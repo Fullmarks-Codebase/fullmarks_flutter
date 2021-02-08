@@ -84,4 +84,9 @@ class AppColors {
   static Color yellowColor = Color(0xffF4B542);
   static Color correctColor = Color(0xff26EDC6);
   static Color incorrectColor = Color(0xffFF8C8B);
+  static Color tabColor = Color(0xff2F5496);
+  static Color tabBorderColor = Color(0xff3AB050);
+  static Color pendingColor = Color(0xffFCD966);
+  static Color acceptColor = Color(0xff70AD47);
+  static Color rejectColor = Color(0xffF50E02);
 }

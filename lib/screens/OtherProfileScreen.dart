@@ -1,20 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/UserResponse.dart';
+import 'package:fullmarks/models/UsersResponse.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class OtherProfileScreen extends StatefulWidget {
-  bool isMyFriend;
+  String id;
   OtherProfileScreen({
-    @required this.isMyFriend,
+    @required this.id,
   });
   @override
   _OtherProfileScreenState createState() => _OtherProfileScreenState();
 }
 
 class _OtherProfileScreenState extends State<OtherProfileScreen> {
+  bool _isLoading = false;
+  Customer customer;
+
+  @override
+  void initState() {
+    _getCustomer();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +42,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                 isHome: false,
               ),
               Spacer(),
-              widget.isMyFriend ? addBuddyView() : Container(),
+              // widget.isMyFriend ? addBuddyView() : Container(),
             ],
           ),
         ],
@@ -38,55 +50,92 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     );
   }
 
-  Widget addBuddyView() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: Utility.bottomDecoration(),
-      child: Utility.button(
-        context,
-        gradientColor1: AppColors.buttonGradient1,
-        gradientColor2: AppColors.buttonGradient2,
-        onPressed: () async {
-          //delay to give ripple effect
-          await Future.delayed(Duration(milliseconds: AppStrings.delay));
-        },
-        text: "Add Buddy",
-      ),
-    );
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
   }
 
+  _getCustomer() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["customerId"] = widget.id;
+      //api call
+      UsersResponse response = UsersResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.customer, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        if (response.result.length > 0) {
+          customer = response.result.first;
+          _notify();
+        }
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  // Widget addBuddyView() {
+  //   return Container(
+  //     padding: EdgeInsets.all(16),
+  //     decoration: Utility.bottomDecoration(),
+  //     child: Utility.button(
+  //       context,
+  //       gradientColor1: AppColors.buttonGradient1,
+  //       gradientColor2: AppColors.buttonGradient2,
+  //       onPressed: () async {
+  //         //delay to give ripple effect
+  //         await Future.delayed(Duration(milliseconds: AppStrings.delay));
+  //       },
+  //       text: "Add Buddy",
+  //     ),
+  //   );
+  // }
+
   Widget body() {
-    return Stack(
-      alignment: Alignment.topCenter,
-      children: [
-        Utility.profileTopView(
-          context,
-          assetName: AppAssets.profileBg2,
-        ),
-        Positioned(
-          top: (MediaQuery.of(context).size.height / 3.5) / 1.35,
-          child: userImage(),
-        ),
-        Container(
-          padding: EdgeInsets.only(
-            top: (MediaQuery.of(context).size.height / 2.8),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+    return _isLoading
+        ? Utility.progress(context)
+        : Stack(
+            alignment: Alignment.topCenter,
             children: [
-              SizedBox(
-                height: 8,
+              Utility.profileTopView(
+                context,
+                assetName: AppAssets.profileBg2,
               ),
-              nameClassView(),
-              SizedBox(
-                height: 8,
+              Positioned(
+                top: (MediaQuery.of(context).size.height / 3.5) / 1.35,
+                child: userImage(),
               ),
-              Utility.leaderBoardView(),
+              Container(
+                padding: EdgeInsets.only(
+                  top: (MediaQuery.of(context).size.height / 2.8),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: 8,
+                    ),
+                    nameClassView(),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Utility.leaderBoardView(),
+                  ],
+                ),
+              ),
             ],
-          ),
-        ),
-      ],
-    );
+          );
   }
 
   Widget nameClassView() {
@@ -94,7 +143,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          "Amitstcetet Nohire",
+          Utility.getUsername(customer: customer),
           style: TextStyle(
             color: Colors.black,
             fontSize: 22,
@@ -115,7 +164,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               width: 8,
             ),
             Text(
-              'Class Four',
+              customer?.classGrades?.name ?? "",
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.w500,
@@ -138,7 +187,9 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
           width: 2,
         ),
         image: DecorationImage(
-          image: AssetImage(AppAssets.dummyUser),
+          image: NetworkImage(
+            AppStrings.userImage + (customer?.thumbnail ?? ""),
+          ),
         ),
       ),
     );

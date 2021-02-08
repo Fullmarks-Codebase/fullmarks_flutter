@@ -35,6 +35,7 @@ class NotificationDetails {
   String createdAt;
   String updatedAt;
   int userId;
+  int room;
 
   NotificationDetails(
       {this.id,
@@ -43,6 +44,7 @@ class NotificationDetails {
       this.status,
       this.createdAt,
       this.updatedAt,
+      this.room,
       this.userId});
 
   NotificationDetails.fromJson(Map<String, dynamic> json) {
@@ -53,6 +55,7 @@ class NotificationDetails {
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
     userId = json['userId'] ?? 0;
+    room = json['room'] ?? 0;
   }
 
   Map<String, dynamic> toJson() {
@@ -64,6 +67,7 @@ class NotificationDetails {
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['userId'] = this.userId;
+    data['room'] = this.room;
     return data;
   }
 }

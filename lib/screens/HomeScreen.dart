@@ -28,10 +28,12 @@ import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:share/share.dart';
+import 'package:uni_links/uni_links.dart';
 
 import '../main.dart';
 import 'AskingForProgressScreen.dart';
 import 'DiscussionScreen.dart';
+import 'JoinQuizScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -54,8 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     AppFirebaseAnalytics.init().logEvent(name: AppStrings.homeScreenEvent);
     _requestPermissions();
+    _configureDidReceiveLocalNotificationSubject();
+    _configureSelectNotificationSubject();
     FirebaseMessagingService().getMessage();
     controller = ScrollController();
+    initDeepLink();
     _getUser();
     if (guest != null) guestLogin();
     _getSubjects();
@@ -65,6 +70,87 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     _notify();
     super.initState();
+  }
+
+  void _configureDidReceiveLocalNotificationSubject() {
+    didReceiveLocalNotificationSubject.stream
+        .listen((ReceivedNotification receivedNotification) async {
+      print(receivedNotification.title);
+      print(receivedNotification.body);
+      print(receivedNotification.payload);
+      // await showDialog(
+      //   context: context,
+      //   builder: (BuildContext context) => CupertinoAlertDialog(
+      //     title: receivedNotification.title != null
+      //         ? Text(receivedNotification.title)
+      //         : null,
+      //     content: receivedNotification.body != null
+      //         ? Text(receivedNotification.body)
+      //         : null,
+      //     actions: <Widget>[
+      //       CupertinoDialogAction(
+      //         isDefaultAction: true,
+      //         onPressed: () async {
+      //           Navigator.of(context, rootNavigator: true).pop();
+      //           await Navigator.push(
+      //             context,
+      //             MaterialPageRoute<void>(
+      //               builder: (BuildContext context) =>
+      //                   SecondPage(receivedNotification.payload),
+      //             ),
+      //           );
+      //         },
+      //         child: const Text('Ok'),
+      //       )
+      //     ],
+      //   ),
+      // );
+    });
+  }
+
+  void _configureSelectNotificationSubject() {
+    selectNotificationSubject.stream.listen((String payload) async {
+      print(payload);
+    });
+  }
+
+  @override
+  void dispose() {
+    didReceiveLocalNotificationSubject.close();
+    selectNotificationSubject.close();
+    super.dispose();
+  }
+
+  initDeepLink() {
+    //handle deep link
+    getLinksStream().listen((String link) {
+      if (link.length != 0) {
+        if (link.contains(AppStrings.joinLiveQuizDeepLinkKey)) {
+          if (link.split("/").length != 0 && link.split("/").last.length != 0) {
+            if (link.split("/")[link.split("/").length - 1] !=
+                AppStrings.joinLiveQuizDeepLinkKey)
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => JoinQuizScreen(
+                    roomId: link.split("/").last,
+                  ),
+                ),
+              );
+          }
+        } else if (link.contains("friends")) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MyFriendsScreen(),
+            ),
+          );
+        }
+      }
+    }, onError: (err) {
+      print("error");
+      print(err.toString());
+    });
   }
 
   void _requestPermissions() {

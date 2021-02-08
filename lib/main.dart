@@ -1,5 +1,4 @@
 import 'package:firebase_admob/firebase_admob.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +14,22 @@ import 'package:rxdart/rxdart.dart';
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('app_icon');
-final IOSInitializationSettings initializationSettingsIOS =
-    IOSInitializationSettings();
 final InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+  android: AndroidInitializationSettings('app_icon'),
+  iOS: IOSInitializationSettings(
+    onDidReceiveLocalNotification:
+        (int id, String title, String body, String payload) async {
+      didReceiveLocalNotificationSubject.add(
+        ReceivedNotification(
+          id: id,
+          title: title,
+          body: body,
+          payload: payload,
+        ),
+      );
+    },
+  ),
+);
 
 /// Streams are created so that app can respond to notification-related events
 /// since the plugin is initialised in the `main` function
@@ -51,7 +60,16 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FirebaseAdMob.instance.initialize(appId: AppStrings.appId);
   await Firebase.initializeApp();
-  flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onSelectNotification: (String payload) async {
+      if (payload != null) {
+        debugPrint('notification payload: $payload');
+      }
+      // selectedNotificationPayload = payload;
+      selectNotificationSubject.add(payload);
+    },
+  );
 
   final NotificationAppLaunchDetails notificationAppLaunchDetails =
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fullmarks/models/NotificationResponse.dart';
+import 'package:fullmarks/screens/JoinQuizScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class NotificationDetailsScreen extends StatefulWidget {
@@ -74,6 +76,29 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
               color: Colors.black,
             ),
           ),
+          SizedBox(
+            height: 16,
+          ),
+          widget.notificationDetail.room != 0
+              ? Utility.button(
+                  context,
+                  gradientColor1: AppColors.buttonGradient1,
+                  gradientColor2: AppColors.buttonGradient2,
+                  onPressed: () async {
+                    //delay to give ripple effect
+                    await Future.delayed(
+                        Duration(milliseconds: AppStrings.delay));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => JoinQuizScreen(
+                          roomId: widget.notificationDetail.room.toString(),
+                        ),
+                      ),
+                    );
+                  },
+                  text: "Join Live Quiz",
+                )
+              : Container()
         ],
       ),
     );

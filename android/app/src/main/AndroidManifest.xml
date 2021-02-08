@@ -59,15 +59,20 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
+<!-- crop image -->
+
             <activity
     android:name="com.yalantis.ucrop.UCropActivity"
     android:screenOrientation="portrait"
     android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
+<!-- google admob -->
+
     <meta-data
     android:name="com.google.android.gms.ads.APPLICATION_ID"
     android:value="ca-app-pub-9321524489967330~8028966399"/>
 
+<!-- facebook -->
     
     <meta-data android:name="com.facebook.sdk.ApplicationId" 
         android:value="@string/facebook_app_id"/>
@@ -87,7 +92,18 @@
         </intent-filter>
     </activity>
 
+<!-- deep link -->
 
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="applink"
+                    android:host="fullmarks.app" 
+                    android:pathPrefix="" />
+            </intent-filter>
+           
     
     </application>
 </manifest>

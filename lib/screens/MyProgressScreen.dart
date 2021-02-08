@@ -181,12 +181,14 @@ class _MyProgressScreenState extends State<MyProgressScreen> {
                     SizedBox(
                       width: 16,
                     ),
-                    Text(
-                      subjectReportDetails[index].subject.name,
-                      style: TextStyle(
-                        color: AppColors.subtopicItemBorderColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Text(
+                        subjectReportDetails[index].subject.name,
+                        style: TextStyle(
+                          color: AppColors.subtopicItemBorderColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],

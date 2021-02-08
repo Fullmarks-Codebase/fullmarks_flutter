@@ -31,6 +31,13 @@ class AppStrings {
       baseUrl + "live/custom/questions/update";
   static String getCustomQuestions = baseUrl + "live/custom/getQuestions";
   static String deleteCustomQuestions = baseUrl + "live/custom/questions/";
+  static String shareCode = baseUrl + "live/shareCode";
+  static String myFriends = baseUrl + "friends/myfriends";
+  static String requestRecieved = baseUrl + "friends/requestRecieved";
+  static String requestSent = baseUrl + "friends/requestSent";
+  static String notFriend = baseUrl + "friends/notFriend";
+  static String sentRequest = baseUrl + "friends/sentRequest";
+  static String requestResponse = baseUrl + "friends/requestResponse";
 
   //image base url
   static String imageBaseUrl = baseUrl;
@@ -66,8 +73,13 @@ class AppStrings {
       "https://play.google.com/store/apps/details?id=app.fullmarks.com"; //change this
   // static String appstore =
   //     "https://apps.apple.com/in/app/apple-store/id375380948"; //change this
-  static String shareAppText =
-      "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore";
+  static String commonShareText =
+      "Hey, Checkout “Fullmarks – Learn CBSE, Math, English, Science”, download the app – $playStore \n\nIf you already have the app, click here - ";
+  static String shareAppText = "$commonShareText applink://fullmarks.app";
+  static String addFriendText =
+      "$commonShareText applink://fullmarks.app/friends to become my friend";
+  static String joinLiveQuizDeepLinkKey = "Live_Quiz";
+  // "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore";
   // "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore \nDownload iOS app - $appstore";
 
   static int phase = kDebugMode ? 2 : 1;

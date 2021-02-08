@@ -24,8 +24,8 @@ class FirebaseMessagingService {
           message['notification']['title'], message['notification']['body']);
     }, onResume: (Map<String, dynamic> message) async {
       print('on resume $message');
-      // _showNotification(
-      // message['notification']['title'], message['notification']['body']);
+      _showNotification(
+          message['notification']['title'], message['notification']['body']);
     }, onLaunch: (Map<String, dynamic> message) async {
       print('on launch $message');
       _showNotification(
@@ -34,14 +34,21 @@ class FirebaseMessagingService {
   }
 
   Future<void> _showNotification(String title, String body) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('find_app_channel_id',
-            'find_app_channel_name', 'find_app_channel_description',
-            importance: Importance.max,
-            priority: Priority.high,
-            ticker: 'ticker');
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'fullmarks_app_channel_id',
+        'fullmarks_app_channel_name',
+        'fullmarks_app_channel_description',
+        importance: Importance.max,
+        priority: Priority.high,
+        ticker: 'ticker',
+        playSound: true,
+      ),
+      iOS: IOSNotificationDetails(
+        presentSound: true,
+        presentAlert: true,
+      ),
+    );
     await flutterLocalNotificationsPlugin
         .show(
       0,

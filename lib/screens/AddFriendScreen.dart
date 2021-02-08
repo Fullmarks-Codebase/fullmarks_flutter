@@ -1,29 +1,35 @@
+import 'dart:convert';
+
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/CommonResponse.dart';
+import 'package:fullmarks/models/MyFriendsResponse.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:share/share.dart';
 
 class AddFriendScreen extends StatefulWidget {
   String title;
   String buttonStr;
-  bool isShare;
+  String roomId;
   AddFriendScreen({
     @required this.buttonStr,
     @required this.title,
-    @required this.isShare,
+    @required this.roomId,
   });
   @override
   _AddFriendScreenState createState() => _AddFriendScreenState();
 }
 
 class _AddFriendScreenState extends State<AddFriendScreen> {
-  Iterable<Contact> friends = List();
-  Iterable<Contact> suggestionList = List();
+  Iterable<MyFriendsDetails> friends = List();
+  Iterable<MyFriendsDetails> suggestionList = List();
   ScrollController controller;
   TextEditingController _searchQueryController = TextEditingController();
   List<int> selectedContact = List();
@@ -32,8 +38,40 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   @override
   void initState() {
     controller = ScrollController();
-    getContacts();
+    if (widget.roomId == null) {
+      getContacts();
+    } else {
+      _getMyFriends();
+    }
     super.initState();
+  }
+
+  _getMyFriends() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      //api call
+      MyFriendsResponse response = MyFriendsResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.myFriends, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        friends = response.result;
+        suggestionList = friends;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   getContacts() async {
@@ -42,11 +80,22 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       //We can now access our contacts here
       _isLoading = true;
       _notify();
-      await ContactsService.getContacts().then((value) {
-        _isLoading = false;
-        _notify();
-        friends = value;
-        suggestionList = friends;
+      await ContactsService.getContacts().then((value) async {
+        List<String> strContacts = List();
+        await Future.forEach(value, (Contact element) {
+          if (element.phones.length > 0) {
+            String contact = element.phones.first.value.trim();
+            contact = contact.replaceAll("-", "");
+            contact = contact.replaceAll("(", "");
+            contact = contact.replaceAll(")", "");
+            contact = contact.replaceAll("+91", "");
+            contact = contact.replaceAll(" ", "");
+            if (!strContacts.contains(contact)) {
+              strContacts.add(contact);
+            }
+          }
+        });
+        _getNotFriends(strContacts);
         _notify();
       }).catchError((onError) {
         _isLoading = false;
@@ -56,6 +105,35 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     } else {
       //If permissions have been denied show standard cupertino alert dialog
       openAppSettings();
+    }
+  }
+
+  _getNotFriends(List<String> strContacts) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["numbers"] = jsonEncode(strContacts);
+      //api call
+      MyFriendsResponse response = MyFriendsResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.notFriend, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        friends = response.result;
+        suggestionList = friends;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
     }
   }
 
@@ -80,12 +158,16 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
         children: [
           Utility.setSvgFullScreen(context, AppAssets.commonBg),
           body(),
-          Column(
-            children: [
-              Spacer(),
-              buttonView(),
-            ],
-          ),
+          _isLoading
+              ? Container()
+              : friends.length == 0
+                  ? Container()
+                  : Column(
+                      children: [
+                        Spacer(),
+                        buttonView(),
+                      ],
+                    ),
         ],
       ),
     );
@@ -99,7 +181,11 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
           text: widget.title,
           isHome: false,
         ),
-        searchView(),
+        _isLoading
+            ? Container()
+            : friends.length == 0
+                ? Container()
+                : searchView(),
         friendsList(),
       ],
     );
@@ -116,11 +202,92 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
         onPressed: () async {
           //delay to give ripple effect
           await Future.delayed(Duration(milliseconds: AppStrings.delay));
-          Navigator.pop(context);
+          if (selectedContact.length == 0) {
+            Utility.showToast("Please select atleast one friend.");
+          } else {
+            if (widget.roomId == null) {
+              sendRequest();
+            } else {
+              shareCode();
+            }
+          }
         },
         text: widget.buttonStr,
       ),
     );
+  }
+
+  sendRequest() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      List<String> strContacts = List();
+      await Future.forEach(suggestionList, (MyFriendsDetails element) {
+        int index = suggestionList.toList().indexOf(element);
+        if (selectedContact.contains(index)) {
+          strContacts.add(element.phoneNumber);
+        }
+      });
+      request["numbers"] = jsonEncode(strContacts);
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.sentRequest, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      Utility.showToast(response.message);
+
+      if (response.code == 200) {
+        Navigator.pop(context);
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  shareCode() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      List<String> strContacts = List();
+      await Future.forEach(suggestionList, (MyFriendsDetails element) {
+        int index = suggestionList.toList().indexOf(element);
+        if (selectedContact.contains(index)) {
+          strContacts.add(element.phoneNumber);
+        }
+      });
+      request["numbers"] = jsonEncode(strContacts);
+      request["roomId"] = widget.roomId;
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.shareCode, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      Utility.showToast(response.message);
+
+      if (response.code == 200) {
+        Navigator.pop(context);
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   Widget searchView() {
@@ -186,7 +353,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
         ? friends
         : friends
             .where(
-              (p) => p.displayName.contains(
+              (p) => p.username.contains(
                 RegExp(newQuery, caseSensitive: false),
               ),
             )
@@ -207,17 +374,21 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
 
   Widget friendsList() {
     return Expanded(
-      child: ListView.separated(
-        padding: EdgeInsets.zero,
-        separatorBuilder: (context, index) {
-          return Divider();
-        },
-        controller: controller,
-        itemCount: suggestionList.length,
-        itemBuilder: (context, index) {
-          return friendsItemView(index);
-        },
-      ),
+      child: _isLoading
+          ? Utility.progress(context)
+          : friends.length == 0
+              ? Utility.emptyView("No Friends to add")
+              : ListView.separated(
+                  padding: EdgeInsets.zero,
+                  separatorBuilder: (context, index) {
+                    return Divider();
+                  },
+                  controller: controller,
+                  itemCount: suggestionList.length,
+                  itemBuilder: (context, index) {
+                    return friendsItemView(index);
+                  },
+                ),
     );
   }
 
@@ -235,21 +406,28 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
             }
             _notify();
           },
-          leading: CircleAvatar(
-            backgroundColor: AppColors.greyColor10,
-            child: Text(
-              suggestionList.toList()[index].displayName == null ||
-                      suggestionList.toList()[index].displayName == ""
-                  ? "-"
-                  : suggestionList.toList()[index].displayName.substring(0, 1),
-              style: TextStyle(
-                color: AppColors.greyColor11,
-                fontWeight: FontWeight.w500,
+          leading: Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.appColor,
+                width: 2,
+              ),
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(
+                  AppStrings.userImage +
+                      suggestionList.toList()[index].thumbnail,
+                ),
               ),
             ),
           ),
           title: Text(
-            suggestionList.toList()[index].displayName ?? "-",
+            suggestionList.toList()[index].username == ""
+                ? "User" + suggestionList.toList()[index].id.toString()
+                : suggestionList.toList()[index].username,
             style: TextStyle(
               color: AppColors.blackColor,
               fontWeight: FontWeight.bold,
