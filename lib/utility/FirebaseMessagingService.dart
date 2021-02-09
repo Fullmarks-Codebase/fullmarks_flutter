@@ -55,7 +55,7 @@ class FirebaseMessagingService {
       title,
       body,
       platformChannelSpecifics,
-      payload: '',
+      payload: '', //send payload here
     )
         .then((value) {
       print("SUCCESS");

@@ -1261,7 +1261,7 @@ class Utility {
 
   static String getLiveQuizLink(String roomId) {
     return AppStrings.commonShareText +
-        "applink://fullmarks.app/" +
+        "https://fullmarks.app/" +
         AppStrings.joinLiveQuizDeepLinkKey +
         "/" +
         roomId +

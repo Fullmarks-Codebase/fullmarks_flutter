@@ -123,8 +123,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   initDeepLink() {
     //handle deep link
-    getLinksStream().listen((String link) {
-      if (link.length != 0) {
+    getInitialLink().then((link) {
+      if (link != null && link.length != 0) {
         if (link.contains(AppStrings.joinLiveQuizDeepLinkKey)) {
           if (link.split("/").length != 0 && link.split("/").last.length != 0) {
             if (link.split("/")[link.split("/").length - 1] !=
@@ -147,9 +147,6 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
       }
-    }, onError: (err) {
-      print("error");
-      print(err.toString());
     });
   }
 
