@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/MyLeaderBoardResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/models/UsersResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
@@ -20,11 +21,43 @@ class OtherProfileScreen extends StatefulWidget {
 class _OtherProfileScreenState extends State<OtherProfileScreen> {
   bool _isLoading = false;
   Customer customer;
+  String buddies = "0";
+  String rank = "0";
 
   @override
   void initState() {
     _getCustomer();
+    _getLeaderboard();
     super.initState();
+  }
+
+  _getLeaderboard() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      request["mode"] = "solo";
+      request["userId"] = widget.id.toString();
+      //api call
+      MyLeaderBoardResponse response = MyLeaderBoardResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.leaderboard, request: request),
+      );
+
+      if (response.code == 200) {
+        if (response.result != null) {
+          _notify();
+          if (response.result.reportMaster.length != 0) {
+            buddies = response.result.buddies.toString();
+            rank = response.result.reportMaster.first.rank.toString();
+            _notify();
+          }
+        }
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   @override
@@ -130,7 +163,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                     SizedBox(
                       height: 8,
                     ),
-                    Utility.leaderBoardView(),
+                    Utility.leaderBoardView("0", buddies, rank),
                   ],
                 ),
               ),

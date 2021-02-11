@@ -130,4 +130,8 @@ class AppStrings {
   static String notSubmitted = "notSubmitted";
   static String completed = "completed";
   // static String  = "";
+
+  //notification type
+  static int friends = 2;
+  // static String  = "";
 }

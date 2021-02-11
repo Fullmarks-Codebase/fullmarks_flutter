@@ -44,6 +44,7 @@ class Customer {
   String phoneId;
   bool submitted;
   int score;
+  int buddies;
   List<ReportMaster> reportMaster;
 
   Customer({
@@ -65,6 +66,7 @@ class Customer {
     this.phoneId,
     this.submitted,
     this.score,
+    this.buddies,
     this.reportMaster,
   });
 
@@ -88,6 +90,7 @@ class Customer {
     phoneId = json['phoneId'] ?? "";
     submitted = json['submitted'] ?? false;
     score = json['score'] ?? 0;
+    buddies = json['buddies'] ?? 0;
     if (json['reportMaster'] != null) {
       reportMaster = new List<ReportMaster>();
       json['reportMaster'].forEach((v) {
@@ -118,6 +121,7 @@ class Customer {
     data['phoneId'] = this.phoneId;
     data['submitted'] = this.submitted;
     data['score'] = this.score;
+    data['buddies'] = this.buddies;
     if (this.reportMaster != null) {
       data['reportMaster'] = this.reportMaster.map((v) => v.toJson()).toList();
     }

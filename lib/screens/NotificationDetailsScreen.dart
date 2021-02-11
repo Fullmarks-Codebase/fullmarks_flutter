@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fullmarks/models/NotificationResponse.dart';
 import 'package:fullmarks/screens/JoinQuizScreen.dart';
+import 'package:fullmarks/screens/MyFriendsScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
@@ -79,6 +80,24 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
           SizedBox(
             height: 16,
           ),
+          widget.notificationDetail.notifyType == AppStrings.friends
+              ? Utility.button(
+                  context,
+                  gradientColor1: AppColors.buttonGradient1,
+                  gradientColor2: AppColors.buttonGradient2,
+                  onPressed: () async {
+                    //delay to give ripple effect
+                    await Future.delayed(
+                        Duration(milliseconds: AppStrings.delay));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => MyFriendsScreen(),
+                      ),
+                    );
+                  },
+                  text: "My Friends",
+                )
+              : Container(),
           widget.notificationDetail.room != 0
               ? Utility.button(
                   context,

@@ -709,7 +709,7 @@ class Utility {
     );
   }
 
-  static Widget leaderBoardView() {
+  static Widget leaderBoardView(String likes, String buddies, String rank) {
     return Container(
       margin: EdgeInsets.only(
         left: 16,
@@ -748,7 +748,7 @@ class Utility {
                       ),
                       Expanded(
                         child: Text(
-                          "Likes : 234",
+                          "Likes : " + likes,
                           style: TextStyle(
                             color: Colors.black,
                           ),
@@ -770,7 +770,7 @@ class Utility {
                       ),
                       Expanded(
                         child: Text(
-                          "Buddies : 340",
+                          "Buddies : " + buddies,
                           style: TextStyle(
                             color: Colors.black,
                           ),
@@ -793,7 +793,7 @@ class Utility {
                 onPressed: null,
               ),
               Text(
-                "Leaderboard Rank : 301",
+                "Leaderboard Rank : " + rank,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 16,

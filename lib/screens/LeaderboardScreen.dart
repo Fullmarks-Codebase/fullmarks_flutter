@@ -166,7 +166,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  customers[index].username + (isyou ? " ( You )" : ""),
+                  customers[index].username + (isyou ? " (You)" : ""),
                   style: TextStyle(
                     color: isyou ? Colors.white : AppColors.appColor,
                     fontWeight: FontWeight.bold,
