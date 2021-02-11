@@ -196,7 +196,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
             fontSize: 14,
             radius: 8,
             borderWidth: currentIndex == index ? 5 : 0,
-            padding: 2,
+            padding: 0,
           ),
           badge == 0
               ? Container()

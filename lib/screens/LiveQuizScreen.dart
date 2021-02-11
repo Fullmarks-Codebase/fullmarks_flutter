@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/MyLeaderBoardResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/AddFriendScreen.dart';
 import 'package:fullmarks/screens/CreateNewQuizScreen.dart';
@@ -7,6 +8,7 @@ import 'package:fullmarks/screens/JoinQuizScreen.dart';
 import 'package:fullmarks/screens/LeaderboardScreen.dart';
 import 'package:fullmarks/screens/MyFriendsScreen.dart';
 import 'package:fullmarks/screens/SubjectSelectionScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
@@ -18,6 +20,52 @@ class LiveQuizScreen extends StatefulWidget {
 }
 
 class _LiveQuizScreenState extends State<LiveQuizScreen> {
+  Customer customer;
+  String points = "0";
+  String games = "0";
+  String rank = "0";
+
+  @override
+  void initState() {
+    _getLeaderboard();
+    super.initState();
+  }
+
+  _getLeaderboard() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      request["mode"] = "solo";
+      //api call
+      MyLeaderBoardResponse response = MyLeaderBoardResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.leaderboard, request: request),
+      );
+
+      if (response.code == 200) {
+        if (response.result != null) {
+          customer = response.result;
+          _notify();
+          if (customer.reportMaster.length != 0) {
+            points = customer.reportMaster.first.points;
+            games = customer.reportMaster.first.gamePlayed.toString();
+            rank = customer.reportMaster.first.rank.toString();
+            _notify();
+          }
+        }
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -273,7 +321,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                       width: 4,
                     ),
                     Text(
-                      "56 Points",
+                      points + " Points",
                       style: TextStyle(
                         color: AppColors.myProgressIncorrectcolor,
                         fontSize: 16,
@@ -294,7 +342,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                       width: 4,
                     ),
                     Text(
-                      "30 Games",
+                      games + " Games",
                       style: TextStyle(
                         color: AppColors.myProgressIncorrectcolor,
                         fontSize: 16,
@@ -319,7 +367,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                     width: 8,
                   ),
                   Text(
-                    "Leaderboard Rank : 301",
+                    "Leaderboard Rank : " + rank,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -369,7 +417,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: AppColors.appColor,
+                    color: AppColors.chartBgColor,
                     width: 2,
                   ),
                   image: DecorationImage(
@@ -387,7 +435,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
         color: Colors.white,
         shape: BoxShape.circle,
         border: Border.all(
-          color: AppColors.appColor,
+          color: AppColors.chartBgColor,
           width: 2,
         ),
       ),
@@ -395,7 +443,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
       width: size,
       child: Icon(
         Icons.person,
-        color: AppColors.appColor,
+        color: AppColors.chartBgColor,
         size: size / 2,
       ),
     );

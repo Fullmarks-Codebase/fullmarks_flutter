@@ -1,39 +1,187 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/CustomQuizResponse.dart';
+import 'package:fullmarks/models/LiveQuizReadyResponse.dart';
+import 'package:fullmarks/models/LiveQuizResponse.dart';
+import 'package:fullmarks/models/LiveQuizUsersResponse.dart';
+import 'package:fullmarks/models/SubjectsResponse.dart';
+import 'package:fullmarks/models/UserResponse.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:share/share.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'AddFriendScreen.dart';
 import 'LiveQuizPlayScreen.dart';
 
 class CreateQuizLobbyScreen extends StatefulWidget {
+  SubjectDetails subject;
+  CustomQuizDetails customQuiz;
+  bool isCustomQuiz;
+  CreateQuizLobbyScreen({
+    @required this.subject,
+    @required this.customQuiz,
+    @required this.isCustomQuiz,
+  });
   @override
   _CreateQuizLobbyScreenState createState() => _CreateQuizLobbyScreenState();
 }
 
 class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
+  bool _isLoading = false;
+  LiveQuizDetails liveQuizDetail;
+  IO.Socket socket = AppSocket.init();
+  Customer customer = Utility.getCustomer();
+  List<LiveQuizUsersDetails> participants = List();
+  String waitingText = "";
+  Timer _timer;
+  int _start = 5;
+
+  @override
+  void initState() {
+    getQuestionsAndRoom();
+    socket.on(AppStrings.allParticipants, (data) {
+      print(AppStrings.allParticipants);
+      print(data);
+      LiveQuizUsersResponse response =
+          LiveQuizUsersResponse.fromJson(json.decode(jsonEncode(data)));
+      participants = response.users;
+      _notify();
+    });
+
+    socket.onError((data) {
+      print("onError");
+      print(data);
+    });
+
+    socket.on(AppStrings.error, (data) {
+      print(AppStrings.error);
+      print(data);
+      //hide progress
+      _isLoading = false;
+      _notify();
+      Utility.showToast(jsonEncode(data));
+    });
+
+    socket.on(AppStrings.join, (data) {
+      print(AppStrings.join);
+      print(data);
+      socket.emit(AppStrings.userDetails);
+    });
+
+    socket.on(AppStrings.disconnected, (data) {
+      print(AppStrings.disconnected);
+      print(data);
+      socket.emit(AppStrings.userDetails);
+    });
+
+    super.initState();
+  }
+
+  getQuestionsAndRoom() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      if (widget.subject != null) {
+        request["subjectId"] = widget.subject.id.toString();
+      } else {
+        request["customMasterId"] = widget.customQuiz.id.toString();
+      }
+      //api call
+      LiveQuizResponse response = LiveQuizResponse.fromJson(
+        await ApiManager(context).postCall(
+            url: widget.subject == null
+                ? AppStrings.liveQuizCustom
+                : AppStrings.liveQuizBySubject,
+            request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        liveQuizDetail = response.result;
+        _notify();
+        //join room after creating quiz
+        socket.emit(AppStrings.room, {
+          "room": liveQuizDetail.room.room,
+          "id": Utility.getCustomer().id,
+          "userObj": Utility.getCustomer(),
+        });
+        socket.emit(AppStrings.userDetails);
+      } else {
+        Utility.showToast(response.message);
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
+  Future<bool> _onBackPressed() {
+    return Utility.quitLiveQuizDialog(
+          context: context,
+          onPressed: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
+            Navigator.pop(context);
+            socket.emit(
+              AppStrings.forceDisconnect,
+              {"userObj": Utility.getCustomer()},
+            );
+            Navigator.pop(context);
+          },
+        ) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Utility.setSvgFullScreen(context, AppAssets.mockTestBg),
-          Column(
-            children: [
-              Spacer(),
-              SvgPicture.asset(
-                AppAssets.bottomBarbg,
-                width: MediaQuery.of(context).size.width,
-              )
-            ],
-          ),
-          body(),
-        ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Utility.setSvgFullScreen(context, AppAssets.mockTestBg),
+            Column(
+              children: [
+                Spacer(),
+                SvgPicture.asset(
+                  AppAssets.bottomBarbg,
+                  width: MediaQuery.of(context).size.width,
+                )
+              ],
+            ),
+            body(),
+            _isLoading ? Utility.progress(context) : Container(),
+          ],
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    try {
+      _timer.cancel();
+    } catch (e) {}
+    super.dispose();
   }
 
   Widget body() {
@@ -46,39 +194,114 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
             text: "Create New Quiz",
             isHome: false,
             textColor: Colors.white,
+            onBackPressed: _onBackPressed,
           ),
-          roomIdView(),
-          participantsView(),
-          participantsList(),
-          Container(
-            margin: EdgeInsets.only(
-              top: 16,
-              right: 16,
-              left: 16,
-              bottom: 80,
-            ),
-            child: Utility.button(
-              context,
-              onPressed: () async {
-                //delay to give ripple effect
-                await Future.delayed(Duration(milliseconds: AppStrings.delay));
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => LiveQuizPlayScreen(
-                      isRandomQuiz: false,
-                    ),
+          liveQuizDetail == null ? Container() : roomIdView(),
+          liveQuizDetail == null ? Container() : participantsView(),
+          liveQuizDetail == null ? Container() : participantsList(),
+          liveQuizDetail == null
+              ? Container()
+              : Container(
+                  margin: EdgeInsets.only(
+                    top: 16,
+                    right: 16,
+                    left: 16,
+                    bottom: 80,
                   ),
-                );
-              },
-              text: "Start Play",
-              bgColor: AppColors.strongCyan,
-              assetName: AppAssets.enter,
-              isSufix: true,
-              isSpacer: true,
-            ),
-          ),
+                  child: _timer != null
+                      ? waitingView()
+                      : Utility.button(
+                          context,
+                          onPressed: () async {
+                            //delay to give ripple effect
+                            await Future.delayed(
+                                Duration(milliseconds: AppStrings.delay));
+
+                            if (participants.length == 1) {
+                              Utility.showToast(
+                                  "Quiz cannot start with 1 participants");
+                            } else {
+                              //if more than 1 participants then start quiz
+                              socket.emit(AppStrings.startQuiz);
+
+                              socket.on(AppStrings.getReady, (data) {
+                                print(AppStrings.getReady);
+                                print(data);
+                                LiveQuizReadyResponse response =
+                                    LiveQuizReadyResponse.fromJson(
+                                        json.decode(jsonEncode(data)));
+                                startTimer(response.message);
+                              });
+                            }
+                          },
+                          text: "Start Play",
+                          bgColor: AppColors.strongCyan,
+                          assetName: AppAssets.enter,
+                          isSufix: true,
+                          isSpacer: true,
+                        ),
+                ),
         ],
       ),
+    );
+  }
+
+  Widget waitingView() {
+    return Container(
+      alignment: Alignment.center,
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: AppColors.myProgressIncorrectcolor,
+          width: 5,
+        ),
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(32),
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(4),
+          topLeft: Radius.circular(4),
+        ),
+      ),
+      child: Text(
+        waitingText,
+        style: TextStyle(
+          color: AppColors.appColor,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  void startTimer(String message) {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          timer.cancel();
+          _notify();
+          //on timer complete go to play live quiz
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (BuildContext context) => LiveQuizPlayScreen(
+                isRandomQuiz: false,
+                questions: liveQuizDetail.questions,
+                room: liveQuizDetail.room,
+                isCustomQuiz: widget.isCustomQuiz,
+              ),
+            ),
+          );
+        } else {
+          waitingText = message + " " + _start.toString();
+          _start--;
+          _notify();
+        }
+      },
     );
   }
 
@@ -117,7 +340,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
         padding: EdgeInsets.only(
           bottom: 16,
         ),
-        itemCount: 15,
+        itemCount: participants.length,
         itemBuilder: (BuildContext context, int index) {
           return participantsItemView(index);
         },
@@ -136,10 +359,13 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(
-            image: AssetImage(AppAssets.dummyUser),
+            fit: BoxFit.cover,
+            image: NetworkImage(
+              AppStrings.userImage + participants[index].user.thumbnail,
+            ),
           ),
           border: Border.all(
-            color: index == 0
+            color: participants[index].user.id == customer.id
                 ? AppColors.myProgressIncorrectcolor
                 : Colors.transparent,
             width: 3,
@@ -147,7 +373,8 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
         ),
       ),
       title: Text(
-        'User Name' + (index == 0 ? " (You)" : ""),
+        participants[index].user.username +
+            (participants[index].user.id == customer.id ? " (You)" : ""),
         style: TextStyle(
           color: Colors.white,
           fontSize: 18,
@@ -179,7 +406,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
             children: [
               Expanded(
                 child: Text(
-                  "room id : 1020",
+                  "room id : " + liveQuizDetail.room.room,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,
@@ -262,7 +489,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
                                 builder: (context) => AddFriendScreen(
                                   buttonStr: "Share",
                                   title: "My Friends",
-                                  roomId: "1020",
+                                  roomId: liveQuizDetail.room.room,
                                 ),
                               ),
                             );
@@ -301,7 +528,8 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
                       child: SvgPicture.asset(AppAssets.share),
                     ),
                     onTap: () {
-                      Share.share(Utility.getLiveQuizLink("1020"));
+                      Share.share(
+                          Utility.getLiveQuizLink(liveQuizDetail.room.room));
                     },
                   ),
                 ),

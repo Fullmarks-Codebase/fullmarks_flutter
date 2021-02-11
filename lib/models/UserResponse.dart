@@ -42,6 +42,9 @@ class Customer {
   String googleId;
   String facebookId;
   String phoneId;
+  bool submitted;
+  int score;
+  List<ReportMaster> reportMaster;
 
   Customer({
     this.id,
@@ -60,6 +63,9 @@ class Customer {
     this.googleId,
     this.facebookId,
     this.phoneId,
+    this.submitted,
+    this.score,
+    this.reportMaster,
   });
 
   Customer.fromJson(Map<String, dynamic> json) {
@@ -80,6 +86,14 @@ class Customer {
     googleId = json['googleId'] ?? "";
     facebookId = json['facebookId'] ?? "";
     phoneId = json['phoneId'] ?? "";
+    submitted = json['submitted'] ?? false;
+    score = json['score'] ?? 0;
+    if (json['reportMaster'] != null) {
+      reportMaster = new List<ReportMaster>();
+      json['reportMaster'].forEach((v) {
+        reportMaster.add(new ReportMaster.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -102,6 +116,33 @@ class Customer {
     data['googleId'] = this.googleId;
     data['facebookId'] = this.facebookId;
     data['phoneId'] = this.phoneId;
+    data['submitted'] = this.submitted;
+    data['score'] = this.score;
+    if (this.reportMaster != null) {
+      data['reportMaster'] = this.reportMaster.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class ReportMaster {
+  int rank;
+  String points;
+  int gamePlayed;
+
+  ReportMaster({this.rank, this.points, this.gamePlayed});
+
+  ReportMaster.fromJson(Map<String, dynamic> json) {
+    rank = json['rank'] ?? 0;
+    points = json['points'] ?? 0;
+    gamePlayed = json['game_played'] ?? "0";
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['rank'] = this.rank;
+    data['points'] = this.points;
+    data['game_played'] = this.gamePlayed;
     return data;
   }
 }

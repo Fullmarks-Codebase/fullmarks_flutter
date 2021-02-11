@@ -328,9 +328,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       request["id"] = customer.id.toString();
       if (_usernameController.text.trim() != "")
         request["username"] = _usernameController.text.trim();
-      if (_emailController.text.trim() != "")
+      if (_emailController.text.trim() != "" &&
+          _emailController.text.trim() != customer.email)
         request["email"] = _emailController.text.trim();
-      if (_phoneController.text.trim() != "")
+      if (_phoneController.text.trim() != "" &&
+          _phoneController.text.trim() != customer.phoneNumber)
         request["phoneNumber"] = _phoneController.text.trim();
       if (maleFemale != -1) request["gender"] = maleFemale.toString();
       if (dob != "") request["dob"] = dob;

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/LeaderBoardResponse.dart';
+import 'package:fullmarks/models/UserResponse.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 class LeaderboardScreen extends StatefulWidget {
@@ -10,6 +14,56 @@ class LeaderboardScreen extends StatefulWidget {
 }
 
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
+  bool _isLoading = false;
+  List<Customer> customers = List();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+
+  @override
+  void initState() {
+    _getLeaderboard();
+    super.initState();
+  }
+
+  _getLeaderboard() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["mode"] = "public";
+      //api call
+      LeaderBoardResponse response = LeaderBoardResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.leaderboard, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        customers = response.result;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  Future<Null> _handleRefresh() async {
+    _getLeaderboard();
+    await Future.delayed(Duration(milliseconds: AppStrings.delay));
+    return null;
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,22 +101,52 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   Widget leaderboardList() {
     return Expanded(
-      child: ListView.builder(
-        padding: EdgeInsets.only(
-          top: 16,
-          right: 16,
-          left: 16,
-        ),
-        itemCount: 15,
-        itemBuilder: (BuildContext context, int index) {
-          return leaderboardItemView(index);
-        },
-      ),
+      child: _isLoading
+          ? Utility.progress(context)
+          : RefreshIndicator(
+              key: _refreshIndicatorKey,
+              onRefresh: _handleRefresh,
+              child: customers.length == 0
+                  ? ListView(
+                      padding: EdgeInsets.all(16),
+                      physics: AlwaysScrollableScrollPhysics(),
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height -
+                              ((AppBar().preferredSize.height * 2) + 100),
+                          child: Utility.emptyView(
+                            "No Leaderboard",
+                            textColor: Colors.white,
+                          ),
+                        ),
+                      ],
+                    )
+                  : ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.only(
+                        top: 16,
+                        right: 16,
+                        left: 16,
+                      ),
+                      itemCount: customers.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return leaderboardItemView(index);
+                      },
+                    ),
+            ),
     );
   }
 
   Widget leaderboardItemView(index) {
-    bool isyou = index == 4;
+    bool isyou = customers[index].id == Utility.getCustomer().id;
+    String points = customers[index].reportMaster.length != 0
+        ? customers[index].reportMaster.first.points
+        : "";
+    String rank = customers[index].reportMaster.length != 0
+        ? customers[index].reportMaster.first.rank.toString()
+        : "";
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 24,
@@ -82,7 +166,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isyou ? "Amitstcetet ( You )" : "User Name",
+                  customers[index].username + (isyou ? " ( You )" : ""),
                   style: TextStyle(
                     color: isyou ? Colors.white : AppColors.appColor,
                     fontWeight: FontWeight.bold,
@@ -102,7 +186,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                       width: 4,
                     ),
                     Text(
-                      "56 Points",
+                      points + " Points",
                       style: TextStyle(
                         color: isyou ? Colors.white : AppColors.yellowColor,
                         fontSize: 16,
@@ -115,7 +199,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
             ),
           ),
           Text(
-            "#" + (index + 1).toString(),
+            "#" + rank,
             style: TextStyle(
               color: isyou ? Colors.white : AppColors.myProgressCorrectcolor,
               fontSize: 25,

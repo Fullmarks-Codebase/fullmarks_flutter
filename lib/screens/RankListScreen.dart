@@ -1,22 +1,90 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/LiveQuizResponse.dart';
+import 'package:fullmarks/models/QuizLeaderBoardResponse.dart';
+import 'package:fullmarks/models/UserResponse.dart';
+import 'package:fullmarks/screens/HomeScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:share/share.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class RankListScreen extends StatefulWidget {
   bool isRandomQuiz;
   String title;
+  LiveQuizRoom room;
   RankListScreen({
     @required this.isRandomQuiz,
     @required this.title,
+    @required this.room,
   });
   @override
   _RankListScreenState createState() => _RankListScreenState();
 }
 
 class _RankListScreenState extends State<RankListScreen> {
+  IO.Socket socket = AppSocket.init();
+  List<QuizLeaderBoardDetails> quizLeaderboard = List();
+  Customer customer = Utility.getCustomer();
+  String notSubmittedString = "";
+
+  @override
+  void initState() {
+    socket.emit(AppStrings.submit);
+
+    socket.on(AppStrings.notSubmitted, (data) {
+      print(AppStrings.notSubmitted);
+      print(data);
+      if (data != null) {
+        notSubmittedString = jsonEncode(data);
+        _notify();
+      }
+    });
+
+    socket.on(AppStrings.completed, (data) {
+      print(AppStrings.completed);
+      print(data);
+      _getLeaderboard();
+    });
+
+    super.initState();
+  }
+
+  _getLeaderboard() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      request["mode"] = "quizResult";
+      request["room"] = widget.room.room;
+      request["roomId"] = widget.room.id.toString();
+      //api call
+      QuizLeaderBoardResponse response = QuizLeaderBoardResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.leaderboard, request: request),
+      );
+
+      if (response.code == 200) {
+        quizLeaderboard = response.result;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,74 +114,89 @@ class _RankListScreenState extends State<RankListScreen> {
           text: widget.title,
           homeassetName: AppAssets.home,
           textColor: Colors.white,
+          onBackPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => HomeScreen(),
+                ),
+                (Route<dynamic> route) => false);
+          },
         ),
         ranklistView(),
       ],
     );
   }
 
+  Widget noLeaderboardView() {
+    return Utility.emptyView(notSubmittedString, textColor: Colors.white);
+  }
+
   Widget ranklistView() {
     return Expanded(
-      child: Container(
-        margin: EdgeInsets.only(
-          top: 0,
-          right: 16,
-          left: 16,
-          bottom: 80,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(48),
-            bottomRight: Radius.circular(16),
-            bottomLeft: Radius.circular(48),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: ListView.separated(
-                padding: EdgeInsets.only(
-                  top: 32,
-                  right: 16,
-                  left: 16,
+      child: quizLeaderboard.length == 0
+          ? noLeaderboardView()
+          : Container(
+              margin: EdgeInsets.only(
+                top: 0,
+                right: 16,
+                left: 16,
+                bottom: 80,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(48),
+                  bottomRight: Radius.circular(16),
+                  bottomLeft: Radius.circular(48),
                 ),
-                itemCount: widget.isRandomQuiz ? 2 : 27,
-                separatorBuilder: (context, index) {
-                  return Divider(
-                    color: AppColors.lightAppColor,
-                    thickness: 1,
-                  );
-                },
-                itemBuilder: (context, index) {
-                  return rankItemView(index);
-                },
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: ListView.separated(
+                      padding: EdgeInsets.only(
+                        top: 32,
+                        right: 16,
+                        left: 16,
+                      ),
+                      itemCount:
+                          widget.isRandomQuiz ? 0 : quizLeaderboard.length,
+                      separatorBuilder: (context, index) {
+                        return Divider(
+                          color: AppColors.lightAppColor,
+                          thickness: 1,
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        return rankItemView(index);
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    child: Utility.button(
+                      context,
+                      onPressed: () async {
+                        //delay to give ripple effect
+                        await Future.delayed(
+                            Duration(milliseconds: AppStrings.delay));
+                        Share.share("Dummy share message");
+                      },
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      gradientColor1: AppColors.buttonGradient1,
+                      gradientColor2: AppColors.buttonGradient2,
+                      text: "Share",
+                    ),
+                  )
+                ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.all(16),
-              margin: EdgeInsets.symmetric(
-                horizontal: 16,
-              ),
-              child: Utility.button(
-                context,
-                onPressed: () async {
-                  //delay to give ripple effect
-                  await Future.delayed(
-                      Duration(milliseconds: AppStrings.delay));
-                },
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                gradientColor1: AppColors.buttonGradient1,
-                gradientColor2: AppColors.buttonGradient2,
-                text: "Share",
-              ),
-            )
-          ],
-        ),
-      ),
     );
   }
 
@@ -140,17 +223,21 @@ class _RankListScreenState extends State<RankListScreen> {
               ),
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage(AppAssets.dummyUser),
+                fit: BoxFit.cover,
+                image: NetworkImage(
+                  AppStrings.userImage + quizLeaderboard[index].user.thumbnail,
+                ),
               ),
             ),
           ),
           title: Text(
-            'User Name' +
-                (index == 0
+            quizLeaderboard[index].user.username +
+                (quizLeaderboard[index].user.id == customer.id
                     ? " (You)"
-                    : index == 3
-                        ? " (Host)"
-                        : ""),
+                    : "") +
+                (widget.room.userId == quizLeaderboard[index].user.id
+                    ? " (Host)"
+                    : ""),
             style: TextStyle(
               color: Colors.black,
               fontSize: 18,
@@ -160,7 +247,7 @@ class _RankListScreenState extends State<RankListScreen> {
             overflow: TextOverflow.ellipsis,
           ),
           trailing: Text(
-            "#" + (index + 1).toString(),
+            "#" + quizLeaderboard[index].rank.toString(),
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.w900,

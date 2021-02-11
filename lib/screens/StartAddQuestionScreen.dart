@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/CustomQuizResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
@@ -8,6 +9,10 @@ import 'package:fullmarks/utility/Utiity.dart';
 import 'AddQuestionScreen.dart';
 
 class StartAddQuestionScreen extends StatefulWidget {
+  CustomQuizDetails customQuiz;
+  StartAddQuestionScreen({
+    @required this.customQuiz,
+  });
   @override
   _StartAddQuestionScreenState createState() => _StartAddQuestionScreenState();
 }
@@ -88,7 +93,7 @@ class _StartAddQuestionScreenState extends State<StartAddQuestionScreen> {
                             builder: (context) => AddQuestionScreen(
                               isEdit: false,
                               questionDetails: null,
-                              quizDetails: null,
+                              quizDetails: widget.customQuiz,
                             ),
                           ),
                         );

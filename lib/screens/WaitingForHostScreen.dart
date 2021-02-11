@@ -1,55 +1,189 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/LiveQuizReadyResponse.dart';
+import 'package:fullmarks/models/LiveQuizUsersResponse.dart';
+import 'package:fullmarks/models/LiveQuizWelcomeResponse.dart';
+import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppSocket.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:share/share.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'LiveQuizPlayScreen.dart';
 
 class WaitingForHostScreen extends StatefulWidget {
+  LiveQuizWelcomeResponse liveQuizWelcomeResponse;
+  WaitingForHostScreen({
+    @required this.liveQuizWelcomeResponse,
+  });
   @override
   _WaitingForHostScreenState createState() => _WaitingForHostScreenState();
 }
 
 class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
+  LiveQuizUsersResponse liveQuizUsersResponse;
+  IO.Socket socket = AppSocket.init();
+  List<LiveQuizUsersDetails> participants = List();
+  Customer customer = Utility.getCustomer();
+  String waitingText = "Waiting for Host to Start the Quiz...";
+  Timer _timer;
+  int _start = 5;
+
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 3), gotoHome);
+    //when this is emited then get all participants
+    socket.emit(AppStrings.userDetails);
+
+    //when any participants joins
+    socket.on(AppStrings.join, (data) {
+      print(AppStrings.join);
+      print(data);
+      socket.emit(AppStrings.userDetails);
+    });
+
+    //this will start quiz when host press start quiz button
+    socket.on(AppStrings.getReady, (data) {
+      print(AppStrings.getReady);
+      print(data);
+      LiveQuizReadyResponse response =
+          LiveQuizReadyResponse.fromJson(json.decode(jsonEncode(data)));
+      startTimer(response.message);
+    });
+
+    //this will return all Participants
+    socket.on(AppStrings.allParticipants, (data) {
+      // print(AppStrings.allParticipants);
+      // print(data);
+      LiveQuizUsersResponse response =
+          LiveQuizUsersResponse.fromJson(json.decode(jsonEncode(data)));
+      if (response?.users?.length != 0) {
+        participants = response.users;
+        _notify();
+      }
+    });
+
+    socket.onError((data) {
+      print("onError");
+      print(data);
+    });
+
+    socket.on(AppStrings.error, (data) {
+      print(AppStrings.error);
+      print(data);
+      Utility.showToast(jsonEncode(data));
+    });
+
+    //when any user disconnects or leaves quiz
+    socket.on(AppStrings.disconnected, (data) {
+      print(AppStrings.disconnected);
+      print(data);
+      socket.emit(AppStrings.userDetails);
+    });
   }
 
-  gotoHome() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (BuildContext context) => LiveQuizPlayScreen(
-          isRandomQuiz: false,
+  void startTimer(String message) {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) async {
+        if (_start == 0) {
+          timer.cancel();
+          _notify();
+          List<QuestionDetails> questions = List();
+          bool isCustomQuiz = false;
+          await Future.forEach(widget.liveQuizWelcomeResponse.questions,
+              (LiveQuizWelcomeDetails element) {
+            if (element.fixQuestion != null) {
+              questions.add(element.fixQuestion);
+              isCustomQuiz = false;
+              _notify();
+            } else {
+              questions.add(element.customQuestion);
+              isCustomQuiz = true;
+              _notify();
+            }
+          });
+          //on timer complete go to play live quiz
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (BuildContext context) => LiveQuizPlayScreen(
+                isRandomQuiz: false,
+                questions: questions,
+                room: widget.liveQuizWelcomeResponse.room,
+                isCustomQuiz: isCustomQuiz,
+              ),
+            ),
+          );
+        } else {
+          waitingText = message + " " + _start.toString();
+          _start--;
+          _notify();
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    try {
+      _timer.cancel();
+    } catch (e) {}
+    super.dispose();
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Utility.setSvgFullScreen(context, AppAssets.mockTestBg),
+            Column(
+              children: [
+                Spacer(),
+                SvgPicture.asset(
+                  AppAssets.bottomBarbg,
+                  width: MediaQuery.of(context).size.width,
+                )
+              ],
+            ),
+            body(),
+          ],
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Utility.setSvgFullScreen(context, AppAssets.mockTestBg),
-          Column(
-            children: [
-              Spacer(),
-              SvgPicture.asset(
-                AppAssets.bottomBarbg,
-                width: MediaQuery.of(context).size.width,
-              )
-            ],
-          ),
-          body(),
-        ],
-      ),
-    );
+  Future<bool> _onBackPressed() {
+    return Utility.quitLiveQuizDialog(
+          context: context,
+          onPressed: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
+            Navigator.pop(context);
+            socket.emit(
+              AppStrings.forceDisconnect,
+              {"userObj": Utility.getCustomer()},
+            );
+            Navigator.pop(context);
+            return true;
+          },
+        ) ??
+        false;
   }
 
   Widget body() {
@@ -61,8 +195,10 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
           textColor: Colors.white,
           homeassetName: AppAssets.share,
           onHomePressed: () {
-            Share.share(Utility.getLiveQuizLink("123"));
+            Share.share(Utility.getLiveQuizLink(
+                widget.liveQuizWelcomeResponse.room.room));
           },
+          onBackPressed: _onBackPressed,
         ),
         waitingView(),
         participantsView(),
@@ -84,7 +220,7 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
             width: 16,
           ),
           Text(
-            "Participants (15)",
+            "Participants (" + participants.length.toString() + ")",
             style: TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -102,7 +238,7 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
         padding: EdgeInsets.only(
           bottom: 16,
         ),
-        itemCount: 15,
+        itemCount: participants.length,
         itemBuilder: (BuildContext context, int index) {
           return participantsItemView(index);
         },
@@ -121,10 +257,13 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(
-            image: AssetImage(AppAssets.dummyUser),
+            fit: BoxFit.cover,
+            image: NetworkImage(
+              AppStrings.userImage + participants[index].user.thumbnail,
+            ),
           ),
           border: Border.all(
-            color: index == 0
+            color: participants[index].user.id == customer.id
                 ? AppColors.myProgressIncorrectcolor
                 : Colors.transparent,
             width: 3,
@@ -132,7 +271,8 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
         ),
       ),
       title: Text(
-        'User Name' + (index == 0 ? " (You)" : ""),
+        participants[index].user.username +
+            (participants[index].user.id == customer.id ? " (You)" : ""),
         style: TextStyle(
           color: Colors.white,
           fontSize: 18,
@@ -163,7 +303,7 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
         ),
       ),
       child: Text(
-        "Waiting for Host to Start the Quiz...",
+        waitingText,
         style: TextStyle(
           color: AppColors.appColor,
           fontSize: 18,

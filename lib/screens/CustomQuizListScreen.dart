@@ -127,7 +127,7 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                   //delay to give ripple effect
                   await Future.delayed(
                       Duration(milliseconds: AppStrings.delay));
-                  Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => AddQuestionScreen(
@@ -137,6 +137,7 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                       ),
                     ),
                   );
+                  _getQuestions();
                 },
                 bgColor: AppColors.chartBgColor,
                 begin: Alignment.topCenter,
@@ -269,9 +270,13 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                     ),
                   ),
                 )
-              : questionsDetails[index].questionImage.length != 0
-                  ? questionImageView(index)
-                  : Container(),
+              : Container(),
+          SizedBox(
+            height: 16,
+          ),
+          questionsDetails[index].questionImage.length != 0
+              ? questionImageView(index)
+              : Container(),
           SizedBox(
             height: 16,
           ),
@@ -328,8 +333,8 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                 ),
                 questionItemViewButton(
                   AppAssets.edit,
-                  () {
-                    Navigator.push(
+                  () async {
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => AddQuestionScreen(
@@ -339,6 +344,7 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                         ),
                       ),
                     );
+                    _getQuestions();
                   },
                 ),
                 SizedBox(

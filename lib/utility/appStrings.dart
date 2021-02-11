@@ -32,6 +32,11 @@ class AppStrings {
   static String getCustomQuestions = baseUrl + "live/custom/getQuestions";
   static String deleteCustomQuestions = baseUrl + "live/custom/questions/";
   static String shareCode = baseUrl + "live/shareCode";
+  static String liveQuizBySubject = baseUrl + "live/bySubject";
+  static String liveQuizCustom = baseUrl + "live/custom/getQuestions/random";
+  static String liveReport = baseUrl + "live/report";
+  static String leaderboard = baseUrl + "live/leaderboard";
+  static String deleteImage = baseUrl + "live/custom/deleteImage";
   static String myFriends = baseUrl + "friends/myfriends";
   static String requestRecieved = baseUrl + "friends/requestRecieved";
   static String requestSent = baseUrl + "friends/requestSent";
@@ -75,14 +80,15 @@ class AppStrings {
   //     "https://apps.apple.com/in/app/apple-store/id375380948"; //change this
   static String commonShareText =
       "Hey, Checkout “Fullmarks – Learn CBSE, Math, English, Science”, download the app – $playStore \n\nIf you already have the app, click here - ";
-  static String shareAppText = "$commonShareText applink://fullmarks.app";
+  static String shareAppText = "$commonShareText https://fullmarks.app";
   static String addFriendText =
-      "$commonShareText applink://fullmarks.app/friends to become my friend";
+      "$commonShareText https://fullmarks.app/friends to become my friend";
   static String joinLiveQuizDeepLinkKey = "Live_Quiz";
   // "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore";
   // "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore \nDownload iOS app - $appstore";
 
-  static int phase = kDebugMode ? 2 : 1;
+  // static int phase = 1;
+  static int phase = 2;
 
   //admob
   //https://developers.google.com/admob/android/test-ads
@@ -105,5 +111,23 @@ class AppStrings {
   static String verificationScreenEvent = "verificationScreen";
   static String homeScreenEvent = "homeScreen";
   static String guestLoginEvent = "guestLogin";
+  // static String  = "";
+
+  //socket events
+  static String room = "room";
+  static String welcome = "welcome";
+  static String sessionFull = "session_full";
+  static String join = "join";
+  static String getReady = "GetReady";
+  static String allParticipants = "allParticipants";
+  static String userDetails = "userDetails";
+  static String startQuiz = "start_quiz";
+  static String error = "Error";
+  static String disconnected = "disconnected";
+  static String forceDisconnect = "forceDisconnect";
+  static String updateScore = "updateScore";
+  static String submit = "submit";
+  static String notSubmitted = "notSubmitted";
+  static String completed = "completed";
   // static String  = "";
 }

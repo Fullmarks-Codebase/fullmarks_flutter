@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/AddQuizResponse.dart';
 import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/screens/StartAddQuestionScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
@@ -138,7 +139,7 @@ class _AddQuizNameScreenState extends State<AddQuizNameScreen> {
       var request = Map<String, dynamic>();
       request["name"] = quizNameController.text.trim();
       //api call
-      CommonResponse response = CommonResponse.fromJson(
+      AddQuizResponse response = AddQuizResponse.fromJson(
         await ApiManager(context)
             .postCall(url: AppStrings.addCustomQuiz, request: request),
       );
@@ -152,7 +153,9 @@ class _AddQuizNameScreenState extends State<AddQuizNameScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => StartAddQuestionScreen(),
+            builder: (context) => StartAddQuestionScreen(
+              customQuiz: response.result,
+            ),
           ),
         );
       }

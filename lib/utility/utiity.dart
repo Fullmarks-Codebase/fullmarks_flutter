@@ -324,6 +324,56 @@ class Utility {
     );
   }
 
+  static Future<bool> quitLiveQuizDialog({
+    @required BuildContext context,
+    @required Function onPressed,
+  }) async {
+    return showDialog<bool>(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Do you want to quit this Live Quiz?",
+                style: TextStyle(
+                  color: AppColors.appColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Utility.button(
+                context,
+                bgColor: AppColors.redColor2,
+                onPressed: onPressed,
+                text: "Quit",
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Utility.button(
+                context,
+                onPressed: () async {
+                  //delay to give ripple effect
+                  await Future.delayed(
+                      Duration(milliseconds: AppStrings.delay));
+                  Navigator.pop(context);
+                },
+                text: "Cancel",
+                textcolor: AppColors.appColor,
+                borderColor: AppColors.appColor,
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   static Widget appbar(
     BuildContext context, {
     @required String text,
@@ -875,7 +925,7 @@ class Utility {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Do you want to  delete this Question?",
+                "Do you want to delete this Question?",
                 style: TextStyle(
                   color: AppColors.appColor,
                   fontWeight: FontWeight.bold,

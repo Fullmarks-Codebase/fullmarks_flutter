@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/LiveQuizWelcomeResponse.dart';
 import 'package:fullmarks/screens/WaitingForHostScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class JoinQuizScreen extends StatefulWidget {
   String roomId;
@@ -17,11 +22,68 @@ class JoinQuizScreen extends StatefulWidget {
 
 class _JoinQuizScreenState extends State<JoinQuizScreen> {
   TextEditingController roomIdController = TextEditingController();
+  IO.Socket socket = AppSocket.init();
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     roomIdController.text = widget.roomId;
+
+    //this will get room and questions
+    socket.on(AppStrings.welcome, (data) {
+      print(AppStrings.welcome);
+      print(data);
+      //hide progress
+      _isLoading = false;
+      _notify();
+      LiveQuizWelcomeResponse response =
+          LiveQuizWelcomeResponse.fromJson(json.decode(jsonEncode(data)));
+      Utility.showToast(response.message);
+      if (context != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WaitingForHostScreen(
+              liveQuizWelcomeResponse: response,
+            ),
+          ),
+        );
+      }
+    });
+
+    socket.on(AppStrings.sessionFull, (data) {
+      print(AppStrings.sessionFull);
+      print(data);
+      //hide progress
+      _isLoading = false;
+      _notify();
+      Utility.showToast(jsonEncode(data));
+    });
+
+    //this shows error from socket
+    socket.onError((data) {
+      print("onError");
+      print(data);
+      //hide progress
+      _isLoading = false;
+      _notify();
+    });
+
+    // this is manual error
+    socket.on(AppStrings.error, (data) {
+      print(AppStrings.error);
+      print(data);
+      //hide progress
+      _isLoading = false;
+      _notify();
+      Utility.showToast(jsonEncode(data));
+    });
+  }
+
+  _notify() {
+    //notify internal state change in objects
+    if (mounted) setState(() {});
   }
 
   @override
@@ -40,6 +102,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
             ],
           ),
           body(),
+          _isLoading ? Utility.progress(context) : Container()
         ],
       ),
     );
@@ -54,58 +117,74 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
           isHome: false,
         ),
         Spacer(),
-        Text(
-          "Join Quiz",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.all(16),
-          padding: EdgeInsets.all(16),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(50),
-          ),
-          child: TextField(
-            controller: roomIdController,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 25,
-            ),
-            decoration: InputDecoration(
-              hintText: "Enter Room Id",
-              border: InputBorder.none,
-            ),
-            keyboardType: TextInputType.number,
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16,
-          ),
-          child: Utility.button(
-            context,
-            onPressed: () async {
-              //delay to give ripple effect
-              await Future.delayed(Duration(milliseconds: AppStrings.delay));
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WaitingForHostScreen(),
+        _isLoading
+            ? Container()
+            : Text(
+                "Join Quiz",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
                 ),
-              );
-            },
-            text: "Enter",
-            bgColor: AppColors.myProgressCorrectcolor,
-            isSufix: true,
-            assetName: AppAssets.enter,
-            isSpacer: true,
-          ),
-        ),
+              ),
+        _isLoading
+            ? Container()
+            : Container(
+                margin: EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: TextField(
+                  controller: roomIdController,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 25,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: "Enter Room Id",
+                    border: InputBorder.none,
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+        _isLoading
+            ? Container()
+            : Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                ),
+                child: Utility.button(
+                  context,
+                  onPressed: () async {
+                    //delay to give ripple effect
+                    await Future.delayed(
+                        Duration(milliseconds: AppStrings.delay));
+                    if (roomIdController.text.trim().length == 0) {
+                      Utility.showToast("Room id is required");
+                    } else {
+                      //show progress
+                      _isLoading = true;
+                      _notify();
+
+                      //this "room" emit will create room
+                      // this will listen to "welcome" event and go to WaitingForHostScreen screen
+                      socket.emit(AppStrings.room, {
+                        "room": roomIdController.text.trim(),
+                        "id": Utility.getCustomer().id,
+                        "userObj": Utility.getCustomer(),
+                      });
+                    }
+                  },
+                  text: "Enter",
+                  bgColor: AppColors.myProgressCorrectcolor,
+                  isSufix: true,
+                  assetName: AppAssets.enter,
+                  isSpacer: true,
+                ),
+              ),
         Spacer(),
         Spacer(),
       ],

@@ -303,7 +303,7 @@ class _CreateCustomQuizScreenState extends State<CreateCustomQuizScreen> {
                 ),
                 Expanded(
                     child:
-                        //handle if quiz is played
+                        //TODO handle if quiz is played
                         // index == 0
                         //     ?
                         Column(
@@ -334,31 +334,39 @@ class _CreateCustomQuizScreenState extends State<CreateCustomQuizScreen> {
                       fontSize: 12,
                       padding: 8,
                     ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Utility.button(
-                      context,
-                      onPressed: () async {
-                        //delay to give ripple effect
-                        await Future.delayed(
-                            Duration(milliseconds: AppStrings.delay));
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CreateQuizLobbyScreen(),
+                    customQuizDetails[index].totalQuestion == 0
+                        ? Container()
+                        : SizedBox(
+                            height: 4,
                           ),
-                        );
-                        _getQuiz();
-                      },
-                      text: "Start Quiz",
-                      bgColor: AppColors.strongCyan,
-                      assetName: AppAssets.enterWhite,
-                      isSufix: true,
-                      isSpacer: true,
-                      fontSize: 12,
-                      padding: 8,
-                    ),
+                    customQuizDetails[index].totalQuestion == 0
+                        ? Container()
+                        : Utility.button(
+                            context,
+                            onPressed: () async {
+                              //delay to give ripple effect
+                              await Future.delayed(
+                                  Duration(milliseconds: AppStrings.delay));
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CreateQuizLobbyScreen(
+                                    subject: null,
+                                    customQuiz: customQuizDetails[index],
+                                    isCustomQuiz: true,
+                                  ),
+                                ),
+                              );
+                              _getQuiz();
+                            },
+                            text: "Start Quiz",
+                            bgColor: AppColors.strongCyan,
+                            assetName: AppAssets.enterWhite,
+                            isSufix: true,
+                            isSpacer: true,
+                            fontSize: 12,
+                            padding: 8,
+                          ),
                   ],
                 )
                     // : Container(

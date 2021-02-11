@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/CustomQuizResponse.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/screens/AddEditCustomQuizQuestionOptionScreen.dart';
 import 'package:fullmarks/screens/SetTimeLimitScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
@@ -34,18 +35,10 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
   TextEditingController questionController = TextEditingController();
   String questionSeconds = "30";
   File question_image;
-  String ans_one = "for testing";
-  String ans_two = "for testing";
-  String ans_three = "for testing";
-  String ans_four = "for testing";
-  bool ans_one_status = true;
-  bool ans_two_status = false;
-  bool ans_three_status = false;
-  bool ans_four_status = false;
-  File ans_one_image;
-  File ans_two_image;
-  File ans_three_image;
-  File ans_four_image;
+  List<String> answers = ["", "", "", ""];
+  List<bool> answerStatus = [false, false, false, false];
+  List<File> answerFileImages = [null, null, null, null];
+  List<String> answerImages = ["", "", "", ""];
   bool _isLoading = false;
 
   @override
@@ -53,6 +46,20 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
     if (widget.isEdit) {
       questionSeconds = widget.questionDetails.time.toString();
       questionController.text = widget.questionDetails.question;
+      answers[0] = widget.questionDetails.ansOne;
+      answers[1] = widget.questionDetails.ansTwo;
+      answers[2] = widget.questionDetails.ansThree;
+      answers[3] = widget.questionDetails.ansFour;
+
+      answerStatus[0] = widget.questionDetails.ansOneStatus;
+      answerStatus[1] = widget.questionDetails.ansTwoStatus;
+      answerStatus[2] = widget.questionDetails.ansThreeStatus;
+      answerStatus[3] = widget.questionDetails.ansFourStatus;
+
+      answerImages[0] = widget.questionDetails.ansOneImage;
+      answerImages[1] = widget.questionDetails.ansTwoImage;
+      answerImages[2] = widget.questionDetails.ansThreeImage;
+      answerImages[3] = widget.questionDetails.ansFourImage;
     }
     super.initState();
   }
@@ -146,11 +153,11 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
           ),
           Row(
             children: [
-              optionView(AppColors.myProgressCorrectcolor),
+              optionView(0, AppColors.myProgressCorrectcolor, "ans_one_image"),
               SizedBox(
                 width: 16,
               ),
-              optionView(AppColors.subtopicItemBorderColor),
+              optionView(1, AppColors.subtopicItemBorderColor, "ans_two_image"),
             ],
           ),
           SizedBox(
@@ -158,11 +165,11 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
           ),
           Row(
             children: [
-              optionView(AppColors.strongCyan),
+              optionView(2, AppColors.strongCyan, "ans_three_image"),
               SizedBox(
                 width: 16,
               ),
-              optionView(AppColors.introColor4),
+              optionView(3, AppColors.introColor4, "ans_four_image"),
             ],
           ),
           SizedBox(
@@ -251,10 +258,78 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
     );
   }
 
+  deleteImage() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["id"] = widget.questionDetails.id.toString();
+      request["image_field"] = "question_image";
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.deleteImage, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      Utility.showToast(response.message);
+
+      if (response.code == 200) {
+        Navigator.pop(context);
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  showEditDeleteImageDialog() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) {
+        return CupertinoActionSheet(
+          title: Text("Do you want edit or delete this image?"),
+          message: Text("Select from"),
+          actions: [
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                _onImageTap();
+              },
+              child: Text("Edit"),
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                deleteImage();
+              },
+              child: Text("Delete"),
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Cancel"),
+          ),
+        );
+      },
+    );
+  }
+
   Widget addImageView() {
     return GestureDetector(
       onTap: () {
-        _onImageTap();
+        if (widget.isEdit) {
+          showEditDeleteImageDialog();
+        } else {
+          _onImageTap();
+        }
       },
       child: Container(
         height: 200,
@@ -366,64 +441,105 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
     );
   }
 
-  Widget optionView(Color bgColor) {
+  Widget optionView(int index, Color bgColor, String image_field) {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 32,
-        ),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: Colors.transparent,
+            width: 1.0,
+          ),
         ),
-        child: Column(
-          children: [
-            widget.isEdit
-                ? Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    child: SvgPicture.asset(
-                      AppAssets.pencil,
-                      color: bgColor,
-                    ),
-                  )
-                : SvgPicture.asset(AppAssets.add),
-            SizedBox(
-              height: 16,
-            ),
-            Text(
-              widget.isEdit ? "Edit Option" : "Add Option",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+        child: FlatButton(
+          onPressed: () async {
+            FocusScope.of(context).requestFocus(new FocusNode());
+            var data = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddEditCustomQuizQuestionOptionScreen(
+                  isEdit: widget.isEdit,
+                  isAnswer: answerStatus[index],
+                  option: answers[index],
+                  optionFileImage: answerFileImages[index],
+                  optionImage: answerImages[index],
+                  image_field: image_field,
+                  questionid: widget.questionDetails.id.toString(),
+                ),
               ),
-            )
-          ],
+            );
+            if (data != null) {
+              answers[index] = data["option"];
+              answerFileImages[index] = data["optionFileImage"];
+              answerStatus[index] = data["isAnswer"];
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 32,
+            ),
+            child: Column(
+              children: [
+                widget.isEdit
+                    ? Container(
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: SvgPicture.asset(
+                          AppAssets.pencil,
+                          color: bgColor,
+                        ),
+                      )
+                    : SvgPicture.asset(AppAssets.add),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  widget.isEdit ? "Edit Option" : "Add Option",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                  textAlign: TextAlign.center,
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
   addEditTap() {
-    if (question_image == null && questionController.text.trim().length == 0) {
+    if (!widget.isEdit &&
+        question_image == null &&
+        questionController.text.trim().length == 0) {
       Utility.showToast("Please select question image or type question");
-    } else if (ans_one_image == null && ans_one.length == 0) {
+    } else if (!widget.isEdit &&
+        answerFileImages[0] == null &&
+        answers[0].length == 0) {
       Utility.showToast("Please select option 1 image or type option 1");
-    } else if (ans_two_image == null && ans_two.length == 0) {
+    } else if (!widget.isEdit &&
+        answerFileImages[1] == null &&
+        answers[1].length == 0) {
       Utility.showToast("Please select option 2 image or type option 2");
-    } else if (ans_three_image == null && ans_three.length == 0) {
+    } else if (!widget.isEdit &&
+        answerFileImages[2] == null &&
+        answers[2].length == 0) {
       Utility.showToast("Please select option 3 image or type option 3");
-    } else if (ans_four_image == null && ans_four.length == 0) {
+    } else if (!widget.isEdit &&
+        answerFileImages[3] == null &&
+        answers[3].length == 0) {
       Utility.showToast("Please select option 4 image or type option 4");
-    } else if (!ans_one_status &&
-        !ans_two_status &&
-        !ans_three_status &&
-        !ans_four_status) {
+    } else if (!answerStatus[0] &&
+        !answerStatus[1] &&
+        !answerStatus[2] &&
+        !answerStatus[3]) {
       Utility.showToast("Please select any one right answer");
     } else {
       _addEditQuestion();
@@ -456,15 +572,15 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
       }
       if (questionController.text.trim().length != 0)
         request.fields["question"] = questionController.text.trim();
-      if (ans_one.length != 0) request.fields["ans_one"] = ans_one;
-      if (ans_two.length != 0) request.fields["ans_two"] = ans_two;
-      if (ans_three.length != 0) request.fields["ans_three"] = ans_three;
-      if (ans_four.length != 0) request.fields["ans_four"] = ans_four;
+      if (answers[0].length != 0) request.fields["ans_one"] = answers[0];
+      if (answers[1].length != 0) request.fields["ans_two"] = answers[1];
+      if (answers[2].length != 0) request.fields["ans_three"] = answers[2];
+      if (answers[3].length != 0) request.fields["ans_four"] = answers[3];
 
-      request.fields["ans_one_status"] = ans_one_status.toString();
-      request.fields["ans_two_status"] = ans_two_status.toString();
-      request.fields["ans_three_status"] = ans_three_status.toString();
-      request.fields["ans_four_status"] = ans_four_status.toString();
+      request.fields["ans_one_status"] = answerStatus[0].toString();
+      request.fields["ans_two_status"] = answerStatus[1].toString();
+      request.fields["ans_three_status"] = answerStatus[2].toString();
+      request.fields["ans_four_status"] = answerStatus[3].toString();
 
       request.fields["time"] = questionSeconds;
 
@@ -478,41 +594,43 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
           ),
         );
       }
-      if (ans_one_image != null) {
+      if (answerFileImages[0] != null) {
         request.files.add(
           await MultipartFile.fromPath(
             'ans_one_image',
-            ans_one_image.path,
-            contentType: MediaType('image', ans_one_image.path.split(".").last),
+            answerFileImages[0].path,
+            contentType:
+                MediaType('image', answerFileImages[0].path.split(".").last),
           ),
         );
       }
-      if (ans_two_image != null) {
+      if (answerFileImages[1] != null) {
         request.files.add(
           await MultipartFile.fromPath(
             'ans_two_image',
-            ans_two_image.path,
-            contentType: MediaType('image', ans_two_image.path.split(".").last),
+            answerFileImages[1].path,
+            contentType:
+                MediaType('image', answerFileImages[1].path.split(".").last),
           ),
         );
       }
-      if (ans_three_image != null) {
+      if (answerFileImages[2] != null) {
         request.files.add(
           await MultipartFile.fromPath(
             'ans_three_image',
-            ans_three_image.path,
+            answerFileImages[2].path,
             contentType:
-                MediaType('image', ans_three_image.path.split(".").last),
+                MediaType('image', answerFileImages[2].path.split(".").last),
           ),
         );
       }
-      if (ans_four_image != null) {
+      if (answerFileImages[3] != null) {
         request.files.add(
           await MultipartFile.fromPath(
             'ans_four_image',
-            ans_four_image.path,
+            answerFileImages[3].path,
             contentType:
-                MediaType('image', ans_four_image.path.split(".").last),
+                MediaType('image', answerFileImages[3].path.split(".").last),
           ),
         );
       }
