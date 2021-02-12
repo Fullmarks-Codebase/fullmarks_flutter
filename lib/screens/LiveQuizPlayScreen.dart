@@ -595,25 +595,30 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                user1 == null ? "-" : user1.user.username,
-                style: TextStyle(
-                  color: Colors.white,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  user1 == null ? "-" : user1.user.username,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
                 ),
-              ),
-              SizedBox(
-                height: 2,
-              ),
-              Text(
-                user1 == null ? "0" : user1.points.toString(),
-                style: TextStyle(
-                  color: Colors.white,
+                SizedBox(
+                  height: 2,
                 ),
-              ),
-            ],
+                Text(
+                  user1 == null ? "0" : user1.points.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
           SizedBox(
             width: 8,
@@ -733,10 +738,15 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                user2 == null ? "-" : user2.user.username,
-                style: TextStyle(
-                  color: Colors.white,
+              Expanded(
+                child: Text(
+                  user2 == null ? "-" : user2.user.username,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
                 ),
               ),
               SizedBox(
