@@ -735,30 +735,30 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
           SizedBox(
             width: 8,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   user2 == null ? "-" : user2.user.username,
                   style: TextStyle(
                     color: Colors.white,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.end,
+                  textAlign: TextAlign.start,
                 ),
-              ),
-              SizedBox(
-                height: 2,
-              ),
-              Text(
-                user2 == null ? "0" : user2.points.toString(),
-                style: TextStyle(
-                  color: Colors.white,
+                SizedBox(
+                  height: 2,
                 ),
-              ),
-            ],
+                Text(
+                  user2 == null ? "0" : user2.points.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           )
         ],
       ),

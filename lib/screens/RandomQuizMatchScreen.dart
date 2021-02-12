@@ -290,6 +290,9 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
         fontWeight: FontWeight.bold,
         fontSize: 22,
       ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.center,
     );
   }
 
