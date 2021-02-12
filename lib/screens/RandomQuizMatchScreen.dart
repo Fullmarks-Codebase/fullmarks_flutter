@@ -1,38 +1,187 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/LiveQuizResponse.dart';
+import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/models/RandomQuizParticipantsResponse.dart';
+import 'package:fullmarks/models/RandomQuizWelcomeResponse.dart';
+import 'package:fullmarks/models/SubjectsResponse.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppSocket.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
-
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'LiveQuizPlayScreen.dart';
 
 class RandomQuizMatchScreen extends StatefulWidget {
+  SubjectDetails subject;
+  RandomQuizMatchScreen({
+    @required this.subject,
+  });
   @override
   _RandomQuizMatchScreenState createState() => _RandomQuizMatchScreenState();
 }
 
 class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
-  bool isMatchFound = false;
+  IO.Socket socket = AppSocket.initRandom();
+  Customer customer = Utility.getCustomer();
+  Timer _timer;
+  int _start = 5;
+  List<QuestionDetails> questions = List();
+  Customer user1;
+  Customer user2;
+  int room = 0;
+  int roomId = 0;
+
+  @override
+  void initState() {
+    user1 = Utility.getCustomer();
+    var chooseData = {
+      "users": customer,
+      "data": {
+        "subjectId": widget.subject.id,
+        "classId": customer.classGrades.id
+      }
+    };
+    print(chooseData);
+    socket.emit(AppStrings.choose, chooseData);
+
+    socket.on(AppStrings.welcome, (data) {
+      print(AppStrings.welcome);
+      print(jsonEncode(data));
+      RandomQuizWelcomeResponse randomQuizWelcomeResponse =
+          RandomQuizWelcomeResponse.fromJson(jsonDecode(jsonEncode(data)));
+      room = randomQuizWelcomeResponse.room;
+      roomId = randomQuizWelcomeResponse.roomId;
+      Utility.showToast(randomQuizWelcomeResponse.message);
+      questions = randomQuizWelcomeResponse.questions;
+      _notify();
+      socket.emit(
+          AppStrings.userDetails, {"room": randomQuizWelcomeResponse.room});
+    });
+
+    socket.on(AppStrings.allParticipants, (data) {
+      print(AppStrings.allParticipants);
+      print(jsonEncode(data));
+      RandomQuizParticipantsResponse randomQuizParticipantsResponse =
+          RandomQuizParticipantsResponse.fromJson(jsonDecode(jsonEncode(data)));
+      try {
+        if (user1.id == randomQuizParticipantsResponse.users[0].user.id) {
+          user1 = randomQuizParticipantsResponse.users[0].user;
+          user2 = randomQuizParticipantsResponse.users[1].user;
+        } else {
+          user1 = randomQuizParticipantsResponse.users[1].user;
+          user2 = randomQuizParticipantsResponse.users[0].user;
+        }
+      } catch (e) {
+        user1 = null;
+        user2 = null;
+      }
+
+      _notify();
+      if (user1 != null && user2 != null) {
+        if (_timer == null) {
+          startTimer();
+        }
+      }
+    });
+
+    socket.on(AppStrings.disconnected, (data) {
+      print(AppStrings.disconnected);
+      print(data);
+      Utility.showToast(jsonEncode(data));
+      socket.emit(
+        AppStrings.forceDisconnect,
+      );
+      if (context != null) Navigator.pop(context);
+    });
+
+    super.initState();
+  }
+
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) async {
+        if (_start == 0) {
+          timer.cancel();
+          _notify();
+
+          //on timer complete go to play live quiz
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (BuildContext context) => LiveQuizPlayScreen(
+                isRandomQuiz: true,
+                isCustomQuiz: false,
+                questions: questions,
+                room: LiveQuizRoom(
+                  id: roomId,
+                  room: room.toString(),
+                  userId: Utility.getCustomer().id,
+                ),
+              ),
+            ),
+          );
+        } else {
+          _start--;
+          _notify();
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    try {
+      _timer.cancel();
+    } catch (e) {}
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Utility.setSvgFullScreen(context, AppAssets.mockTestBg),
-          Column(
-            children: [
-              Spacer(),
-              SvgPicture.asset(
-                AppAssets.bottomBarbg,
-                width: MediaQuery.of(context).size.width,
-              )
-            ],
-          ),
-          body(),
-        ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Utility.setSvgFullScreen(context, AppAssets.mockTestBg),
+            Column(
+              children: [
+                Spacer(),
+                SvgPicture.asset(
+                  AppAssets.bottomBarbg,
+                  width: MediaQuery.of(context).size.width,
+                )
+              ],
+            ),
+            body(),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<bool> _onBackPressed() {
+    return Utility.quitLiveQuizDialog(
+          context: context,
+          onPressed: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
+            Navigator.pop(context);
+            socket.emit(
+              AppStrings.forceDisconnect,
+            );
+            Navigator.pop(context);
+            return true;
+          },
+        ) ??
+        false;
   }
 
   Widget body() {
@@ -40,9 +189,12 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
       children: [
         Utility.appbar(
           context,
-          text: isMatchFound ? "Matched" : "Searching for Player",
+          text: questions.length != 0 && user1 != null && user2 != null
+              ? "Matched"
+              : "Searching for Player",
           isHome: false,
           textColor: Colors.white,
+          onBackPressed: _onBackPressed,
         ),
         userImageView(),
         searchingView(),
@@ -53,23 +205,13 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
         SizedBox(
           height: 16,
         ),
-        GestureDetector(
-          onTap: () {
-            //click for ui tsting purpose
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (BuildContext context) => LiveQuizPlayScreen(
-                  isRandomQuiz: true,
-                ),
-              ),
-            );
-          },
-          child: Text(
-            isMatchFound ? "Get Ready to Play in 5 Second.." : "",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+        Text(
+          questions.length != 0 && user1 != null && user2 != null
+              ? "Get Ready to Play in  $_start  Second..."
+              : "",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
         SizedBox(
@@ -90,59 +232,52 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
         padding: EdgeInsets.symmetric(
           horizontal: 16,
         ),
-        child: GestureDetector(
-          onTap: () {
-            //click only for ui purpose
-            isMatchFound = !isMatchFound;
-            _notify();
-          },
-          child: isMatchFound
-              ? Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          searchingText("Amit"),
-                          SizedBox(
-                            height: 16,
-                          ),
-                          searchingText("India"),
-                        ],
-                      ),
+        child: questions.length != 0 && user1 != null && user2 != null
+            ? Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        searchingText(user1.username),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        searchingText("India"),
+                      ],
                     ),
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "VS",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.w900,
-                          ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "VS",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          searchingText("Adit"),
-                          SizedBox(
-                            height: 16,
-                          ),
-                          searchingText("Qatar"),
-                        ],
-                      ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        searchingText(user2.username),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        searchingText("India"),
+                      ],
                     ),
-                  ],
-                )
-              : Container(
-                  alignment: Alignment.center,
-                  child: searchingText("Searching..."),
-                ),
-        ),
+                  ),
+                ],
+              )
+            : Container(
+                alignment: Alignment.center,
+                child: searchingText("Searching..."),
+              ),
       ),
     );
   }
@@ -185,7 +320,10 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                            image: AssetImage(AppAssets.dummyUser),
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                              AppStrings.userImage + user1.thumbnail,
+                            ),
                           ),
                           border: Border.all(
                             color: AppColors.myProgressIncorrectcolor,
@@ -198,21 +336,29 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                 ),
                 Expanded(
                   flex: 10,
-                  child: Image.asset(AppAssets.subjectPlaceholder),
+                  child: Utility.imageLoader(
+                    baseUrl: AppStrings.subjectImage,
+                    url: widget.subject.image,
+                    placeholder: AppAssets.subjectPlaceholder,
+                    fit: BoxFit.contain,
+                  ),
                 ),
                 Expanded(
                   flex: 10,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      isMatchFound
+                      questions.length != 0 && user1 != null && user2 != null
                           ? Container(
                               height: 100,
                               width: 100,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
-                                  image: AssetImage(AppAssets.dummyUser),
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(
+                                    AppStrings.userImage + user2.thumbnail,
+                                  ),
                                 ),
                                 border: Border.all(
                                   color: AppColors.myProgressIncorrectcolor,

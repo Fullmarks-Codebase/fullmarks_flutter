@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/AddQuizResponse.dart';
-import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/screens/StartAddQuestionScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';

@@ -8,6 +8,7 @@ import 'package:fullmarks/models/LiveQuestionReportRequest.dart';
 import 'package:fullmarks/models/LiveQuizResponse.dart';
 import 'package:fullmarks/models/LiveQuizUsersResponse.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/models/RandomQuizParticipantsResponse.dart';
 import 'package:fullmarks/models/ReportsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
@@ -39,50 +40,106 @@ class LiveQuizPlayScreen extends StatefulWidget {
 class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   int currentQuestion = 0;
   Timer _timer;
-  IO.Socket socket = AppSocket.init();
+  IO.Socket socket;
   List<LiveQuizUsersDetails> participants = List();
   Customer customer = Utility.getCustomer();
   String myScore = "0";
   int perQuestionSeconds = 0;
   RewardedVideoAd rewardAd = RewardedVideoAd.instance;
   bool _isLoading = false;
+  int defaultSeconds = 5;
+  RandomQuizParticipantsDetails user1;
+  RandomQuizParticipantsDetails user2;
+
+  getQuestionSeconds() {
+    perQuestionSeconds = widget.isRandomQuiz
+        ? defaultSeconds
+        : widget.isCustomQuiz
+            ? widget.questions[currentQuestion].time
+            : defaultSeconds;
+    _notify();
+  }
 
   @override
   void initState() {
     super.initState();
-    perQuestionSeconds =
-        widget.isCustomQuiz ? widget.questions[currentQuestion].time : 5;
+    socket = widget.isRandomQuiz ? AppSocket.initRandom() : AppSocket.init();
+    getQuestionSeconds();
     startTimer();
 
-    //this will return all Participants
-    socket.on(AppStrings.allParticipants, (data) {
-      print(AppStrings.allParticipants);
-      print(data);
-      LiveQuizUsersResponse response =
-          LiveQuizUsersResponse.fromJson(json.decode(jsonEncode(data)));
-      participants = response.users;
-      if (participants.length != 0)
-        myScore = participants
-            .firstWhere(
-              (element) => element.user.id == customer.id,
-              orElse: () => null,
-            )
-            ?.user
-            ?.score
-            .toString();
-      _notify();
-    });
+    if (widget.isRandomQuiz) {
+      socket.emit(AppStrings.userDetails, {"room": widget.room.room});
 
-    socket.onError((data) {
-      print("onError");
-      print(data);
-    });
+      //if other user disconnects then you also force quits the quiz
+      socket.on(AppStrings.disconnected, (data) {
+        print(AppStrings.disconnected);
+        print(jsonEncode(data));
+        Utility.showToast(jsonEncode(data));
+        socket.emit(
+          AppStrings.forceDisconnect,
+        );
+        if (context != null)
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (BuildContext context) => HomeScreen(),
+            ),
+            (Route<dynamic> route) => false,
+          );
+      });
 
-    socket.on(AppStrings.error, (data) {
-      print(AppStrings.error);
-      print(data);
-      Utility.showToast(jsonEncode(data));
-    });
+      socket.on(AppStrings.allParticipants, (data) {
+        print(AppStrings.allParticipants);
+        print(jsonEncode(data));
+        RandomQuizParticipantsResponse randomQuizParticipantsResponse =
+            RandomQuizParticipantsResponse.fromJson(
+                jsonDecode(jsonEncode(data)));
+        try {
+          if (Utility.getCustomer().id ==
+              randomQuizParticipantsResponse.users[0].user.id) {
+            user1 = randomQuizParticipantsResponse.users[1];
+            user2 = randomQuizParticipantsResponse.users[0];
+          } else {
+            user1 = randomQuizParticipantsResponse.users[0];
+            user2 = randomQuizParticipantsResponse.users[1];
+          }
+        } catch (e) {
+          user1 = null;
+          user2 = null;
+        }
+
+        _notify();
+      });
+    } else {
+      //this will return all Participants
+      socket.on(AppStrings.allParticipants, (data) {
+        print(AppStrings.allParticipants);
+        print(data);
+        LiveQuizUsersResponse response =
+            LiveQuizUsersResponse.fromJson(json.decode(jsonEncode(data)));
+        participants = response.users;
+        if (response.users.length != 0)
+          myScore = participants
+              .firstWhere(
+                (element) => element.user.id == customer.id,
+                orElse: () => null,
+              )
+              ?.user
+              ?.score
+              .toString();
+        _notify();
+      });
+
+      socket.onError((data) {
+        print("onError");
+        print(data);
+      });
+
+      socket.on(AppStrings.error, (data) {
+        print(AppStrings.error);
+        print(data);
+        Utility.showToast(jsonEncode(data));
+      });
+    }
 
     rewardAd.load(adUnitId: AppStrings.adUnitId).then((value) {
       print("Reward ad load");
@@ -145,7 +202,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   }
 
   void startTimer() {
-    socket.emit(AppStrings.userDetails);
+    socket.emit(AppStrings.userDetails, {"room": widget.room.room});
     const oneSec = const Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
@@ -153,18 +210,32 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         if (perQuestionSeconds == 0) {
           timer.cancel();
 
-          //check answer is correc or not
+          //check answer is correct or not
           if (Utility.getQuestionCorrectAnswer(
                   widget.questions[currentQuestion]) ==
               widget.questions[currentQuestion].selectedAnswer) {
             Utility.showAnswerToast(context, "Correct", AppColors.correctColor);
-            socket.emit(AppStrings.updateScore, {"point": 1});
-            socket.emit(AppStrings.userDetails);
+            socket.emit(
+              AppStrings.updateScore,
+              {
+                "point": 1,
+                "id": Utility.getCustomer().id,
+                "room": widget.room.room,
+              },
+            );
+            socket.emit(AppStrings.userDetails, {"room": widget.room.room});
           } else {
             Utility.showAnswerToast(
                 context, "Incorrect", AppColors.incorrectColor);
-            socket.emit(AppStrings.updateScore, {"point": 0});
-            socket.emit(AppStrings.userDetails);
+            socket.emit(
+              AppStrings.updateScore,
+              {
+                "point": 0,
+                "id": Utility.getCustomer().id,
+                "room": widget.room.room,
+              },
+            );
+            socket.emit(AppStrings.userDetails, {"room": widget.room.room});
           }
 
           Future.delayed(
@@ -176,7 +247,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
               } else {
                 //go to next question
                 currentQuestion = currentQuestion + 1;
-                perQuestionSeconds = 3;
+                getQuestionSeconds();
                 _notify();
                 //again start timer
                 startTimer();
@@ -515,71 +586,82 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   Widget scoreView() {
     return Expanded(
       flex: 20,
-      child: widget.isRandomQuiz
-          ? Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        "Adit",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(
-                        "5",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Container(
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage(AppAssets.dummyUser),
-                      ),
-                      border: Border.all(
-                        color: AppColors.myProgressIncorrectcolor,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                ],
+      child: widget.isRandomQuiz ? user1View() : myScoreView(),
+    );
+  }
+
+  Widget user1View() {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                user1 == null ? "-" : user1.user.username,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
-            )
-          : Container(
-              alignment: Alignment.centerRight,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 16,
+              SizedBox(
+                height: 2,
+              ),
+              Text(
+                user1 == null ? "0" : user1.points.toString(),
+                style: TextStyle(
+                  color: Colors.white,
                 ),
-                decoration: BoxDecoration(
-                  color: AppColors.whiteColor,
-                  borderRadius: BorderRadius.circular(30),
+              ),
+            ],
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Container(
+            height: 40,
+            width: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(
+                  user1 == null
+                      ? ""
+                      : AppStrings.userImage + user1.user.thumbnail,
                 ),
-                child: Text(
-                  "My Score : " + myScore,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: AppColors.appColor,
-                  ),
-                ),
+              ),
+              border: Border.all(
+                color: AppColors.myProgressIncorrectcolor,
+                width: 2,
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget myScoreView() {
+    return Container(
+      alignment: Alignment.centerRight,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          vertical: 8,
+          horizontal: 16,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.whiteColor,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Text(
+          "My Score : " + myScore,
+          style: TextStyle(
+            fontSize: 10,
+            color: AppColors.appColor,
+          ),
+        ),
+      ),
     );
   }
 
@@ -622,105 +704,115 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
     );
   }
 
+  Widget user2View() {
+    return Container(
+      child: Row(
+        children: [
+          Container(
+            height: 40,
+            width: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(
+                  user2 == null
+                      ? ""
+                      : AppStrings.userImage + user2.user.thumbnail,
+                ),
+              ),
+              border: Border.all(
+                color: AppColors.myProgressIncorrectcolor,
+                width: 2,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                user2 == null ? "-" : user2.user.username,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(
+                height: 2,
+              ),
+              Text(
+                user2 == null ? "0" : user2.points.toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget participantsCountView() {
+    return Container(
+      alignment: Alignment.center,
+      child: GestureDetector(
+        onTap: () async {
+          //delay to give ripple effect
+          await Future.delayed(Duration(milliseconds: AppStrings.delay));
+          showParticipantsDialog();
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: 8,
+            horizontal: 8,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 12,
+                width: 12,
+                child: SvgPicture.asset(
+                  AppAssets.participants,
+                  color: AppColors.appColor,
+                ),
+              ),
+              SizedBox(
+                width: 4,
+              ),
+              Text(
+                "Participants (" + participants.length.toString() + ")",
+                style: TextStyle(
+                  fontSize: 10,
+                  color: AppColors.appColor,
+                ),
+              ),
+              SizedBox(
+                width: 2,
+              ),
+              Icon(
+                Icons.keyboard_arrow_down,
+                color: AppColors.appColor,
+                size: 12,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget participantsView() {
     return Expanded(
       flex: 20,
-      child: widget.isRandomQuiz
-          ? Container(
-              child: Row(
-                children: [
-                  Container(
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage(AppAssets.dummyUser),
-                      ),
-                      border: Border.all(
-                        color: AppColors.myProgressIncorrectcolor,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Amit",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(
-                        "1",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            )
-          : Container(
-              alignment: Alignment.center,
-              child: GestureDetector(
-                onTap: () async {
-                  //delay to give ripple effect
-                  await Future.delayed(
-                      Duration(milliseconds: AppStrings.delay));
-                  showParticipantsDialog();
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 12,
-                        width: 12,
-                        child: SvgPicture.asset(
-                          AppAssets.participants,
-                          color: AppColors.appColor,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 4,
-                      ),
-                      Text(
-                        "Participants (" + participants.length.toString() + ")",
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: AppColors.appColor,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Icon(
-                        Icons.keyboard_arrow_down,
-                        color: AppColors.appColor,
-                        size: 12,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
+      child: widget.isRandomQuiz ? user2View() : participantsCountView(),
     );
   }
 

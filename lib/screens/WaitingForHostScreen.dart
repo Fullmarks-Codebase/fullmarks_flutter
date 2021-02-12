@@ -55,7 +55,9 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
       print(data);
       LiveQuizReadyResponse response =
           LiveQuizReadyResponse.fromJson(json.decode(jsonEncode(data)));
-      startTimer(response.message);
+      if (_timer == null) {
+        startTimer(response.message);
+      }
     });
 
     //this will return all Participants

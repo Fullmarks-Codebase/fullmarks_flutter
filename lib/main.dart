@@ -86,24 +86,24 @@ Future<void> main() async {
 
 /*
 
-Home (subject) -> SubTopicScreen -> SetsScreen -> InstructionsScreen -> TestScreen -> TestResultScreen -> QuizResultScreen
+Home (subject) -> SubTopicScreen -> SetsScreen -> InstructionsScreen -> TestScreen -> TestResultScreen -> QuizResultScreen (done)
 
-NotificationListScreen -> NotificationDetailsScreen
+NotificationListScreen -> NotificationDetailsScreen  (done)
 
 Drawer
-1. My ProgressScreen
+1. My ProgressScreen (done)
 MyProgressScreen -> MyProgressSubjectScreen
 
-2. My Profile
+2. My Profile (done)
 MyProfileScreen
 
-3. Change Grade
+3. Change Grade (done)
 ChangeGradeScreen
 
 4. Mock Test
 MockTestScreen -> MockTestQuizScreen
 
-5. Live Quizzes
+5. Live Quizzes (done) 
 LiveQuizScreen 
   - LeaderboardScreen
   - AddFriendScreen
@@ -111,8 +111,8 @@ LiveQuizScreen
   - JoinQuizScreen -> WaitingForHostScreen -> LiveQuizPlayScreen -> RankListScreen
   - CreateNewQuizScreen -> SubjectSelectionScreen
                               - CreateQuizLobbyScreen -> LiveQuizPlayScreen -> RankListScreen
-                              - CreateCustomQuizScreen -> AddQuizNameScreen
-  - SubjectSelectionScreen -> RandomQuizMatchScreen -> LiveQuizPlayScreen
+                              - CreateCustomQuizScreen -> AddQuizNameScreen -> StartAddQuestionScreen -> AddQuestionScreen -> AddEditCustomQuizQuestionOptionScreen
+  - SubjectSelectionScreen -> RandomQuizMatchScreen -> LiveQuizPlayScreen -> RankListScreen
 
 6. Discussion
 DiscussionScreen 
@@ -120,7 +120,7 @@ DiscussionScreen
   - AddDiscussionScreen 
   - AddCommentScreen 
 
-7. My Buddies
+7. My Buddies (done)
 MyFriendsScreen -> OtherProfileScreen
 
 *****/

@@ -29,13 +29,14 @@ class RankListScreen extends StatefulWidget {
 }
 
 class _RankListScreenState extends State<RankListScreen> {
-  IO.Socket socket = AppSocket.init();
+  IO.Socket socket;
   List<QuizLeaderBoardDetails> quizLeaderboard = List();
   Customer customer = Utility.getCustomer();
   String notSubmittedString = "";
 
   @override
   void initState() {
+    socket = widget.isRandomQuiz ? AppSocket.initRandom() : AppSocket.init();
     socket.emit(AppStrings.submit);
 
     socket.on(AppStrings.notSubmitted, (data) {
@@ -161,8 +162,7 @@ class _RankListScreenState extends State<RankListScreen> {
                         right: 16,
                         left: 16,
                       ),
-                      itemCount:
-                          widget.isRandomQuiz ? 0 : quizLeaderboard.length,
+                      itemCount: quizLeaderboard.length,
                       separatorBuilder: (context, index) {
                         return Divider(
                           color: AppColors.lightAppColor,
@@ -235,9 +235,11 @@ class _RankListScreenState extends State<RankListScreen> {
                 (quizLeaderboard[index].user.id == customer.id
                     ? " (You)"
                     : "") +
-                (widget.room.userId == quizLeaderboard[index].user.id
-                    ? " (Host)"
-                    : ""),
+                (widget.isRandomQuiz
+                    ? ""
+                    : widget.room.userId == quizLeaderboard[index].user.id
+                        ? " (Host)"
+                        : ""),
             style: TextStyle(
               color: Colors.black,
               fontSize: 18,

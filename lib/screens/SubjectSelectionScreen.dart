@@ -174,7 +174,9 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => widget.isRandomQuiz
-                ? RandomQuizMatchScreen()
+                ? RandomQuizMatchScreen(
+                    subject: subjects[index],
+                  )
                 : CreateQuizLobbyScreen(
                     subject: subjects[index],
                     customQuiz: null,

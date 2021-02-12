@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
-
 class AppStrings {
   // static String baseUrl = "http://e-fullmarks.in/";
   static String baseUrl = "http://104.131.14.251:3001/";
@@ -114,6 +112,7 @@ class AppStrings {
   // static String  = "";
 
   //socket events
+  //live quuiz
   static String room = "room";
   static String welcome = "welcome";
   static String sessionFull = "session_full";
@@ -129,9 +128,10 @@ class AppStrings {
   static String submit = "submit";
   static String notSubmitted = "notSubmitted";
   static String completed = "completed";
+  //random quiz
+  static String choose = "choose";
   // static String  = "";
 
   //notification type
   static int friends = 2;
-  // static String  = "";
 }
