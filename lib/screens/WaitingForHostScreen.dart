@@ -17,6 +17,7 @@ import 'package:fullmarks/utility/Utiity.dart';
 import 'package:share/share.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import 'HomeScreen.dart';
 import 'LiveQuizPlayScreen.dart';
 
 class WaitingForHostScreen extends StatefulWidget {
@@ -35,6 +36,7 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
   Customer customer = Utility.getCustomer();
   String waitingText = "Waiting for Host to Start the Quiz...";
   Timer _timer;
+  Timer _timerInternet;
   int _start = 5;
 
   @override
@@ -91,6 +93,20 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
       print(data);
       socket.emit(AppStrings.userDetails);
     });
+
+    _timerInternet = Timer.periodic(
+        Duration(seconds: AppStrings.timerSecondsForNoInternet), (timer) {
+      //for no internet
+      if (!socket.connected) {
+        timer.cancel();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) => HomeScreen(),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      }
+    });
   }
 
   void startTimer(String message) {
@@ -139,6 +155,9 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
   void dispose() {
     try {
       _timer.cancel();
+    } catch (e) {}
+    try {
+      _timerInternet.cancel();
     } catch (e) {}
     super.dispose();
   }

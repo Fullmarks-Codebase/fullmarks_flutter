@@ -20,6 +20,7 @@ import 'package:share/share.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'AddFriendScreen.dart';
+import 'HomeScreen.dart';
 import 'LiveQuizPlayScreen.dart';
 
 class CreateQuizLobbyScreen extends StatefulWidget {
@@ -44,6 +45,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
   String waitingText = "";
   Timer _timer;
   int _start = 5;
+  Timer _timerInternet;
 
   @override
   void initState() {
@@ -84,6 +86,19 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
       socket.emit(AppStrings.userDetails);
     });
 
+    _timerInternet = Timer.periodic(
+        Duration(seconds: AppStrings.timerSecondsForNoInternet), (timer) {
+      //for no internet
+      if (!socket.connected) {
+        timer.cancel();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) => HomeScreen(),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      }
+    });
     super.initState();
   }
 
@@ -182,6 +197,9 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
   void dispose() {
     try {
       _timer.cancel();
+    } catch (e) {}
+    try {
+      _timerInternet.cancel();
     } catch (e) {}
     super.dispose();
   }

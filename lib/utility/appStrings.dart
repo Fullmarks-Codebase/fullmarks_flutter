@@ -194,6 +194,9 @@ class AppStrings {
   //random quiz
   static String choose = "choose";
 
+  //no internet socket check
+  static int timerSecondsForNoInternet = 7;
+
   //notification type
   static int friends = 2;
 }

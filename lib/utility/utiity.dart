@@ -5,6 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fullmarks/models/DiscussionResponse.dart';
 import 'package:fullmarks/models/GuestUserResponse.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
@@ -12,6 +13,7 @@ import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/screens/LoginScreen.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -962,35 +964,20 @@ class Utility {
     );
   }
 
-  static List<String> getCategories({
-    bool isAll = true,
-  }) {
-    return isAll
-        ? [
-            "All",
-            "English",
-            "Science",
-            "Math",
-            "Biology",
-            "Physics",
-            "Chemistry"
-          ]
-        : ["English", "Science", "Math", "Biology", "Physics", "Chemistry"];
-  }
-
   static Widget categoryItemView({
     @required String title,
     @required Function(int) onTap,
     @required int selectedCategory,
+    @required bool isLast,
+    @required int index,
   }) {
-    int index = getCategories().indexOf(title);
     return GestureDetector(
       onTap: () {
         onTap(index);
       },
       child: Container(
         margin: EdgeInsets.only(
-          right: (getCategories().length - 1) == index ? 0 : 8,
+          right: isLast ? 0 : 8,
         ),
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -1015,147 +1002,6 @@ class Utility {
     );
   }
 
-  static Widget textFieldIcons(
-    BuildContext context, {
-    @required Function onPickImageTap,
-    @required Function onKeyboardTap,
-    @required Function onSymbolTap,
-    @required Function onBigTTap,
-  }) {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: onPickImageTap,
-          child: Container(
-            color: Colors.transparent,
-            child: SvgPicture.asset(
-              AppAssets.pickImages,
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 8,
-        ),
-        GestureDetector(
-          onTap: onKeyboardTap,
-          child: Container(
-            color: Colors.transparent,
-            child: SvgPicture.asset(
-              AppAssets.keyboard,
-              color: MediaQuery.of(context).viewInsets.bottom == 0
-                  ? AppColors.blackColor2
-                  : AppColors.appColor,
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 8,
-        ),
-        GestureDetector(
-          onTap: onSymbolTap,
-          child: Container(
-            color: Colors.transparent,
-            child: SvgPicture.asset(
-              AppAssets.symbol,
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 8,
-        ),
-        GestureDetector(
-          onTap: onBigTTap,
-          child: Container(
-            color: Colors.transparent,
-            child: SvgPicture.asset(
-              AppAssets.bigT,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  static Widget discussionUserView() {
-    return Container(
-      padding: EdgeInsets.only(
-        right: 16,
-        left: 16,
-      ),
-      child: Row(
-        children: [
-          Container(
-            margin: EdgeInsets.only(
-              top: 16,
-              bottom: 16,
-              right: 16,
-            ),
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: AssetImage(AppAssets.dummyUser),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'User Name',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '15th Sep, 2020',
-                      style: TextStyle(
-                        color: AppColors.lightTextColor,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 12,
-                      width: 12,
-                      child: SvgPicture.asset(
-                        AppAssets.class1, // show subject image
-                        color: AppColors.appColor,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      "Science",
-                      style: TextStyle(
-                        color: AppColors.appColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
   static Widget discussionListSeparator() {
     return Container(
       height: 10,
@@ -1163,26 +1009,36 @@ class Utility {
     );
   }
 
-  static Widget likeCommentView(
-    String assetName,
-    String count,
-  ) {
-    return Row(
-      children: [
-        SvgPicture.asset(
-          assetName,
-        ),
-        SizedBox(
-          width: 4,
-        ),
-        Text(
-          count,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+  static Widget likeCommentView({
+    @required String assetName,
+    @required String count,
+    @required Function onPressed,
+  }) {
+    return ButtonTheme(
+      minWidth: 60,
+      child: FlatButton(
+        padding: EdgeInsets.zero,
+        onPressed: onPressed,
+        child: Container(
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                assetName,
+              ),
+              SizedBox(
+                width: 4,
+              ),
+              Text(
+                count,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -1445,5 +1301,10 @@ class Utility {
         ),
       ),
     );
+  }
+
+  static String convertDate(String date) {
+    return DateFormat("dd MMMM, yyyy")
+        .format(DateFormat("yyyy-MM-dd").parse(date));
   }
 }

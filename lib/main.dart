@@ -140,6 +140,18 @@ class MyApp extends StatelessWidget {
           systemNavigationBarIconBrightness: Brightness.dark,
         ),
         child: MaterialApp(
+          shortcuts:
+              Map<LogicalKeySet, Intent>.from(WidgetsApp.defaultShortcuts)
+                ..addAll(<LogicalKeySet, Intent>{
+                  LogicalKeySet(LogicalKeyboardKey.arrowLeft):
+                      const FakeFocusIntent(),
+                  LogicalKeySet(LogicalKeyboardKey.arrowRight):
+                      const FakeFocusIntent(),
+                  LogicalKeySet(LogicalKeyboardKey.arrowDown):
+                      const FakeFocusIntent(),
+                  LogicalKeySet(LogicalKeyboardKey.arrowUp):
+                      const FakeFocusIntent(),
+                }),
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: AppColors.appColor,
@@ -154,4 +166,9 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+// Create a Focus Intent that does nothing
+class FakeFocusIntent extends Intent {
+  const FakeFocusIntent();
 }

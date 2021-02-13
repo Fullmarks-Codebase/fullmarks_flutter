@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/CommonResponse.dart';
+import 'package:fullmarks/models/DiscussionResponse.dart';
+import 'package:fullmarks/models/SubjectsResponse.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/DiscussionDetailsScreen.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:fullmarks/widgets/DiscussionItemView.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
+import 'AddCommentScreen.dart';
 import 'AddDiscussionScreen.dart';
 
 class DiscussionScreen extends StatefulWidget {
@@ -19,14 +26,123 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
   ScrollController controller;
   int selectedFilter = 0;
   int selectedCategory = 0;
-  List<String> categoryList = Utility.getCategories();
-  int totalDiscussions = 5;
+  List<SubjectDetails> subjects = List();
+  bool _isLoading = false;
+  Customer customer = Utility.getCustomer();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+  List<DiscussionDetails> discussions = List();
+  int page = 0;
+  bool stop = false;
 
   @override
   void initState() {
     AppFirebaseAnalytics.init().logEvent(name: AppStrings.discussionEvent);
     controller = ScrollController();
+    _getSubjects();
     super.initState();
+  }
+
+  _getSubjects() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["userId"] = customer.id.toString();
+      request["id"] = customer.classGrades.id.toString();
+      request["calledFrom"] = "app";
+      //api call
+      SubjectsResponse response = SubjectsResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.subjects, request: request),
+      );
+
+      if (response.code == 200) {
+        if (response.result.length != 0) {
+          subjects.clear();
+          subjects.add(SubjectDetails(
+            id: 0,
+            name: "All",
+          ));
+          subjects.addAll(response.result);
+          _notify();
+          refresh();
+        }
+      } else {
+        //hide progress
+        _isLoading = false;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  _getDiscussions() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      if (subjects[selectedCategory].id != 0) {
+        request["subjectId"] = subjects[selectedCategory].id.toString();
+      }
+      page = page + 1;
+      request["page"] = page.toString();
+      //api call
+      DiscussionResponse response = DiscussionResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.getPosts, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        if (response.result.length != 0) {
+          discussions = response.result;
+          _notify();
+        } else {
+          noDataLogic(page);
+        }
+      } else {
+        noDataLogic(page);
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  noDataLogic(int pagenum) {
+    print("noDataLogic");
+    //show empty view
+    page = pagenum - 1;
+    stop = true;
+    _notify();
+  }
+
+  refresh() {
+    print("refresh");
+    //to refresh page
+    page = 0;
+    discussions.clear();
+    stop = false;
+    _notify();
+    if (selectedFilter == 0) {
+      //explore
+      _getDiscussions();
+    } else if (selectedFilter == 1) {
+      //my posts
+    } else if (selectedFilter == 2) {
+      //favourites
+    }
   }
 
   @override
@@ -44,12 +160,15 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
         onPressed: () async {
           //delay to give ripple effect
           await Future.delayed(Duration(milliseconds: AppStrings.delay));
-          Navigator.push(
+          await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddDiscussionScreen(),
+              builder: (context) => AddDiscussionScreen(
+                isEdit: false,
+              ),
             ),
           );
+          refresh();
         },
       ),
     );
@@ -62,15 +181,26 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
           context,
           text: "Discussion Forum",
         ),
-        filterDiscussion(),
-        SizedBox(
-          height: 16,
-        ),
-        categoryView(),
-        SizedBox(
-          height: 16,
-        ),
-        discussionList(),
+        _isLoading ? Container() : filterDiscussion(),
+        _isLoading
+            ? Container()
+            : SizedBox(
+                height: 16,
+              ),
+        _isLoading ? Container() : categoryView(),
+        _isLoading
+            ? Container()
+            : SizedBox(
+                height: 16,
+              ),
+        Expanded(
+          child: Stack(
+            children: [
+              discussionList(),
+              _isLoading ? Utility.progress(context) : Container()
+            ],
+          ),
+        )
       ],
     );
   }
@@ -84,14 +214,18 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
           right: 16,
         ),
         child: Row(
-          children: categoryList.map((e) {
+          children: subjects.map((e) {
+            int index = subjects.indexOf(e);
             return Utility.categoryItemView(
-              title: e,
+              title: subjects[index].name,
               selectedCategory: selectedCategory,
               onTap: (index) {
                 selectedCategory = index;
                 _notify();
+                refresh();
               },
+              index: index,
+              isLast: (subjects.length - 1) == index,
             );
           }).toList(),
         ),
@@ -132,6 +266,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       onTap: () {
         selectedFilter = index;
         _notify();
+        refresh();
       },
       child: Container(
         padding: EdgeInsets.all(8),
@@ -161,7 +296,6 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
               style: TextStyle(
                 color:
                     selectedFilter == index ? Colors.white : AppColors.appColor,
-                // fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
               maxLines: 2,
@@ -174,45 +308,166 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
   }
 
   Widget discussionList() {
-    return Expanded(
-      child: ListView.separated(
-        padding: EdgeInsets.zero,
-        shrinkWrap: true,
-        controller: controller,
-        itemBuilder: (context, index) {
-          return DiscussionItemView(
-            isDetails: false,
-            index: index,
-            onUpArrowTap: () async {
-              //delay to give ripple effect
-              await Future.delayed(Duration(milliseconds: AppStrings.delay));
-              controller.animateTo(
-                0,
-                duration: Duration(milliseconds: 300),
-                curve: Curves.ease,
-              );
-            },
-            totalDiscussions: totalDiscussions,
-            onItemTap: () async {
-              //delay to give ripple effect
-              await Future.delayed(Duration(milliseconds: AppStrings.delay));
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DiscussionDetailsScreen(
-                    index: index,
-                    totalDiscussions: totalDiscussions,
-                  ),
+    return RefreshIndicator(
+      key: _refreshIndicatorKey,
+      onRefresh: () async {
+        refresh();
+      },
+      child: !_isLoading && discussions.length == 0
+          ? ListView(
+              padding: EdgeInsets.all(16),
+              physics: AlwaysScrollableScrollPhysics(),
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height -
+                      ((AppBar().preferredSize.height * 2) + 100),
+                  child: Utility.emptyView("No Discussion Forum"),
                 ),
-              );
-            },
-          );
-        },
-        separatorBuilder: (context, index) {
-          return Utility.discussionListSeparator();
-        },
-        itemCount: totalDiscussions,
-      ),
+              ],
+            )
+          : ListView.separated(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              controller: controller,
+              itemBuilder: (context, index) {
+                return (discussions.length - 1) == index
+                    /*
+                            VisibilityDetector is only attached to last item of list.
+                            when this view is visible we will call api for next page.
+                          */
+                    ? VisibilityDetector(
+                        key: Key(index.toString()),
+                        child: itemView(index),
+                        onVisibilityChanged: (visibilityInfo) {
+                          if (!stop) {
+                            _getDiscussions();
+                          }
+                        },
+                      )
+                    : itemView(index);
+              },
+              separatorBuilder: (context, index) {
+                return Utility.discussionListSeparator();
+              },
+              itemCount: discussions.length,
+            ),
     );
+  }
+
+  Widget itemView(int index) {
+    return DiscussionItemView(
+      customer: customer,
+      discussion: discussions[index],
+      isLast: (discussions.length - 1) == index,
+      isDetails: false,
+      onUpArrowTap: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        controller.animateTo(
+          0,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.ease,
+        );
+      },
+      onItemTap: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        DiscussionDetails discussion = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DiscussionDetailsScreen(
+              discussion: discussions[index],
+            ),
+          ),
+        );
+        if (discussion != null) {
+          discussions[index] = discussion;
+          _notify();
+        }
+      },
+      onAddComment: () async {
+        bool isComment = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddCommentScreen(
+              discussion: discussions[index],
+            ),
+          ),
+        );
+        if (isComment != null) {
+          discussions[index].comments = discussions[index].comments + 1;
+          _notify();
+        }
+      },
+      onLikeDislike: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        if (discussions[index].liked == 1) {
+          disLikePost(index);
+        } else {
+          likePost(index);
+        }
+      },
+      onEdit: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
+      },
+      onDelete: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        Navigator.pop(context);
+      },
+      onSaveUnsave: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
+      },
+    );
+  }
+
+  likePost(int index) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      request["postId"] = discussions[index].id.toString();
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.likePosts, request: request),
+      );
+
+      if (response.code == 200) {
+        discussions[index].likes = discussions[index].likes + 1;
+        discussions[index].liked = 1;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  disLikePost(int index) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      request["postId"] = discussions[index].id.toString();
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.dislikePosts, request: request),
+      );
+
+      if (response.code == 200) {
+        discussions[index].likes = discussions[index].likes - 1;
+        discussions[index].liked = 0;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 }

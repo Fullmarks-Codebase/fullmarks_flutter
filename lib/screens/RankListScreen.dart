@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class _RankListScreenState extends State<RankListScreen> {
   List<QuizLeaderBoardDetails> quizLeaderboard = List();
   Customer customer = Utility.getCustomer();
   String notSubmittedString = "";
+  Timer _timerInternet;
 
   @override
   void initState() {
@@ -54,7 +56,28 @@ class _RankListScreenState extends State<RankListScreen> {
       _getLeaderboard();
     });
 
+    _timerInternet = Timer.periodic(
+        Duration(seconds: AppStrings.timerSecondsForNoInternet), (timer) {
+      //for no internet
+      if (!socket.connected) {
+        timer.cancel();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) => HomeScreen(),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    try {
+      _timerInternet.cancel();
+    } catch (e) {}
+    super.dispose();
   }
 
   _getLeaderboard() async {

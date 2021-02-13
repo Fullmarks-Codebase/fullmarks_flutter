@@ -1,23 +1,44 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fullmarks/screens/AddCommentScreen.dart';
+import 'package:fullmarks/models/DiscussionResponse.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:fullmarks/zefyr/zefyr.dart';
+import 'package:fullmarks/notus/notus.dart';
+import 'package:quill_delta/quill_delta.dart';
+
+import 'CustomAttrDelegate.dart';
+import 'CustomImageDelegate.dart';
 
 class DiscussionItemView extends StatefulWidget {
-  int index;
-  int totalDiscussions;
+  DiscussionDetails discussion;
   Function onUpArrowTap;
   Function onItemTap;
   bool isDetails = false;
+  bool isLast;
+  Customer customer;
+  Function onAddComment;
+  Function onLikeDislike;
+  Function onEdit;
+  Function onDelete;
+  Function onSaveUnsave;
   DiscussionItemView({
-    @required this.index,
-    @required this.totalDiscussions,
+    @required this.discussion,
     @required this.onUpArrowTap,
     @required this.onItemTap,
     @required this.isDetails,
+    @required this.isLast,
+    @required this.customer,
+    @required this.onAddComment,
+    @required this.onLikeDislike,
+    @required this.onEdit,
+    @required this.onDelete,
+    @required this.onSaveUnsave,
   });
   @override
   _DiscussionItemViewState createState() => _DiscussionItemViewState();
@@ -36,12 +57,11 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
         color: Colors.transparent,
         child: Column(
           children: [
-            Utility.discussionUserView(),
-            questionView(widget.index),
-            questionImageView(widget.index),
-            utilityView(widget.index),
-            commentView(widget.index),
-            (widget.totalDiscussions - 1) == widget.index
+            userView(),
+            questionView(),
+            utilityView(),
+            commentView(),
+            widget.isLast
                 ? widget.isDetails
                     ? Container()
                     : Container(
@@ -59,39 +79,111 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
     );
   }
 
-  Widget questionImageView(int index) {
+  Widget userView() {
     return Container(
       padding: EdgeInsets.only(
         right: 16,
         left: 16,
       ),
-      margin: EdgeInsets.only(
-        top: 16,
-      ),
-      child: Image.asset(
-        AppAssets.imagePlaceholder,
+      child: Row(
+        children: [
+          Container(
+            margin: EdgeInsets.only(
+              top: 16,
+              bottom: 16,
+              right: 16,
+            ),
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(
+                  AppStrings.userImage + widget.discussion.user.thumbnail,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.discussion.user.username,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      Utility.convertDate(
+                          widget.discussion.createdAt.substring(0, 10)),
+                      style: TextStyle(
+                        color: AppColors.lightTextColor,
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                Row(
+                  children: [
+                    Container(
+                      height: 12,
+                      width: 12,
+                      child: Utility.imageLoader(
+                        baseUrl: AppStrings.subjectImage,
+                        url: widget.discussion.subject.image,
+                        placeholder: AppAssets.subjectPlaceholder,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      widget.discussion.subject.name,
+                      style: TextStyle(
+                        color: AppColors.appColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
 
-  Widget questionView(int index) {
+  Widget questionView() {
     return Container(
       padding: EdgeInsets.only(
         right: 16,
         left: 16,
       ),
-      child: Text(
-        "How to answer this question? I am getting answer as 5 Kg, but it is wrong answer pls help!",
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+      child: ZefyrView(
+        document: NotusDocument.fromDelta(
+          Delta.fromJson(json.decode(widget.discussion.question) as List),
         ),
+        imageDelegate: CustomImageDelegate(),
+        attrDelegate: CustomAttrDelegate(),
       ),
     );
   }
 
-  Widget commentView(int index) {
+  Widget commentView() {
     return Container(
       margin: EdgeInsets.only(
         bottom: 16,
@@ -117,85 +209,96 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage(AppAssets.dummyUser),
+                fit: BoxFit.cover,
+                image: NetworkImage(
+                  AppStrings.userImage + widget.customer.thumbnail,
+                ),
               ),
             ),
           ),
           Expanded(
             child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddCommentScreen(),
+              onTap: widget.onAddComment,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: EdgeInsets.only(
+                        right: 16,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(
+                          color: AppColors.greyColor6,
+                        ),
+                      ),
+                      child: Text(
+                        "Add a Comment...",
+                        style: TextStyle(
+                          color: AppColors.greyColor8,
+                        ),
+                      ),
+                    ),
                   ),
-                );
-              },
-              child: Container(
-                margin: EdgeInsets.only(
-                  right: 16,
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(50),
-                  border: Border.all(
-                    color: AppColors.greyColor6,
-                  ),
-                ),
-                child: Text(
-                  "Add a Comment...",
-                  style: TextStyle(
-                    color: AppColors.greyColor8,
-                  ),
-                ),
+                  SvgPicture.asset(AppAssets.camera),
+                ],
               ),
             ),
           ),
-          SvgPicture.asset(AppAssets.camera),
         ],
       ),
     );
   }
 
-  Widget utilityView(int index) {
+  Widget utilityView() {
     return Container(
       padding: EdgeInsets.only(
-        right: 16,
-        left: 16,
+        right: 8,
+        left: 8,
       ),
       child: IntrinsicHeight(
         child: Row(
           children: [
             Utility.likeCommentView(
-              AppAssets.postLike,
-              "34",
+              assetName: widget.discussion.liked == 1
+                  ? AppAssets.liked
+                  : AppAssets.postLike,
+              count: widget.discussion.likes.toString(),
+              onPressed: widget.onLikeDislike,
             ),
             SizedBox(
               width: 16,
             ),
-            Utility.likeCommentView(
-              AppAssets.postComment,
-              "59",
+            Row(
+              children: [
+                SvgPicture.asset(
+                  AppAssets.postComment,
+                ),
+                SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  widget.discussion.comments.toString(),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
             ),
             Spacer(),
-            index % 2 == 0
+            widget.discussion.userId != widget.customer.id
                 ? Container()
-                : GestureDetector(
-                    child: Container(
-                      color: Colors.transparent,
-                      padding: EdgeInsets.only(
-                        top: 16,
-                        bottom: 16,
-                        right: 8,
-                      ),
-                      child: SvgPicture.asset(AppAssets.postEdit),
-                    ),
+                : iconButton(
+                    assetName: AppAssets.postEdit,
+                    onPressed: widget.onEdit,
                   ),
-            index % 2 == 0
+            widget.discussion.userId != widget.customer.id
                 ? Container()
                 : Container(
                     padding: EdgeInsets.symmetric(
@@ -203,30 +306,18 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
                     ),
                     child: VerticalDivider(),
                   ),
-            index % 2 == 0
+            widget.discussion.userId != widget.customer.id
                 ? Container()
-                : GestureDetector(
-                    onTap: () {
+                : iconButton(
+                    assetName: AppAssets.postDelete,
+                    onPressed: () {
                       Utility.showDeleteDialog(
                         context: context,
-                        onDeletePress: () async {
-                          //delay to give ripple effect
-                          await Future.delayed(
-                              Duration(milliseconds: AppStrings.delay));
-                          Navigator.pop(context);
-                        },
+                        onDeletePress: widget.onDelete,
                       );
                     },
-                    child: Container(
-                      color: Colors.transparent,
-                      padding: EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 8,
-                      ),
-                      child: SvgPicture.asset(AppAssets.postDelete),
-                    ),
                   ),
-            index % 2 == 0
+            widget.discussion.userId != widget.customer.id
                 ? Container()
                 : Container(
                     padding: EdgeInsets.symmetric(
@@ -234,20 +325,35 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
                     ),
                     child: VerticalDivider(),
                   ),
-            GestureDetector(
-              child: Container(
-                color: Colors.transparent,
-                padding: EdgeInsets.only(
-                  left: 8,
-                  top: 16,
-                  bottom: 16,
-                ),
-                child: SvgPicture.asset(index % 2 == 0
-                    ? AppAssets.bookmark
-                    : AppAssets.postunBookmark),
-              ),
+            iconButton(
+              assetName: widget.discussion.save == 1
+                  ? AppAssets.bookmark
+                  : AppAssets.postunBookmark,
+              onPressed: widget.onSaveUnsave,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget iconButton({
+    @required String assetName,
+    @required Function onPressed,
+  }) {
+    return ButtonTheme(
+      minWidth: 30,
+      child: FlatButton(
+        padding: EdgeInsets.zero,
+        onPressed: onPressed,
+        child: Container(
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                assetName,
+              ),
+            ],
+          ),
         ),
       ),
     );

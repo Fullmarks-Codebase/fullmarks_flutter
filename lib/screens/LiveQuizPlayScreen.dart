@@ -51,6 +51,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   int defaultSeconds = 5;
   RandomQuizParticipantsDetails user1;
   RandomQuizParticipantsDetails user2;
+  Timer _timerInternet;
 
   getQuestionSeconds() {
     perQuestionSeconds = widget.isRandomQuiz
@@ -115,22 +116,6 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
           user2 = null;
         }
 
-        // socket.emit("active", {
-        //   "room": widget.room.room,
-        // });
-        // //if there is 1 participants then disconnect quiz
-        // if (randomQuizParticipantsResponse.users.length < 2) {
-        //   socket.emit(
-        //     AppStrings.forceDisconnect,
-        //     {"userObj": Utility.getCustomer()},
-        //   );
-        //   Navigator.of(context).pushAndRemoveUntil(
-        //     MaterialPageRoute(
-        //       builder: (BuildContext context) => HomeScreen(),
-        //     ),
-        //     (Route<dynamic> route) => false,
-        //   );
-        // }
         _notify();
       });
     } else {
@@ -177,6 +162,20 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         submitQuestions();
       }
     };
+
+    _timerInternet = Timer.periodic(
+        Duration(seconds: AppStrings.timerSecondsForNoInternet), (timer) {
+      //for no internet
+      if (!socket.connected) {
+        timer.cancel();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) => HomeScreen(),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      }
+    });
   }
 
   Future<bool> _onBackPressed() {
@@ -361,6 +360,9 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   void dispose() {
     try {
       _timer.cancel();
+    } catch (e) {}
+    try {
+      _timerInternet.cancel();
     } catch (e) {}
     super.dispose();
   }

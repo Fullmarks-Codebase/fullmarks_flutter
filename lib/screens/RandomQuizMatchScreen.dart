@@ -9,6 +9,7 @@ import 'package:fullmarks/models/RandomQuizParticipantsResponse.dart';
 import 'package:fullmarks/models/RandomQuizWelcomeResponse.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
+import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
@@ -31,6 +32,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
   IO.Socket socket = AppSocket.initRandom();
   Customer customer = Utility.getCustomer();
   Timer _timer;
+  Timer _timerInternet;
   int _start = 5;
   List<QuestionDetails> questions = List();
   Customer user1;
@@ -100,6 +102,20 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
       if (context != null) Navigator.pop(context);
     });
 
+    _timerInternet = Timer.periodic(
+        Duration(seconds: AppStrings.timerSecondsForNoInternet), (timer) {
+      //for no internet
+      if (!socket.connected) {
+        timer.cancel();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) => HomeScreen(),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      }
+    });
+
     super.initState();
   }
 
@@ -139,6 +155,9 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
   void dispose() {
     try {
       _timer.cancel();
+    } catch (e) {}
+    try {
+      _timerInternet.cancel();
     } catch (e) {}
     super.dispose();
   }

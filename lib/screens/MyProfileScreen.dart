@@ -365,10 +365,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   String getDob() {
     try {
-      return dob == ""
-          ? dob
-          : DateFormat("dd MMMM, yyyy")
-              .format(DateFormat("yyyy-MM-dd").parse(dob));
+      return dob == "" ? dob : Utility.convertDate(dob);
     } catch (e) {
       return "";
     }
