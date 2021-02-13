@@ -10,6 +10,7 @@ import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -38,6 +39,7 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.waitingForHostEvent);
     super.initState();
     //when this is emited then get all participants
     socket.emit(AppStrings.userDetails);

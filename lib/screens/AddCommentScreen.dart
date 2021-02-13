@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -11,6 +12,12 @@ class AddCommentScreen extends StatefulWidget {
 
 class _AddCommentScreenState extends State<AddCommentScreen> {
   FocusNode fn = FocusNode();
+
+  @override
+  void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.addCommentEvent);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

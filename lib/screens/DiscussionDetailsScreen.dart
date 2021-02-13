@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:fullmarks/widgets/DiscussionItemView.dart';
@@ -22,6 +23,8 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init()
+        .logEvent(name: AppStrings.discussionDetailsEvent);
     controller = ScrollController();
     super.initState();
   }

@@ -5,6 +5,7 @@ import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -27,6 +28,8 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init()
+        .logEvent(name: AppStrings.myProgressSubjectEvent);
     customer = Utility.getCustomer();
     _getSetProgress();
     super.initState();

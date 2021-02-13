@@ -5,6 +5,7 @@ import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -21,6 +22,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.leaderboardEvent);
     _getLeaderboard();
     super.initState();
   }

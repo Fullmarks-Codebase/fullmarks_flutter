@@ -1131,8 +1131,8 @@ class Utility {
                     Container(
                       height: 12,
                       width: 12,
-                      child: Image.asset(
-                        AppAssets.imagePlaceholder,
+                      child: SvgPicture.asset(
+                        AppAssets.class1, // show subject image
                         color: AppColors.appColor,
                       ),
                     ),
@@ -1316,5 +1316,134 @@ class Utility {
         "/" +
         roomId +
         " to join my LIVE quiz !";
+  }
+
+  static Widget horizontalItemView({
+    @required BuildContext context,
+    @required Color color,
+    @required String assetName,
+    @required String text,
+    @required String buttonText,
+    EdgeInsets margin,
+    @required Function onTap,
+    bool isPng = false,
+    bool isComingSoon = false,
+  }) {
+    return Container(
+      margin: margin,
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: isPng ? Image.asset(assetName) : SvgPicture.asset(assetName),
+          ),
+          SizedBox(
+            width: 4,
+          ),
+          Expanded(
+            flex: 2,
+            child: Column(
+              children: [
+                text.trim().length == 0
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: List.generate(
+                          5,
+                          (index) => SvgPicture.asset(AppAssets.star),
+                        ),
+                      )
+                    : Text(
+                        text,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                SizedBox(
+                  height: 16,
+                ),
+                Stack(
+                  alignment: Alignment.topLeft,
+                  children: [
+                    Utility.button(
+                      context,
+                      onPressed: isComingSoon ? () {} : onTap,
+                      text: buttonText,
+                      gradientColor1: Color(0xFF76B5FF),
+                      gradientColor2: Color(0xFF4499FF),
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      fontSize: 14,
+                      height: 40,
+                    ),
+                    isComingSoon
+                        ? Image.asset(
+                            AppAssets.comingSoon,
+                            height: 20,
+                            width: 80,
+                          )
+                        : Container()
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  static Widget drawerItemView({
+    @required String assetName,
+    @required String text,
+    @required Function onTap,
+    bool iscomingsoon = false,
+  }) {
+    return FlatButton(
+      padding: EdgeInsets.zero,
+      onPressed: iscomingsoon ? () {} : onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Row(
+          children: [
+            Container(
+              width: 55,
+              child: SvgPicture.asset(
+                assetName,
+                height: 15,
+                width: 15,
+              ),
+            ),
+            Text(
+              text,
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+              ),
+            ),
+            Spacer(),
+            iscomingsoon
+                ? Image.asset(
+                    AppAssets.comingSoon,
+                    height: 30,
+                    width: 90,
+                  )
+                : Container(),
+            SizedBox(
+              width: 4,
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

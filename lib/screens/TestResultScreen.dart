@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/models/ReportsResponse.dart';
 import 'package:fullmarks/models/SetsResponse.dart';
@@ -8,6 +7,7 @@ import 'package:fullmarks/models/SubtopicResponse.dart';
 import 'package:fullmarks/screens/QuizResultScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -32,6 +32,12 @@ class TestResultScreen extends StatefulWidget {
 }
 
 class _TestResultScreenState extends State<TestResultScreen> {
+  @override
+  void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.testResultEvent);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

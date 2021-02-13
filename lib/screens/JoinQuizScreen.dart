@@ -6,6 +6,7 @@ import 'package:fullmarks/models/LiveQuizWelcomeResponse.dart';
 import 'package:fullmarks/screens/WaitingForHostScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -28,6 +29,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
   @override
   void initState() {
     super.initState();
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.joinQuizEvent);
     roomIdController.text = widget.roomId;
 
     //this will get room and questions

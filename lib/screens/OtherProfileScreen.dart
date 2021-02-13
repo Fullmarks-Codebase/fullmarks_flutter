@@ -6,6 +6,7 @@ import 'package:fullmarks/models/UsersResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -26,6 +27,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.otherProfileEvent);
     _getCustomer();
     _getLeaderboard();
     super.initState();

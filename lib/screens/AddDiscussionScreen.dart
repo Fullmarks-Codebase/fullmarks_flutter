@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -13,6 +14,12 @@ class _AddDiscussionScreenState extends State<AddDiscussionScreen> {
   int selectedCategory = 0;
   List<String> categoryList = Utility.getCategories(isAll: false);
   FocusNode fn = FocusNode();
+
+  @override
+  void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.addDiscussionEvent);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

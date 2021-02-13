@@ -7,6 +7,7 @@ import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:image_picker/image_picker.dart';
@@ -42,6 +43,8 @@ class _AddEditCustomQuizQuestionOptionScreenState
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init()
+        .logEvent(name: AppStrings.addEditCustomQuizQuestionOptionEvent);
     optionController.text = widget.option;
     isAnswer = widget.isAnswer;
     optionImage = widget.optionFileImage;

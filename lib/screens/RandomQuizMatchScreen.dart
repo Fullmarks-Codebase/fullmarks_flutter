@@ -11,6 +11,7 @@ import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -39,6 +40,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.randomQuizMatchEvent);
     user1 = Utility.getCustomer();
     var chooseData = {
       "users": customer,
@@ -47,7 +49,6 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
         "classId": customer.classGrades.id
       }
     };
-    print(chooseData);
     socket.emit(AppStrings.choose, chooseData);
 
     socket.on(AppStrings.welcome, (data) {
@@ -78,7 +79,6 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
           user2 = randomQuizParticipantsResponse.users[0].user;
         }
       } catch (e) {
-        user1 = null;
         user2 = null;
       }
 

@@ -12,6 +12,7 @@ import 'package:fullmarks/screens/SetTimeLimitScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:http/http.dart';
@@ -43,6 +44,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.addQuestionEvent);
     if (widget.isEdit) {
       questionSeconds = widget.questionDetails.time.toString();
       questionController.text = widget.questionDetails.question;

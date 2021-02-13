@@ -4,6 +4,7 @@ import 'package:fullmarks/screens/JoinQuizScreen.dart';
 import 'package:fullmarks/screens/MyFriendsScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -18,6 +19,13 @@ class NotificationDetailsScreen extends StatefulWidget {
 }
 
 class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
+  @override
+  void initState() {
+    AppFirebaseAnalytics.init()
+        .logEvent(name: AppStrings.notificationDetailsEvent);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

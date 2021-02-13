@@ -12,6 +12,7 @@ import 'package:fullmarks/screens/InstructionsScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -40,6 +41,7 @@ class _SetsScreenState extends State<SetsScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.setsEvent);
     customer = Utility.getCustomer();
     guest = Utility.getGuest();
     _getSets();

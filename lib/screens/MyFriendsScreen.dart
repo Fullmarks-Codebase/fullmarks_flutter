@@ -6,6 +6,7 @@ import 'package:fullmarks/screens/OtherProfileScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -29,6 +30,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.myFriendsEvent);
     _getMyFriends();
     _getRequestsReceived();
     _getRequestsSent();

@@ -10,6 +10,7 @@ import 'package:fullmarks/models/UsersResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/PreferenceUtils.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -40,6 +41,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.myProfileEvent);
     customer = Utility.getCustomer();
     _notify();
     _phoneController.text = customer.phoneNumber;

@@ -9,6 +9,7 @@ import 'package:fullmarks/screens/PreviewQuestionScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -30,6 +31,7 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.customQuizListEvent);
     controller = ScrollController();
     _getQuestions();
     super.initState();

@@ -5,6 +5,7 @@ import 'package:fullmarks/screens/StartAddQuestionScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -16,6 +17,12 @@ class AddQuizNameScreen extends StatefulWidget {
 class _AddQuizNameScreenState extends State<AddQuizNameScreen> {
   TextEditingController quizNameController = TextEditingController();
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.addQuizNameEvent);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

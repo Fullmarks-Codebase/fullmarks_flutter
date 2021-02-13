@@ -13,6 +13,7 @@ import 'package:fullmarks/screens/TestResultScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -49,6 +50,7 @@ class _TestScreenState extends State<TestScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.testEvent);
     questionsNumberController = ScrollController();
     questionController = PageController();
     timer = Timer.periodic(

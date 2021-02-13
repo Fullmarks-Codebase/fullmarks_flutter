@@ -3,25 +3,31 @@ import 'dart:io';
 class AppStrings {
   // static String baseUrl = "http://e-fullmarks.in/";
   static String baseUrl = "http://104.131.14.251:3001/";
+  //customer (user)
   static String login = baseUrl + "app/customer/checkin";
   static String customer = baseUrl + "customer/getSingleCustomer";
   static String customerUpdate = baseUrl + "customer/update";
+  static String changeClass = baseUrl + "customer/changeClass";
+  //guest
+  static String guestLogin = baseUrl + "customer/guest";
+  static String changeClassGuest = baseUrl + "customer/guestClassChange";
+  //common
   static String subjects = baseUrl + "subjects/onlySubjects";
   static String subTopics = baseUrl + "subjects/onlyTopics";
   static String getClass = baseUrl + "class";
-  static String changeClass = baseUrl + "customer/changeClass";
-  static String changeClassGuest = baseUrl + "customer/guestClassChange";
   static String sets = baseUrl + "subjects/topics/sets";
   static String questions = baseUrl + "questions";
+  //report
   static String reports = baseUrl + "report/add";
   static String overallReport = baseUrl + "report/overall";
   static String subjectReport = baseUrl + "report/subject";
   static String setReport = baseUrl + "report/set";
-  static String guestLogin = baseUrl + "customer/guest";
   static String testResult = baseUrl + "report/myReport";
+  //notification
   static String getNotification = baseUrl + "notification/getAll";
   static String readNotification = baseUrl + "notification/read";
   static String countNotification = baseUrl + "notification/count";
+  //live quiz
   static String getCustomQuiz = baseUrl + "live/custom/getNames";
   static String addCustomQuiz = baseUrl + "live/custom/add";
   static String addCustomQuestions = baseUrl + "live/custom/questions/add";
@@ -35,12 +41,32 @@ class AppStrings {
   static String liveReport = baseUrl + "live/report";
   static String leaderboard = baseUrl + "live/leaderboard";
   static String deleteImage = baseUrl + "live/custom/deleteImage";
+  //friends
   static String myFriends = baseUrl + "friends/myfriends";
   static String requestRecieved = baseUrl + "friends/requestRecieved";
   static String requestSent = baseUrl + "friends/requestSent";
   static String notFriend = baseUrl + "friends/notFriend";
   static String sentRequest = baseUrl + "friends/sentRequest";
   static String requestResponse = baseUrl + "friends/requestResponse";
+  //posts
+  static String addPosts = baseUrl + "posts/add";
+  static String getPosts = baseUrl + "posts";
+  static String deletePosts = baseUrl + "posts/delete/";
+  static String updatePosts = baseUrl + "posts/update";
+  static String likePosts = baseUrl + "posts/like";
+  static String dislikePosts = baseUrl + "posts/dislike";
+  static String mySavedPosts = baseUrl + "posts/mySaved";
+  static String savePosts = baseUrl + "posts/save";
+  static String removeSavePosts = baseUrl + "posts/removeSave";
+  static String myPosts = baseUrl + "posts/myPost";
+  static String deletePostsImage = baseUrl + "posts/deleteImage";
+  //posts comments
+  static String getPostsComments = baseUrl + "posts/comments";
+  static String addPostsComments = baseUrl + "posts/comments/add";
+  static String likePostsComments = baseUrl + "posts/comments/like";
+  static String dislikePostsComments = baseUrl + "posts/comments/dislike";
+  static String deletePostsCommentsImage =
+      baseUrl + "posts/comments/deleteImage";
 
   //image base url
   static String imageBaseUrl = baseUrl;
@@ -54,8 +80,8 @@ class AppStrings {
   static String subjectImage = imageBaseUrl + "images/subjects/";
   static String questionImage = imageBaseUrl + "images/questions/question/";
   static String answersImage = imageBaseUrl + "images/questions/answers/";
-  static String commentImage = imageBaseUrl + "images/posts/comments/";
   static String postImage = imageBaseUrl + "images/posts/post/";
+  static String commentImage = imageBaseUrl + "images/posts/comments/";
 
   //constant strings
   static String noInternet = "No Internet Connection";
@@ -109,7 +135,44 @@ class AppStrings {
   static String verificationScreenEvent = "verificationScreen";
   static String homeScreenEvent = "homeScreen";
   static String guestLoginEvent = "guestLogin";
-  // static String  = "";
+  static String addCommentEvent = "addCommentScreen";
+  static String addDiscussionEvent = "addDiscussionScreen";
+  static String addEditCustomQuizQuestionOptionEvent =
+      "addEditCustomQuizQuestionOptionScreen";
+  static String addFriendEvent = "addFriendScreen";
+  static String addQuestionEvent = "addQuestionScreen";
+  static String addQuizNameEvent = "addQuizNameScreen";
+  static String askingForProgressEvent = "askingForProgressScreen";
+  static String createCustomQuizEvent = "createCustomQuizScreen";
+  static String createNewQuizEvent = "createNewQuizScreen";
+  static String createQuizLobbyEvent = "createQuizLobbyScreen";
+  static String customQuizListEvent = "customQuizListScreen";
+  static String discussionDetailsEvent = "discussionDetailsScreen";
+  static String discussionEvent = "discussionScreen";
+  static String joinQuizDeepLinkEvent = "joinQuizDeepLink";
+  static String shareAppEvent = "shareApp";
+  static String rateAppEvent = "rateApp";
+  static String instructionsEvent = "instructionsScreen";
+  static String joinQuizEvent = "joinQuizScreen";
+  static String leaderboardEvent = "leaderboardScreen";
+  static String liveQuizPlayEvent = "liveQuizPlayScreen";
+  static String mockTestQuizEvent = "mockTestQuizScreen";
+  static String mockTestEvent = "mockTestScreen";
+  static String myFriendsEvent = "myFriendsScreen";
+  static String myProfileEvent = "myProfileScreen";
+  static String myProgressEvent = "myProgressScreen";
+  static String myProgressSubjectEvent = "myProgressSubjectScreen";
+  static String notificationDetailsEvent = "notificationDetailsScreen";
+  static String notificationListEvent = "notificationListScreen";
+  static String otherProfileEvent = "otherProfileScreen";
+  static String quizResultEvent = "quizResultScreen";
+  static String randomQuizMatchEvent = "randomQuizMatchScreen";
+  static String setsEvent = "setsScreen";
+  static String subjectSelectionEvent = "subjectSelectionScreen";
+  static String subTopicEvent = "subTopicScreen";
+  static String testResultEvent = "testResultScreen";
+  static String testEvent = "testScreen";
+  static String waitingForHostEvent = "waitingForHostScreen";
 
   //socket events
   //live quuiz
@@ -130,7 +193,6 @@ class AppStrings {
   static String completed = "completed";
   //random quiz
   static String choose = "choose";
-  // static String  = "";
 
   //notification type
   static int friends = 2;

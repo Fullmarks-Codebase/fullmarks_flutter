@@ -12,6 +12,7 @@ import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -46,6 +47,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.createQuizLobbyEvent);
     getQuestionsAndRoom();
     socket.on(AppStrings.allParticipants, (data) {
       print(AppStrings.allParticipants);

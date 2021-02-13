@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/LiveQuizResponse.dart';
 import 'package:fullmarks/models/QuizLeaderBoardResponse.dart';
-import 'package:fullmarks/models/RandomQuizParticipantsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';

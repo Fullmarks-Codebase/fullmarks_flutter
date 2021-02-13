@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/GuestUserResponse.dart';
-import 'package:fullmarks/models/LiveQuizResponse.dart';
 import 'package:fullmarks/models/NotificationCountResponse.dart';
 import 'package:fullmarks/models/ReportsResponse.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
@@ -35,7 +33,6 @@ import '../main.dart';
 import 'AskingForProgressScreen.dart';
 import 'DiscussionScreen.dart';
 import 'JoinQuizScreen.dart';
-import 'RankListScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -131,14 +128,16 @@ class _HomeScreenState extends State<HomeScreen> {
           if (link.split("/").length != 0 && link.split("/").last.length != 0) {
             if (link.split("/")[link.split("/").length - 1] !=
                 AppStrings.joinLiveQuizDeepLinkKey)
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => JoinQuizScreen(
-                    roomId: link.split("/").last,
-                  ),
+              AppFirebaseAnalytics.init()
+                  .logEvent(name: AppStrings.joinQuizDeepLinkEvent);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => JoinQuizScreen(
+                  roomId: link.split("/").last,
                 ),
-              );
+              ),
+            );
           }
         } else if (link.contains("friends")) {
           Navigator.push(
@@ -379,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              drawerItemView(
+              Utility.drawerItemView(
                 assetName: AppAssets.drawerMyProgress,
                 text: "My Progress",
                 onTap: () async {
@@ -395,7 +394,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-              drawerItemView(
+              Utility.drawerItemView(
                 assetName: AppAssets.drawerMyProfile,
                 text: "My Profile",
                 onTap: () async {
@@ -414,7 +413,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (customer != null) _getOverallProgress();
                 },
               ),
-              drawerItemView(
+              Utility.drawerItemView(
                 assetName: AppAssets.drawerChangeGrade,
                 text: "Change Grade",
                 onTap: () async {
@@ -435,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (customer != null) _getOverallProgress();
                 },
               ),
-              drawerItemView(
+              Utility.drawerItemView(
                 assetName: AppAssets.drawerMockTest,
                 text: "Mock Test",
                 onTap: () async {
@@ -447,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 iscomingsoon: true,
               ),
-              drawerItemView(
+              Utility.drawerItemView(
                 assetName: AppAssets.drawerLiveQuiz,
                 text: "Live Quizzes",
                 onTap: () async {
@@ -459,7 +458,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 iscomingsoon: AppStrings.phase == 1,
               ),
-              drawerItemView(
+              Utility.drawerItemView(
                 assetName: AppAssets.drawerDiscussion,
                 text: "Discussion",
                 onTap: () async {
@@ -469,9 +468,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                   discussionTap();
                 },
-                iscomingsoon: true,
+                iscomingsoon: AppStrings.phase == 1,
               ),
-              drawerItemView(
+              Utility.drawerItemView(
                 assetName: AppAssets.drawerMyBuddies,
                 text: "My Buddies",
                 onTap: () async {
@@ -488,7 +487,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 iscomingsoon: AppStrings.phase == 1,
               ),
-              drawerItemView(
+              Utility.drawerItemView(
                 assetName: AppAssets.drawerShareApp,
                 text: "Share this App",
                 onTap: () async {
@@ -499,7 +498,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   shareApp();
                 },
               ),
-              drawerItemView(
+              Utility.drawerItemView(
                 assetName: AppAssets.drawerRateApp,
                 text: "Rate Us",
                 onTap: () async {
@@ -510,7 +509,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   rateApp();
                 },
               ),
-              drawerItemView(
+              Utility.drawerItemView(
                 assetName: AppAssets.drawerLogout,
                 text: "Logout",
                 onTap: () async {
@@ -529,10 +528,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   shareApp() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.shareAppEvent);
     Share.share(AppStrings.shareAppText);
   }
 
   rateApp() async {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.rateAppEvent);
     final InAppReview inAppReview = InAppReview.instance;
 
     if (await inAppReview.isAvailable()) {
@@ -563,52 +564,6 @@ class _HomeScreenState extends State<HomeScreen> {
     //delay to give ripple effect
     await Future.delayed(Duration(milliseconds: AppStrings.delay));
     return null;
-  }
-
-  Widget drawerItemView({
-    @required String assetName,
-    @required String text,
-    @required Function onTap,
-    bool iscomingsoon = false,
-  }) {
-    return FlatButton(
-      padding: EdgeInsets.zero,
-      onPressed: iscomingsoon ? () {} : onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 16),
-        child: Row(
-          children: [
-            Container(
-              width: 55,
-              child: SvgPicture.asset(
-                assetName,
-                height: 15,
-                width: 15,
-              ),
-            ),
-            Text(
-              text,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-                fontSize: 16,
-              ),
-            ),
-            Spacer(),
-            iscomingsoon
-                ? Image.asset(
-                    AppAssets.comingSoon,
-                    height: 30,
-                    width: 90,
-                  )
-                : Container(),
-            SizedBox(
-              width: 4,
-            )
-          ],
-        ),
-      ),
-    );
   }
 
   Widget body() {
@@ -652,7 +607,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           height: 16,
                         ),
-                        horizontalItemView(
+                        Utility.horizontalItemView(
+                          context: context,
                           color: AppColors.appColor,
                           assetName: AppAssets.shareApp,
                           isPng: true,
@@ -669,7 +625,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           height: 16,
                         ),
-                        horizontalItemView(
+                        Utility.horizontalItemView(
+                          context: context,
                           color: AppColors.strongCyan,
                           assetName: AppAssets.rateUs,
                           text: "",
@@ -747,7 +704,8 @@ class _HomeScreenState extends State<HomeScreen> {
         viewportFraction: 0.85,
       ),
       items: [
-        horizontalItemView(
+        Utility.horizontalItemView(
+          context: context,
           color: AppColors.introColor4,
           assetName: AppAssets.liveQuiz,
           text: "Play Live Quiz with friends and other students",
@@ -762,7 +720,8 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           isComingSoon: AppStrings.phase == 1,
         ),
-        horizontalItemView(
+        Utility.horizontalItemView(
+          context: context,
           color: AppColors.mockTestColor,
           assetName: AppAssets.mockTest,
           text: "Full mock tests and see All India Performance",
@@ -778,7 +737,8 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           isComingSoon: true,
         ),
-        horizontalItemView(
+        Utility.horizontalItemView(
+          context: context,
           color: AppColors.discussionForumColor,
           assetName: AppAssets.discussionForum,
           text: "Get answers to any question by asking our live community",
@@ -791,91 +751,9 @@ class _HomeScreenState extends State<HomeScreen> {
             await Future.delayed(Duration(milliseconds: AppStrings.delay));
             discussionTap();
           },
-          isComingSoon: true,
+          isComingSoon: AppStrings.phase == 1,
         ),
       ],
-    );
-  }
-
-  Widget horizontalItemView({
-    @required Color color,
-    @required String assetName,
-    @required String text,
-    @required String buttonText,
-    EdgeInsets margin,
-    @required Function onTap,
-    bool isPng = false,
-    bool isComingSoon = false,
-  }) {
-    return Container(
-      margin: margin,
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: isPng ? Image.asset(assetName) : SvgPicture.asset(assetName),
-          ),
-          SizedBox(
-            width: 4,
-          ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              children: [
-                text.trim().length == 0
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(
-                          5,
-                          (index) => SvgPicture.asset(AppAssets.star),
-                        ),
-                      )
-                    : Text(
-                        text,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                SizedBox(
-                  height: 16,
-                ),
-                Stack(
-                  alignment: Alignment.topLeft,
-                  children: [
-                    Utility.button(
-                      context,
-                      onPressed: isComingSoon ? () {} : onTap,
-                      text: buttonText,
-                      gradientColor1: Color(0xFF76B5FF),
-                      gradientColor2: Color(0xFF4499FF),
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      fontSize: 14,
-                      height: 40,
-                    ),
-                    isComingSoon
-                        ? Image.asset(
-                            AppAssets.comingSoon,
-                            height: 20,
-                            width: 80,
-                          )
-                        : Container()
-                  ],
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
     );
   }
 
@@ -946,13 +824,6 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 4,
             ),
             Expanded(
-              // child: SvgPicture.network(
-              //   AppStrings.subjectImage + subjects[index].image,
-              //   fit: BoxFit.contain,
-              //   placeholderBuilder: (context) {
-              //     return Image.asset(AppAssets.subjectPlaceholder);
-              //   },
-              // ),
               child: Utility.imageLoader(
                 baseUrl: AppStrings.subjectImage,
                 url: subjects[index].image,

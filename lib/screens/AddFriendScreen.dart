@@ -9,10 +9,10 @@ import 'package:fullmarks/models/MyFriendsResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:share/share.dart';
 
 class AddFriendScreen extends StatefulWidget {
   String title;
@@ -37,6 +37,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
 
   @override
   void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.addFriendEvent);
     controller = ScrollController();
     if (widget.roomId == null) {
       getContacts();

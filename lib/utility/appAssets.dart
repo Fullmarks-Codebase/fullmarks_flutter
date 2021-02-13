@@ -19,7 +19,6 @@ class AppAssets {
   static String class1 = "assets/class1.svg";
   static String discussionForum = "assets/discussionForum.svg";
   static String drawer = "assets/drawer.svg";
-  static String unreadDrawer = "assets/unreadDrawer.svg";
   static String redDot = "assets/redDot.svg";
   static String drawerBg = "assets/drawerBg.svg";
   static String drawerChangeGrade = "assets/drawerChangeGrade.svg";
@@ -43,7 +42,6 @@ class AppAssets {
   static String upArrow = "assets/upArrow.svg";
   static String star = "assets/star.svg";
   static String home = "assets/home.svg";
-  static String calculator = "assets/calculator.svg";
   static String check = "assets/check.svg";
   static String uncheck = "assets/uncheck.svg";
   static String journeyLine = "assets/journeyLine.svg";
@@ -51,7 +49,6 @@ class AppAssets {
   static String submit = "assets/submit.svg";
   static String previousArrow = "assets/rightArrow.svg";
   static String nextArrow = "assets/leftArrow.svg";
-  static String calculatorWhite = "assets/calculatorWhite.svg";
   static String grageItemBg = "assets/grageItemBg.svg";
   static String notificationBg = "assets/notificationBg.svg";
   static String profileBg = "assets/profileBg.svg";

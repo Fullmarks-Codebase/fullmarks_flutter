@@ -14,6 +14,7 @@ import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -63,6 +64,13 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   @override
   void initState() {
     super.initState();
+    AppFirebaseAnalytics.init().logEvent(
+      name: AppStrings.liveQuizPlayEvent,
+      parameters: {
+        "isRandomQuiz": widget.isRandomQuiz,
+        "isCustomQuiz": widget.isCustomQuiz,
+      },
+    );
     socket = widget.isRandomQuiz ? AppSocket.initRandom() : AppSocket.init();
     getQuestionSeconds();
     startTimer();
@@ -107,6 +115,22 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
           user2 = null;
         }
 
+        // socket.emit("active", {
+        //   "room": widget.room.room,
+        // });
+        // //if there is 1 participants then disconnect quiz
+        // if (randomQuizParticipantsResponse.users.length < 2) {
+        //   socket.emit(
+        //     AppStrings.forceDisconnect,
+        //     {"userObj": Utility.getCustomer()},
+        //   );
+        //   Navigator.of(context).pushAndRemoveUntil(
+        //     MaterialPageRoute(
+        //       builder: (BuildContext context) => HomeScreen(),
+        //     ),
+        //     (Route<dynamic> route) => false,
+        //   );
+        // }
         _notify();
       });
     } else {
