@@ -374,6 +374,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else if (_phoneNumberController.text.trim().length < 10) {
       Utility.showToast("Please enter your mobile phone with 10 digits");
     } else {
+      FocusScope.of(context).requestFocus(new FocusNode());
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (BuildContext context) => VerificationScreen(

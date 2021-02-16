@@ -1,3 +1,4 @@
+import 'package:fullmarks/utility/Utiity.dart';
 import 'package:fullmarks/zefyr/src/widgets/attr_delegate.dart';
 
 class CustomAttrDelegate implements ZefyrAttrDelegate {
@@ -5,6 +6,7 @@ class CustomAttrDelegate implements ZefyrAttrDelegate {
 
   @override
   void onLinkTap(String value) {
-    print('the link is: ${value}');
+    print(value);
+    Utility.launchURL(value.trim());
   }
 }

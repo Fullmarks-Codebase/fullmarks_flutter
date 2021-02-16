@@ -63,6 +63,8 @@ class AppStrings {
   //posts comments
   static String getPostsComments = baseUrl + "posts/comments";
   static String addPostsComments = baseUrl + "posts/comments/add";
+  static String updatePostsComments = baseUrl + "posts/comments/update";
+  static String deletePostsComments = baseUrl + "posts/comments/delete/";
   static String likePostsComments = baseUrl + "posts/comments/like";
   static String dislikePostsComments = baseUrl + "posts/comments/dislike";
   static String deletePostsCommentsImage =

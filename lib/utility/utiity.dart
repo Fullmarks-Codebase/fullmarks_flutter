@@ -111,7 +111,7 @@ class Utility {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url';
+      showToast("Invalid url");
     }
   }
 
@@ -916,6 +916,7 @@ class Utility {
 
   static showDeleteDialog({
     @required BuildContext context,
+    @required String title,
     @required Function onDeletePress,
   }) {
     showDialog(
@@ -927,7 +928,7 @@ class Utility {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Do you want to delete this Question?",
+                title,
                 style: TextStyle(
                   color: AppColors.appColor,
                   fontWeight: FontWeight.bold,
@@ -1306,5 +1307,27 @@ class Utility {
   static String convertDate(String date) {
     return DateFormat("dd MMMM, yyyy")
         .format(DateFormat("yyyy-MM-dd").parse(date));
+  }
+
+  static Widget iconButton({
+    @required String assetName,
+    @required Function onPressed,
+  }) {
+    return ButtonTheme(
+      minWidth: 30,
+      child: FlatButton(
+        padding: EdgeInsets.zero,
+        onPressed: onPressed,
+        child: Container(
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                assetName,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

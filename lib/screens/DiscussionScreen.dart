@@ -27,6 +27,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
   int selectedFilter = 0;
   int selectedCategory = 0;
   List<SubjectDetails> subjects = List();
+  bool _isLoadingCategory = false;
   bool _isLoading = false;
   Customer customer = Utility.getCustomer();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
@@ -47,7 +48,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
     //check internet connection available or not
     if (await ApiManager.checkInternet()) {
       //show progress
-      _isLoading = true;
+      _isLoadingCategory = true;
       _notify();
       //api request
       var request = Map<String, dynamic>();
@@ -59,7 +60,9 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
         await ApiManager(context)
             .postCall(url: AppStrings.subjects, request: request),
       );
-
+      //hide progress
+      _isLoadingCategory = false;
+      _notify();
       if (response.code == 200) {
         if (response.result.length != 0) {
           subjects.clear();
@@ -71,10 +74,6 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
           _notify();
           refresh();
         }
-      } else {
-        //hide progress
-        _isLoading = false;
-        _notify();
       }
     } else {
       //show message that internet is not available
@@ -97,8 +96,13 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       request["page"] = page.toString();
       //api call
       DiscussionResponse response = DiscussionResponse.fromJson(
-        await ApiManager(context)
-            .postCall(url: AppStrings.getPosts, request: request),
+        await ApiManager(context).postCall(
+            url: selectedFilter == 0
+                ? AppStrings.getPosts
+                : selectedFilter == 1
+                    ? AppStrings.myPosts
+                    : AppStrings.mySavedPosts,
+            request: request),
       );
       //hide progress
       _isLoading = false;
@@ -106,7 +110,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
 
       if (response.code == 200) {
         if (response.result.length != 0) {
-          discussions = response.result;
+          discussions.addAll(response.result);
           _notify();
         } else {
           noDataLogic(page);
@@ -135,14 +139,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
     discussions.clear();
     stop = false;
     _notify();
-    if (selectedFilter == 0) {
-      //explore
-      _getDiscussions();
-    } else if (selectedFilter == 1) {
-      //my posts
-    } else if (selectedFilter == 2) {
-      //favourites
-    }
+    _getDiscussions();
   }
 
   @override
@@ -165,6 +162,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
             MaterialPageRoute(
               builder: (context) => AddDiscussionScreen(
                 isEdit: false,
+                discussion: null,
               ),
             ),
           );
@@ -181,18 +179,14 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
           context,
           text: "Discussion Forum",
         ),
-        _isLoading ? Container() : filterDiscussion(),
-        _isLoading
-            ? Container()
-            : SizedBox(
-                height: 16,
-              ),
-        _isLoading ? Container() : categoryView(),
-        _isLoading
-            ? Container()
-            : SizedBox(
-                height: 16,
-              ),
+        filterDiscussion(),
+        SizedBox(
+          height: 16,
+        ),
+        _isLoadingCategory ? Utility.progress(context) : categoryView(),
+        SizedBox(
+          height: 16,
+        ),
         Expanded(
           child: Stack(
             children: [
@@ -313,7 +307,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       onRefresh: () async {
         refresh();
       },
-      child: !_isLoading && discussions.length == 0
+      child: !_isLoadingCategory && !_isLoading && discussions.length == 0
           ? ListView(
               padding: EdgeInsets.all(16),
               physics: AlwaysScrollableScrollPhysics(),
@@ -322,11 +316,16 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height -
                       ((AppBar().preferredSize.height * 2) + 100),
-                  child: Utility.emptyView("No Discussion Forum"),
+                  child: Utility.emptyView(selectedFilter == 0
+                      ? "No Discussion Forum"
+                      : selectedFilter == 1
+                          ? "No My Question"
+                          : "No Favourites"),
                 ),
               ],
             )
           : ListView.separated(
+              physics: AlwaysScrollableScrollPhysics(),
               padding: EdgeInsets.zero,
               shrinkWrap: true,
               controller: controller,
@@ -373,7 +372,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       onItemTap: () async {
         //delay to give ripple effect
         await Future.delayed(Duration(milliseconds: AppStrings.delay));
-        DiscussionDetails discussion = await Navigator.push(
+        var data = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => DiscussionDetailsScreen(
@@ -381,17 +380,28 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
             ),
           ),
         );
-        if (discussion != null) {
-          discussions[index] = discussion;
-          _notify();
-        }
+        try {
+          DiscussionDetails discussion = data;
+          if (discussion != null) {
+            discussions[index] = discussion;
+            _notify();
+          }
+        } catch (e) {}
+        try {
+          bool isRefresh = data;
+          if (isRefresh != null) {
+            refresh();
+          }
+        } catch (e) {}
       },
       onAddComment: () async {
         bool isComment = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => AddCommentScreen(
+              isEdit: false,
               discussion: discussions[index],
+              comment: null,
             ),
           ),
         );
@@ -412,17 +422,108 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       onEdit: () async {
         //delay to give ripple effect
         await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        bool isRefresh = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddDiscussionScreen(
+              isEdit: true,
+              discussion: discussions[index],
+            ),
+          ),
+        );
+        if (isRefresh != null) {
+          refresh();
+        }
       },
       onDelete: () async {
         //delay to give ripple effect
         await Future.delayed(Duration(milliseconds: AppStrings.delay));
         Navigator.pop(context);
+        _deleteDiscussion(index);
       },
       onSaveUnsave: () async {
         //delay to give ripple effect
         await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        if (discussions[index].save == 0) {
+          savePost(index);
+        } else {
+          unsavePost(index);
+        }
       },
     );
+  }
+
+  _deleteDiscussion(int index) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context).deleteCall(
+          url: AppStrings.deletePosts + discussions[index].id.toString(),
+        ),
+      );
+
+      Utility.showToast(response.message);
+
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        discussions.removeAt(index);
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  savePost(int index) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      request["postId"] = discussions[index].id.toString();
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.savePosts, request: request),
+      );
+
+      if (response.code == 200) {
+        discussions[index].save = 1;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  unsavePost(int index) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      request["postId"] = discussions[index].id.toString();
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.removeSavePosts, request: request),
+      );
+
+      if (response.code == 200) {
+        discussions[index].save = 0;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   likePost(int index) async {

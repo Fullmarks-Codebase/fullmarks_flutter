@@ -177,7 +177,7 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
         document: NotusDocument.fromDelta(
           Delta.fromJson(json.decode(widget.discussion.question) as List),
         ),
-        imageDelegate: CustomImageDelegate(),
+        imageDelegate: CustomImageDelegate(AppStrings.postImage),
         attrDelegate: CustomAttrDelegate(),
       ),
     );
@@ -294,7 +294,7 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
             Spacer(),
             widget.discussion.userId != widget.customer.id
                 ? Container()
-                : iconButton(
+                : Utility.iconButton(
                     assetName: AppAssets.postEdit,
                     onPressed: widget.onEdit,
                   ),
@@ -308,12 +308,13 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
                   ),
             widget.discussion.userId != widget.customer.id
                 ? Container()
-                : iconButton(
+                : Utility.iconButton(
                     assetName: AppAssets.postDelete,
                     onPressed: () {
                       Utility.showDeleteDialog(
                         context: context,
                         onDeletePress: widget.onDelete,
+                        title: "Do you want to delete this Question?",
                       );
                     },
                   ),
@@ -325,35 +326,13 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
                     ),
                     child: VerticalDivider(),
                   ),
-            iconButton(
+            Utility.iconButton(
               assetName: widget.discussion.save == 1
                   ? AppAssets.bookmark
                   : AppAssets.postunBookmark,
               onPressed: widget.onSaveUnsave,
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget iconButton({
-    @required String assetName,
-    @required Function onPressed,
-  }) {
-    return ButtonTheme(
-      minWidth: 30,
-      child: FlatButton(
-        padding: EdgeInsets.zero,
-        onPressed: onPressed,
-        child: Container(
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                assetName,
-              ),
-            ],
-          ),
         ),
       ),
     );

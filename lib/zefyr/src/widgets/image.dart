@@ -6,8 +6,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 import 'package:fullmarks/notus/notus.dart';
+import 'package:meta/meta.dart';
 
 import 'editable_box.dart';
 import 'selection_utils.dart';
@@ -213,14 +213,20 @@ class RenderEditableImage extends RenderBox
     assert(constraints.hasBoundedWidth);
     if (child != null) {
       // Make constraints use 16:9 aspect ratio.
-      final width = constraints.maxWidth - kHorizontalPadding * 2;
-      final childConstraints = constraints.copyWith(
-        minWidth: 0.0,
-        maxWidth: width,
-        minHeight: 0.0,
-        maxHeight: (width * 9 / 16).floorToDouble(),
-      );
-      child.layout(childConstraints, parentUsesSize: true);
+      // Make constraints use 1:1 aspect ratio. (changed 16:9 to 1:1)
+      // final width =
+      // constraints.maxWidth < constraints.maxHeight
+      //     ? constraints.maxHeight
+      // :
+      // constraints.maxWidth;
+      // final childConstraints = constraints.copyWith(
+      //   minWidth: 0.0,
+      //   maxWidth: width,
+      //   minHeight: 0.0,
+      //   // maxHeight: (width * 9 / 16).floorToDouble(),  // 16:9 ratio
+      //   maxHeight: width, // 1:1
+      // );
+      child.layout(constraints, parentUsesSize: true);
       _lastChildSize = child.size;
       size = Size(constraints.maxWidth, _lastChildSize.height);
     } else {

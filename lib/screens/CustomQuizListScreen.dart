@@ -355,6 +355,7 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                 questionItemViewButton(AppAssets.delete, () {
                   Utility.showDeleteDialog(
                     context: context,
+                    title: "Do you want to delete this Question?",
                     onDeletePress: () async {
                       //delay to give ripple effect
                       await Future.delayed(

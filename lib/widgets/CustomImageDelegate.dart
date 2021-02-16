@@ -4,9 +4,13 @@
 
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
+import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:fullmarks/zefyr/zefyr.dart';
@@ -14,6 +18,11 @@ import 'package:fullmarks/zefyr/zefyr.dart';
 /// Custom image delegate used by this example to load image from application
 /// assets.
 class CustomImageDelegate implements ZefyrImageDelegate<ImageSource> {
+  String imageBaseUrl;
+  CustomImageDelegate(String imageBaseUrl) {
+    this.imageBaseUrl = imageBaseUrl;
+  }
+
   @override
   ImageSource get cameraSource => ImageSource.camera;
 
@@ -25,26 +34,39 @@ class CustomImageDelegate implements ZefyrImageDelegate<ImageSource> {
     final picker = ImagePicker();
     final file = await picker.getImage(source: source);
     if (file == null) return null;
-    return file.path;
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: file.path,
+        aspectRatioPresets: [CropAspectRatioPreset.square],
+        compressQuality: 80,
+        androidUiSettings: AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: AppColors.appColor,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+    if (croppedFile == null) return null;
+    return croppedFile.path;
   }
 
   @override
   Widget buildImage(BuildContext context, String key) {
-    // We use custom "asset" scheme to distinguish asset images from other files.
-    if (key.startsWith('asset://')) {
-      final asset = AssetImage(key.replaceFirst('asset://', ''));
-      return Image(image: asset);
-    } else if (key.startsWith("http")) {
-      return Utility.imageLoader(
-        baseUrl: "",
-        url: key,
-        placeholder: AppAssets.imagePlaceholder,
-      );
-    } else {
-      // Otherwise assume this is a file stored locally on user's device.
-      final file = File.fromUri(Uri.parse(key));
+    final file = File.fromUri(Uri.parse(key));
+    if (file.existsSync()) {
       final image = FileImage(file);
       return Image(image: image);
+    } else {
+      return Container(
+        height: MediaQuery.of(context).size.width,
+        child: Utility.imageLoader(
+          baseUrl: imageBaseUrl,
+          url: key,
+          placeholder: AppAssets.imagePlaceholder,
+        ),
+      );
     }
   }
 }
