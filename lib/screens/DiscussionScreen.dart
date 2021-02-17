@@ -89,8 +89,10 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       _notify();
       //api request
       var request = Map<String, dynamic>();
-      if (subjects[selectedCategory].id != 0) {
-        request["subjectId"] = subjects[selectedCategory].id.toString();
+      if (subjects.length > 0) {
+        if (subjects[selectedCategory].id != 0) {
+          request["subjectId"] = subjects[selectedCategory].id.toString();
+        }
       }
       page = page + 1;
       request["page"] = page.toString();
@@ -151,24 +153,26 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
           body(),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.appColor,
-        child: Icon(Icons.add),
-        onPressed: () async {
-          //delay to give ripple effect
-          await Future.delayed(Duration(milliseconds: AppStrings.delay));
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddDiscussionScreen(
-                isEdit: false,
-                discussion: null,
-              ),
+      floatingActionButton: subjects.length == 0
+          ? null
+          : FloatingActionButton(
+              backgroundColor: AppColors.appColor,
+              child: Icon(Icons.add),
+              onPressed: () async {
+                //delay to give ripple effect
+                await Future.delayed(Duration(milliseconds: AppStrings.delay));
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddDiscussionScreen(
+                      isEdit: false,
+                      discussion: null,
+                    ),
+                  ),
+                );
+                refresh();
+              },
             ),
-          );
-          refresh();
-        },
-      ),
     );
   }
 
@@ -179,7 +183,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
           context,
           text: "Discussion Forum",
         ),
-        filterDiscussion(),
+        subjects.length == 0 ? Container() : filterDiscussion(),
         SizedBox(
           height: 16,
         ),
@@ -517,7 +521,11 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       );
 
       if (response.code == 200) {
-        discussions[index].save = 0;
+        if (selectedFilter == 2) {
+          discussions.removeAt(index);
+        } else {
+          discussions[index].save = 0;
+        }
         _notify();
       }
     } else {

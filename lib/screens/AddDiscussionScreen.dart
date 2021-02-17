@@ -65,14 +65,16 @@ class _AddDiscussionScreenState extends State<AddDiscussionScreen> {
           // print("isInsert");
           // print(elementChange.attributes);
           // if image is added then add in list
-          try {
-            if (elementChange.attributes["embed"]["type"] == "image") {
-              images.add(File(elementChange.attributes["embed"]["source"]));
-              // print("INSERT IMAGE ADD");
-              // print(images.length);
+          if (elementChange.attributes != null) {
+            try {
+              if (elementChange.attributes["embed"]["type"] == "image") {
+                images.add(File(elementChange.attributes["embed"]["source"]));
+                // print("INSERT IMAGE ADD");
+                // print(images.length);
+              }
+            } catch (e) {
+              print("error - INSERT IMAGE ADD");
             }
-          } catch (e) {
-            print("error - INSERT IMAGE ADD");
           }
         } else if (elementChange.isDelete) {
           await Future.forEach(event.before.toList(),
@@ -80,28 +82,31 @@ class _AddDiscussionScreenState extends State<AddDiscussionScreen> {
             // print("isDelete");
             // print(elementDelete.attributes);
             //if image is deleted
-            try {
-              if (elementDelete.attributes["embed"]["type"] == "image") {
-                try {
-                  //remove from list
-                  await Future.forEach(images, (File img) {
-                    int index = images.indexOf(img);
-                    images.removeAt(index);
-                    // print("DELETE IMAGE REMOVE");
-                    // print(images.length);
-                  });
-                } catch (e) {
-                  print("error - DELETE IMAGE REMOVE");
+            if (elementDelete.attributes != null) {
+              try {
+                if (elementDelete.attributes["embed"]["type"] == "image") {
+                  try {
+                    //remove from list
+                    await Future.forEach(images, (File img) {
+                      int index = images.indexOf(img);
+                      images.removeAt(index);
+                      // print("DELETE IMAGE REMOVE");
+                      // print(images.length);
+                    });
+                  } catch (e) {
+                    print("error - DELETE IMAGE REMOVE");
+                  }
+                  if (widget.isEdit) {
+                    //add deleted in deleteImages list
+                    deleteImages
+                        .add(elementDelete.attributes["embed"]["source"]);
+                    // print("delete");
+                    // print(deleteImages.length);
+                  }
                 }
-                if (widget.isEdit) {
-                  //add deleted in deleteImages list
-                  deleteImages.add(elementDelete.attributes["embed"]["source"]);
-                  // print("delete");
-                  // print(deleteImages.length);
-                }
+              } catch (e) {
+                print("error - DELETE");
               }
-            } catch (e) {
-              print("error - DELETE");
             }
           });
         }
@@ -216,7 +221,6 @@ class _AddDiscussionScreenState extends State<AddDiscussionScreen> {
               ? Container()
               : Expanded(
                   child: Container(
-                    margin: EdgeInsets.only(top: 16),
                     color: AppColors.greyColor9,
                     padding: EdgeInsets.all(16),
                     child: ZefyrField(
@@ -316,30 +320,32 @@ class _AddDiscussionScreenState extends State<AddDiscussionScreen> {
   }
 
   Widget categoryView() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Container(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-        ),
-        child: Row(
-          children: subjects.map((e) {
-            int index = subjects.indexOf(e);
-            return Utility.categoryItemView(
-              title: subjects[index].name,
-              selectedCategory: selectedCategory,
-              onTap: (index) {
-                selectedCategory = index;
-                _notify();
-              },
-              index: index,
-              isLast: (subjects.length - 1) == index,
-            );
-          }).toList(),
-        ),
-      ),
-    );
+    return subjects.length == 0
+        ? Utility.emptyView("No Categories")
+        : SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+              ),
+              child: Row(
+                children: subjects.map((e) {
+                  int index = subjects.indexOf(e);
+                  return Utility.categoryItemView(
+                    title: subjects[index].name,
+                    selectedCategory: selectedCategory,
+                    onTap: (index) {
+                      selectedCategory = index;
+                      _notify();
+                    },
+                    index: index,
+                    isLast: (subjects.length - 1) == index,
+                  );
+                }).toList(),
+              ),
+            ),
+          );
   }
 
   _notify() {

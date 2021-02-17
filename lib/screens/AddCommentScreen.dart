@@ -62,14 +62,16 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
           // print("isInsert");
           // print(elementChange.attributes);
           // if image is added then add in list
-          try {
-            if (elementChange.attributes["embed"]["type"] == "image") {
-              images.add(File(elementChange.attributes["embed"]["source"]));
-              // print("INSERT IMAGE ADD");
-              // print(images.length);
+          if (elementChange.attributes != null) {
+            try {
+              if (elementChange.attributes["embed"]["type"] == "image") {
+                images.add(File(elementChange.attributes["embed"]["source"]));
+                // print("INSERT IMAGE ADD");
+                // print(images.length);
+              }
+            } catch (e) {
+              print("error - INSERT IMAGE ADD");
             }
-          } catch (e) {
-            print("error - INSERT IMAGE ADD");
           }
         } else if (elementChange.isDelete) {
           await Future.forEach(event.before.toList(),
@@ -77,28 +79,31 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
             // print("isDelete");
             // print(elementDelete.attributes);
             //if image is deleted
-            try {
-              if (elementDelete.attributes["embed"]["type"] == "image") {
-                try {
-                  //remove from list
-                  await Future.forEach(images, (File img) {
-                    int index = images.indexOf(img);
-                    images.removeAt(index);
-                    // print("DELETE IMAGE REMOVE");
-                    // print(images.length);
-                  });
-                } catch (e) {
-                  print("error - DELETE IMAGE REMOVE");
+            if (elementDelete.attributes != null) {
+              try {
+                if (elementDelete.attributes["embed"]["type"] == "image") {
+                  try {
+                    //remove from list
+                    await Future.forEach(images, (File img) {
+                      int index = images.indexOf(img);
+                      images.removeAt(index);
+                      // print("DELETE IMAGE REMOVE");
+                      // print(images.length);
+                    });
+                  } catch (e) {
+                    print("error - DELETE IMAGE REMOVE");
+                  }
+                  if (widget.isEdit) {
+                    //add deleted in deleteImages list
+                    deleteImages
+                        .add(elementDelete.attributes["embed"]["source"]);
+                    // print("delete");
+                    // print(deleteImages.length);
+                  }
                 }
-                if (widget.isEdit) {
-                  //add deleted in deleteImages list
-                  deleteImages.add(elementDelete.attributes["embed"]["source"]);
-                  // print("delete");
-                  // print(deleteImages.length);
-                }
+              } catch (e) {
+                print("error - DELETE");
               }
-            } catch (e) {
-              print("error - DELETE");
             }
           });
         }

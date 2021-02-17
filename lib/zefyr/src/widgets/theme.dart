@@ -398,7 +398,7 @@ class AttributeTheme {
         textStyle: TextStyle(
           fontFamily: monospaceFontFamily,
           fontSize: 14.0,
-          color: defaultLineTheme.textStyle.color.withOpacity(0.8),
+          color: Colors.white,
           height: 1.25,
         ),
         inheritLineTextStyle: false,
