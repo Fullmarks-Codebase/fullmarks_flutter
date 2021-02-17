@@ -421,7 +421,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Utility.discussionListSeparator(),
-          userView(),
+          userView(index),
           Container(
             margin: EdgeInsets.only(
               left: 16,
@@ -599,7 +599,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
     }
   }
 
-  Widget userView() {
+  Widget userView(int index) {
     return Container(
       padding: EdgeInsets.only(
         right: 16,
@@ -620,7 +620,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
               image: DecorationImage(
                 fit: BoxFit.cover,
                 image: NetworkImage(
-                  AppStrings.userImage + widget.discussion.user.thumbnail,
+                  AppStrings.userImage + comments[index].user.thumbnail,
                 ),
               ),
             ),
@@ -633,7 +633,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        widget.discussion.user.username,
+                        comments[index].user.username,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 18,
@@ -645,7 +645,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
                     ),
                     Text(
                       Utility.convertDate(
-                          widget.discussion.createdAt.substring(0, 10)),
+                          comments[index].createdAt.substring(0, 10)),
                       style: TextStyle(
                         color: AppColors.lightTextColor,
                       ),

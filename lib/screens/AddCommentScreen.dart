@@ -153,28 +153,26 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
                     ),
                   ),
                 ),
-          Expanded(
-            child: _isLoading
-                ? Utility.progress(context)
-                : Container(
-                    margin: EdgeInsets.only(top: 16),
+          _isLoading
+              ? Container()
+              : Expanded(
+                  child: Container(
                     color: AppColors.greyColor9,
                     padding: EdgeInsets.all(16),
-                    child: Expanded(
-                      child: ZefyrField(
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                        ),
-                        controller: _controller,
-                        focusNode: fn,
-                        autofocus: false,
-                        imageDelegate:
-                            CustomImageDelegate(AppStrings.commentImage),
-                        physics: ClampingScrollPhysics(),
+                    child: ZefyrField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
                       ),
+                      controller: _controller,
+                      focusNode: fn,
+                      autofocus: false,
+                      imageDelegate:
+                          CustomImageDelegate(AppStrings.commentImage),
+                      physics: BouncingScrollPhysics(),
                     ),
                   ),
-          ),
+                ),
+          _isLoading ? Expanded(child: Utility.progress(context)) : Container()
         ],
       ),
     );
