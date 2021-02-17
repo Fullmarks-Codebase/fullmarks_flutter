@@ -444,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                   mockTestTap();
                 },
-                iscomingsoon: true,
+                iscomingsoon: AppStrings.phase == 1,
               ),
               Utility.drawerItemView(
                 assetName: AppAssets.drawerLiveQuiz,
@@ -735,7 +735,7 @@ class _HomeScreenState extends State<HomeScreen> {
             await Future.delayed(Duration(milliseconds: AppStrings.delay));
             mockTestTap();
           },
-          isComingSoon: true,
+          isComingSoon: AppStrings.phase == 1,
         ),
         Utility.horizontalItemView(
           context: context,

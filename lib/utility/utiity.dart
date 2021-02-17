@@ -1330,4 +1330,29 @@ class Utility {
       ),
     );
   }
+
+  static BoxDecoration attemptedDecoration() {
+    return BoxDecoration(
+      color: AppColors.strongCyan,
+      borderRadius: BorderRadius.circular(8),
+    );
+  }
+
+  static BoxDecoration activeDecoration() {
+    return BoxDecoration(
+      color: AppColors.greyColor4,
+      border: Border.all(
+        color: AppColors.wrongBorderColor,
+        width: 2,
+      ),
+      borderRadius: BorderRadius.circular(8),
+    );
+  }
+
+  static BoxDecoration notAttemptedDecoration() {
+    return BoxDecoration(
+      color: AppColors.greyColor2,
+      borderRadius: BorderRadius.circular(8),
+    );
+  }
 }

@@ -52,6 +52,12 @@ class ReportDetails {
     timeTaken = json['time_taken'].toString() ?? "";
     avgTime = json['avg_time'].toString() ?? "";
     totalMarks = json['total_marks'].toString() ?? "";
+    if (json['questions'] != null) {
+      reportDetail = new List<ReportDetail>();
+      json['questions'].forEach((v) {
+        reportDetail.add(new ReportDetail.fromJson(v));
+      });
+    }
     if (json['reportDetail'] != null) {
       reportDetail = new List<ReportDetail>();
       json['reportDetail'].forEach((v) {
@@ -90,6 +96,8 @@ class ReportDetail {
   int questionId;
   int reportId;
   QuestionDetails question;
+  int mockReportMasterId;
+  int mockId;
 
   ReportDetail(
       {this.id,
@@ -102,6 +110,8 @@ class ReportDetail {
       this.classId,
       this.subjectId,
       this.topicId,
+      this.mockReportMasterId,
+      this.mockId,
       this.setId,
       this.questionId,
       this.reportId,
@@ -121,6 +131,8 @@ class ReportDetail {
     setId = json['setId'];
     questionId = json['questionId'];
     reportId = json['reportId'];
+    mockReportMasterId = json['mockReportMasterId'];
+    mockId = json['mockId'];
     question = json['question'] != null
         ? new QuestionDetails.fromJson(json['question'])
         : null;
@@ -141,6 +153,8 @@ class ReportDetail {
     data['setId'] = this.setId;
     data['questionId'] = this.questionId;
     data['reportId'] = this.reportId;
+    data['mockReportMasterId'] = this.mockReportMasterId;
+    data['mockId'] = this.mockId;
     if (this.question != null) {
       data['question'] = this.question.toJson();
     }

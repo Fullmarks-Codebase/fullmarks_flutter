@@ -69,6 +69,11 @@ class AppStrings {
   static String dislikePostsComments = baseUrl + "posts/comments/dislike";
   static String deletePostsCommentsImage =
       baseUrl + "posts/comments/deleteImage";
+  //mock test
+  static String mock = baseUrl + "mock";
+  static String mockQuestions = baseUrl + "mockQuestions/byMockId";
+  static String mockReport = baseUrl + "mock/report";
+  static String mockMyReport = baseUrl + "mock/myReport";
 
   //image base url
   static String imageBaseUrl = baseUrl;

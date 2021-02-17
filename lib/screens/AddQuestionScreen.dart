@@ -431,7 +431,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
                   questionSeconds + " Sec",
                   style: TextStyle(
                     color: AppColors.appColor,
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -467,7 +467,9 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
                   optionFileImage: answerFileImages[index],
                   optionImage: answerImages[index],
                   image_field: image_field,
-                  questionid: widget.questionDetails.id.toString(),
+                  questionid: widget.questionDetails != null
+                      ? widget.questionDetails.id.toString()
+                      : "",
                 ),
               ),
             );

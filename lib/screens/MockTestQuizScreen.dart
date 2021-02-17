@@ -1,40 +1,145 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fullmarks/models/MockQuestionReportRequest.dart';
+import 'package:fullmarks/models/MockTestQuestionsResponse.dart';
+import 'package:fullmarks/models/MockTestResponse.dart';
+import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/models/ReportsResponse.dart';
+import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
+import 'TestResultScreen.dart';
+
 class MockTestQuizScreen extends StatefulWidget {
+  MockTestDetails mockTest;
+  MockTestQuizScreen({
+    @required this.mockTest,
+  });
   @override
   _MockTestQuizScreenState createState() => _MockTestQuizScreenState();
 }
 
 class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
   int currentQuestion = 0;
-  int totalQuestion = 10;
   PageController questionController;
-  int selectedAnswer = -1;
   bool isPopOpen = false;
+  bool _isLoading = false;
+  List<QuestionDetails> questionsDetails = List();
+  RewardedVideoAd rewardAd = RewardedVideoAd.instance;
+  Timer _timer;
+  int _start = 0;
 
   @override
   void initState() {
     AppFirebaseAnalytics.init().logEvent(name: AppStrings.mockTestQuizEvent);
     questionController = PageController();
+    _getQuestions();
+    rewardAd.load(adUnitId: AppStrings.adUnitId).then((value) {
+      print("Reward ad load");
+      print(value);
+    });
+    rewardAd.listener =
+        (RewardedVideoAdEvent event, {String rewardType, int rewardAmount}) {
+      print("Reward ad listener");
+      print(event);
+      if (event == RewardedVideoAdEvent.closed) {
+        submitQuestions();
+      }
+    };
     super.initState();
+  }
+
+  _getQuestions() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["mockId"] = widget.mockTest.id.toString();
+      //api call
+      MockTestQuestionsResponse response = MockTestQuestionsResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.mockQuestions, request: request),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        questionsDetails = response.result;
+        _start = widget.mockTest.time;
+        startTimer();
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
+  }
+
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          timer.cancel();
+          _notify();
+          //on timer complete go to play live quiz
+          showRewardAd();
+        } else {
+          _start--;
+          _notify();
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Utility.setSvgFullScreen(context, AppAssets.mockTestBg),
-          body(),
-        ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Utility.setSvgFullScreen(context, AppAssets.mockTestBg),
+            body(),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<bool> _onBackPressed() {
+    return Utility.showSubmitQuizDialog(
+          context: context,
+          onSubmitPress: () async {
+            _timer.cancel();
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
+            Navigator.pop(context);
+            showRewardAd();
+          },
+        ) ??
+        false;
+  }
+
+  @override
+  void dispose() {
+    try {
+      _timer.cancel();
+    } catch (e) {}
+    super.dispose();
   }
 
   Widget body() {
@@ -42,29 +147,47 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
       children: [
         Utility.appbar(
           context,
-          text: "SSC CGL Mock Test -1",
+          text: widget.mockTest.name,
           isHome: false,
           textColor: Colors.white,
+          onBackPressed: _onBackPressed,
         ),
-        timeElapsedView(),
-        SizedBox(
-          height: 16,
-        ),
-        Expanded(
-          child: PageView(
-            controller: questionController,
-            onPageChanged: (page) {
-              questionAnimateTo(page);
-            },
-            children: List.generate(
-              totalQuestion,
-              (index) {
-                return questionAnswerItemView();
-              },
-            ),
-          ),
-        ),
-        previousNextView(),
+        _isLoading || questionsDetails.length == 0
+            ? Container()
+            : timeElapsedView(),
+        _isLoading || questionsDetails.length == 0
+            ? Container()
+            : SizedBox(
+                height: 16,
+              ),
+        _isLoading || questionsDetails.length == 0
+            ? Container()
+            : Expanded(
+                child: PageView(
+                  controller: questionController,
+                  onPageChanged: (page) {
+                    questionAnimateTo(page);
+                  },
+                  children: List.generate(
+                    questionsDetails.length,
+                    (index) {
+                      return questionAnswerItemView();
+                    },
+                  ),
+                ),
+              ),
+        _isLoading || questionsDetails.length == 0
+            ? Container()
+            : previousNextView(),
+        _isLoading ? Expanded(child: Utility.progress(context)) : Container(),
+        !_isLoading && questionsDetails.length == 0
+            ? Expanded(
+                child: Utility.emptyView(
+                  "No Questions",
+                  textColor: Colors.white,
+                ),
+              )
+            : Container(),
       ],
     );
   }
@@ -96,7 +219,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                       "Question " +
                           (currentQuestion + 1).toString() +
                           " / " +
-                          totalQuestion.toString(),
+                          questionsDetails.length.toString(),
                       style: TextStyle(
                         color: AppColors.appColor,
                         fontSize: 18,
@@ -155,139 +278,134 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                 thickness: 2,
               ),
             ),
-            questionText(),
-            currentQuestion % 2 == 0 ? questionImageView() : Container(),
+            questionsDetails[currentQuestion].question == ""
+                ? Container()
+                : questionText(),
+            questionsDetails[currentQuestion].questionImage == ""
+                ? Container()
+                : questionImageView(),
             SizedBox(
               height: 16,
             ),
-            answersView()
+            answersView(currentQuestion),
           ],
         ),
       ),
     );
   }
 
-  Widget answersView() {
+  Widget answersView(int questionIndex) {
     return Column(
       children: List.generate(4, (index) {
-        return (currentQuestion - 1) % 4 == 0
-            ? imageAnswerItemView(index)
-            : textAnswerItemView(index);
+        return textAnswerItemView(questionIndex, index);
       }),
+    );
+  }
+
+  Widget textAnswerItemView(int questionIndex, int answerIndex) {
+    return Container(
+      margin: EdgeInsets.only(
+        bottom: 16,
+        left: 16,
+        right: 16,
+      ),
+      child: FlatButton(
+        padding: EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 12,
+        ),
+        color: questionsDetails[questionIndex].selectedAnswer == answerIndex
+            ? AppColors.myProgressIncorrectcolor
+            : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(
+            color: questionsDetails[questionIndex].selectedAnswer == answerIndex
+                ? AppColors.myProgressIncorrectcolor
+                : AppColors.blackColor,
+          ),
+        ),
+        onPressed: () async {
+          //delay to give ripple effect
+          await Future.delayed(Duration(milliseconds: AppStrings.delay));
+          questionsDetails[questionIndex].selectedAnswer = answerIndex;
+          _notify();
+        },
+        child: Container(
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              Text(
+                answerIndex == 0
+                    ? "(A) " + questionsDetails[questionIndex].ansOne
+                    : answerIndex == 1
+                        ? "(B) " + questionsDetails[questionIndex].ansTwo
+                        : answerIndex == 2
+                            ? "(C) " + questionsDetails[questionIndex].ansThree
+                            : "(D) " + questionsDetails[questionIndex].ansFour,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              (answerIndex == 0
+                      ? questionsDetails[questionIndex].ansOneImage == ""
+                      : answerIndex == 1
+                          ? questionsDetails[questionIndex].ansTwoImage == ""
+                          : answerIndex == 2
+                              ? questionsDetails[questionIndex].ansThreeImage ==
+                                  ""
+                              : questionsDetails[questionIndex].ansFourImage ==
+                                  "")
+                  ? Container()
+                  : SizedBox(
+                      height: 8,
+                    ),
+              (answerIndex == 0
+                      ? questionsDetails[questionIndex].ansOneImage == ""
+                      : answerIndex == 1
+                          ? questionsDetails[questionIndex].ansTwoImage == ""
+                          : answerIndex == 2
+                              ? questionsDetails[questionIndex].ansThreeImage ==
+                                  ""
+                              : questionsDetails[questionIndex].ansFourImage ==
+                                  "")
+                  ? Container()
+                  : Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      height: 200,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Utility.imageLoader(
+                          baseUrl: AppStrings.answersImage,
+                          url: answerIndex == 0
+                              ? questionsDetails[questionIndex].ansOneImage
+                              : answerIndex == 1
+                                  ? questionsDetails[questionIndex].ansTwoImage
+                                  : answerIndex == 2
+                                      ? questionsDetails[questionIndex]
+                                          .ansThreeImage
+                                      : questionsDetails[questionIndex]
+                                          .ansFourImage,
+                          placeholder: AppAssets.imagePlaceholder,
+                        ),
+                      ),
+                    )
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   _notify() {
     //notify internal state change in objects
     if (mounted) setState(() {});
-  }
-
-  Widget imageAnswerItemView(int index) {
-    return GestureDetector(
-      onTap: () {
-        selectedAnswer = index;
-        _notify();
-      },
-      child: Container(
-        margin: EdgeInsets.only(
-          bottom: 16,
-          left: 16,
-          right: 16,
-        ),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: selectedAnswer == index
-                ? AppColors.myProgressIncorrectcolor
-                : Colors.transparent,
-            width: 2,
-          ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        alignment: Alignment.center,
-        child: Stack(
-          children: [
-            Image.asset(
-              index == 0
-                  ? AppAssets.imagePlaceholder
-                  : index == 1
-                      ? AppAssets.imagePlaceholder
-                      : index == 2
-                          ? AppAssets.imagePlaceholder
-                          : AppAssets.imagePlaceholder,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 8,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    offset: Offset(0, 1),
-                    blurRadius: 1,
-                    color: Colors.black38,
-                  ),
-                ],
-              ),
-              child: Text(
-                index == 0
-                    ? "(A)"
-                    : index == 1
-                        ? "(B)"
-                        : index == 2
-                            ? "(C)"
-                            : "(D)",
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget textAnswerItemView(int index) {
-    return GestureDetector(
-      onTap: () {
-        selectedAnswer = index;
-        _notify();
-      },
-      child: Container(
-        margin: EdgeInsets.only(
-          bottom: 16,
-          left: 16,
-          right: 16,
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: 8,
-          vertical: 12,
-        ),
-        alignment: Alignment.center,
-        decoration: selectedAnswer == index
-            ? Utility.selectedAnswerDecoration(color: AppColors.strongCyan)
-            : Utility.defaultAnswerDecoration(),
-        child: Text(
-          index == 0
-              ? "(A) 18 g of H2O"
-              : index == 1
-                  ? "(B) 21 g of H2O"
-                  : index == 2
-                      ? "(C) 19 g of H2O"
-                      : "(D) 90 g of H2O",
-          style: TextStyle(
-            color: selectedAnswer == index ? Colors.white : Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
   }
 
   Widget questionImageView() {
@@ -330,7 +448,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                   width: 8,
                 ),
                 Text(
-                  "1 hr 55 min 45 sec",
+                  Utility.getHMS(_start),
                   style: TextStyle(
                     color: AppColors.appColor,
                     fontWeight: FontWeight.bold,
@@ -457,7 +575,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: GridView.builder(
                       padding: EdgeInsets.all(8),
-                      itemCount: 100,
+                      itemCount: questionsDetails.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 5,
                         crossAxisSpacing: 16.0,
@@ -467,15 +585,16 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                       itemBuilder: (BuildContext context, int index) {
                         return Container(
                           alignment: Alignment.center,
-                          decoration: index == 0
-                              ? attemptedDecoration()
-                              : index == 1
-                                  ? activeDecoration()
-                                  : notAttemptedDecoration(),
+                          decoration:
+                              questionsDetails[index].selectedAnswer != -1
+                                  ? Utility.attemptedDecoration()
+                                  : index == currentQuestion
+                                      ? Utility.activeDecoration()
+                                      : Utility.notAttemptedDecoration(),
                           child: Text(
                             (index + 1).toString(),
                             style: TextStyle(
-                              color: index == 1
+                              color: index == currentQuestion
                                   ? AppColors.wrongBorderColor
                                   : Colors.white,
                               fontWeight: FontWeight.bold,
@@ -507,31 +626,6 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
           ),
         );
       },
-    );
-  }
-
-  BoxDecoration attemptedDecoration() {
-    return BoxDecoration(
-      color: AppColors.strongCyan,
-      borderRadius: BorderRadius.circular(8),
-    );
-  }
-
-  BoxDecoration activeDecoration() {
-    return BoxDecoration(
-      color: AppColors.greyColor4,
-      border: Border.all(
-        color: AppColors.wrongBorderColor,
-        width: 2,
-      ),
-      borderRadius: BorderRadius.circular(8),
-    );
-  }
-
-  BoxDecoration notAttemptedDecoration() {
-    return BoxDecoration(
-      color: AppColors.greyColor2,
-      borderRadius: BorderRadius.circular(8),
     );
   }
 
@@ -570,7 +664,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
               onPressed: () async {
                 //delay to give ripple effect
                 await Future.delayed(Duration(milliseconds: AppStrings.delay));
-                if (currentQuestion == (totalQuestion - 1)) {
+                if (currentQuestion == (questionsDetails.length - 1)) {
                   Utility.showSubmitQuizDialog(
                     context: context,
                     onSubmitPress: () async {
@@ -578,20 +672,17 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                       await Future.delayed(
                           Duration(milliseconds: AppStrings.delay));
                       Navigator.pop(context);
-                      // Navigator.of(context).pushAndRemoveUntil(
-                      //   MaterialPageRoute(
-                      //     builder: (BuildContext context) => TestResultScreen(),
-                      //   ),
-                      //   (Route<dynamic> route) => false,
-                      // );
+                      showRewardAd();
                     },
                   );
                 } else {
                   questionAnimateTo(currentQuestion + 1);
                 }
               },
-              text: currentQuestion == (totalQuestion - 1) ? "Submit" : "Next",
-              assetName: currentQuestion == (totalQuestion - 1)
+              text: currentQuestion == (questionsDetails.length - 1)
+                  ? "Submit"
+                  : "Next",
+              assetName: currentQuestion == (questionsDetails.length - 1)
                   ? AppAssets.submit
                   : AppAssets.nextArrow,
               isSufix: true,
@@ -600,6 +691,81 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
         ],
       ),
     );
+  }
+
+  showRewardAd() async {
+    _timer.cancel();
+    rewardAd.show().then((value) {
+      print("Reward ad show");
+      print(value);
+      if (!value) {
+        submitQuestions();
+      }
+    }).catchError((onError) {
+      print("onError");
+      print(onError);
+      submitQuestions();
+    });
+  }
+
+  submitQuestions() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api request
+      List<MockQuestionReportRequest> questionReportsAnswersList = List();
+
+      var request = Map<String, dynamic>();
+
+      await Future.forEach(questionsDetails, (QuestionDetails element) {
+        questionReportsAnswersList.add(
+          MockQuestionReportRequest(
+            mockId: widget.mockTest.id.toString(),
+            userId: Utility.getCustomer().id.toString(),
+            questionId: element.id.toString(),
+            correctAnswer: Utility.getQuestionCorrectAnswer(element).toString(),
+            timeTaken: element.timeTaken.toString(),
+            userAnswer: element.selectedAnswer.toString(),
+          ),
+        );
+      });
+      request["answers"] = jsonEncode(questionReportsAnswersList);
+
+      //api call
+      ReportsResponse response = ReportsResponse.fromJson(
+        await ApiManager(context).postCall(
+          url: AppStrings.mockReport,
+          request: request,
+        ),
+      );
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      Utility.showToast(response.message);
+
+      if (response.code == 200) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (BuildContext context) => TestResultScreen(
+              questionsDetails: questionsDetails,
+              subtopic: null,
+              subject: null,
+              setDetails: null,
+              reportDetails:
+                  Utility.getCustomer() == null ? null : response.result,
+              title: widget.mockTest.name,
+            ),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   questionAnimateTo(int page) {
@@ -616,7 +782,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
         left: 16,
       ),
       child: Text(
-        "Which one of the following has maximum number of atoms?",
+        questionsDetails[currentQuestion].question,
         style: TextStyle(
           color: Colors.black,
           fontSize: 20,

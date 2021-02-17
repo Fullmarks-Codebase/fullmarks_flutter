@@ -20,12 +20,14 @@ class TestResultScreen extends StatefulWidget {
   SubjectDetails subject;
   SetDetails setDetails;
   ReportDetails reportDetails;
+  String title;
   TestResultScreen({
     @required this.subtopic,
     @required this.setDetails,
     @required this.questionsDetails,
     @required this.subject,
     @required this.reportDetails,
+    @required this.title,
   });
   @override
   _TestResultScreenState createState() => _TestResultScreenState();
@@ -159,20 +161,34 @@ class _TestResultScreenState extends State<TestResultScreen> {
   }
 
   Widget progressView() {
+    int totalMarks = 0;
+    if (widget.title.length > 0) {
+      int correct = int.tryParse(widget.reportDetails.correct) * 3;
+      int incorrect = int.tryParse(widget.reportDetails.incorrect) * -1;
+      totalMarks = correct + incorrect;
+    }
     return Column(
       children: [
         SizedBox(
           height: 8,
         ),
-        Text(
-          widget.subject.name +
-              " / " +
-              widget.subtopic.name +
-              " / " +
-              widget.setDetails.name,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
+        Container(
+          alignment: Alignment.center,
+          child: Text(
+            widget.subject == null ||
+                    widget.subject == null ||
+                    widget.setDetails == null
+                ? widget.title
+                : widget.subject.name +
+                    " / " +
+                    widget.subtopic.name +
+                    " / " +
+                    widget.setDetails.name,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+            ),
+            textAlign: TextAlign.center,
           ),
         ),
         SizedBox(
@@ -186,23 +202,18 @@ class _TestResultScreenState extends State<TestResultScreen> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Container(
-                      height: (MediaQuery.of(context).size.width / 2) / 3,
-                      width: (MediaQuery.of(context).size.width / 2) / 3,
-                      // child: SvgPicture.network(
-                      //   AppStrings.subjectImage + widget.subject.image,
-                      //   fit: BoxFit.contain,
-                      //   placeholderBuilder: (context) {
-                      //     return Image.asset(AppAssets.subjectPlaceholder);
-                      //   },
-                      // ),
-                      child: Utility.imageLoader(
-                        baseUrl: AppStrings.subjectImage,
-                        url: widget.subject.image,
-                        placeholder: AppAssets.subjectPlaceholder,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
+                    widget.subject == null
+                        ? Container()
+                        : Container(
+                            height: (MediaQuery.of(context).size.width / 2) / 3,
+                            width: (MediaQuery.of(context).size.width / 2) / 3,
+                            child: Utility.imageLoader(
+                              baseUrl: AppStrings.subjectImage,
+                              url: widget.subject.image,
+                              placeholder: AppAssets.subjectPlaceholder,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                     Utility.pieChart(
                       values: [
                         double.tryParse(widget.reportDetails.incorrect),
@@ -269,6 +280,20 @@ class _TestResultScreenState extends State<TestResultScreen> {
                     title:
                         "Avg. Time/Question = " + widget.reportDetails.avgTime,
                   ),
+                  widget.title.length == 0
+                      ? Container()
+                      : SizedBox(
+                          height: 8,
+                        ),
+                  widget.title.length == 0
+                      ? Container()
+                      : Utility.averageView(
+                          assetName: AppAssets.totalMarks,
+                          title: "Total Marks = " +
+                              totalMarks.toString() +
+                              " / " +
+                              (widget.questionsDetails.length * 3).toString(),
+                        ),
                 ],
               ),
             )

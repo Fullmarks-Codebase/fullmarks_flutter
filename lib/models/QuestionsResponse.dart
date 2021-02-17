@@ -56,6 +56,7 @@ class QuestionDetails {
   int timeTaken;
   int customMasterId;
   int time;
+  int mockId;
 
   QuestionDetails({
     this.id,
@@ -86,6 +87,7 @@ class QuestionDetails {
     this.timeTaken,
     this.time,
     this.customMasterId,
+    this.mockId,
   });
 
   QuestionDetails.fromJson(Map<String, dynamic> json) {
@@ -117,6 +119,7 @@ class QuestionDetails {
     timeTaken = json['timeTaken'] ?? 0;
     time = json['time'] ?? 0;
     customMasterId = json['customMasterId'] ?? 0;
+    mockId = json['mockId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -149,6 +152,7 @@ class QuestionDetails {
     data['timeTaken'] = this.timeTaken;
     data['time'] = this.time;
     data['customMasterId'] = this.customMasterId;
+    data['mockId'] = this.mockId;
     return data;
   }
 }

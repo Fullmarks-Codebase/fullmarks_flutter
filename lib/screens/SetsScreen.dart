@@ -251,6 +251,7 @@ class _SetsScreenState extends State<SetsScreen> {
               setDetails: setDetails,
               reportDetails:
                   Utility.getCustomer() == null ? null : response.result,
+              title: "",
             ),
           ),
           (Route<dynamic> route) => false,

@@ -132,7 +132,7 @@ class _TestScreenState extends State<TestScreen> {
             //delay to give ripple effect
             await Future.delayed(Duration(milliseconds: AppStrings.delay));
             Navigator.pop(context);
-            submitQuestions();
+            showRewardAd();
           },
         ) ??
         false;
@@ -478,12 +478,17 @@ class _TestScreenState extends State<TestScreen> {
   }
 
   showRewardAd() async {
+    stopwatch.stop();
     rewardAd.show().then((value) {
       print("Reward ad show");
       print(value);
       if (!value) {
         submitQuestions();
       }
+    }).catchError((onError) {
+      print("onError");
+      print(onError);
+      submitQuestions();
     });
   }
 
@@ -541,6 +546,7 @@ class _TestScreenState extends State<TestScreen> {
               setDetails: widget.setDetails,
               reportDetails:
                   Utility.getCustomer() == null ? null : response.result,
+              title: "",
             ),
           ),
           (Route<dynamic> route) => false,
