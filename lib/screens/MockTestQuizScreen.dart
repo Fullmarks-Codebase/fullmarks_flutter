@@ -205,6 +205,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               padding: EdgeInsets.only(
@@ -331,73 +332,70 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
           questionsDetails[questionIndex].selectedAnswer = answerIndex;
           _notify();
         },
-        child: Container(
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              Text(
-                answerIndex == 0
-                    ? "(A) " + questionsDetails[questionIndex].ansOne
-                    : answerIndex == 1
-                        ? "(B) " + questionsDetails[questionIndex].ansTwo
-                        : answerIndex == 2
-                            ? "(C) " + questionsDetails[questionIndex].ansThree
-                            : "(D) " + questionsDetails[questionIndex].ansFour,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-                textAlign: TextAlign.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              answerIndex == 0
+                  ? "(A) " + questionsDetails[questionIndex].ansOne
+                  : answerIndex == 1
+                      ? "(B) " + questionsDetails[questionIndex].ansTwo
+                      : answerIndex == 2
+                          ? "(C) " + questionsDetails[questionIndex].ansThree
+                          : "(D) " + questionsDetails[questionIndex].ansFour,
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
-              (answerIndex == 0
-                      ? questionsDetails[questionIndex].ansOneImage == ""
-                      : answerIndex == 1
-                          ? questionsDetails[questionIndex].ansTwoImage == ""
-                          : answerIndex == 2
-                              ? questionsDetails[questionIndex].ansThreeImage ==
-                                  ""
-                              : questionsDetails[questionIndex].ansFourImage ==
-                                  "")
-                  ? Container()
-                  : SizedBox(
-                      height: 8,
+            ),
+            (answerIndex == 0
+                    ? questionsDetails[questionIndex].ansOneImage == ""
+                    : answerIndex == 1
+                        ? questionsDetails[questionIndex].ansTwoImage == ""
+                        : answerIndex == 2
+                            ? questionsDetails[questionIndex].ansThreeImage ==
+                                ""
+                            : questionsDetails[questionIndex].ansFourImage ==
+                                "")
+                ? Container()
+                : SizedBox(
+                    height: 8,
+                  ),
+            (answerIndex == 0
+                    ? questionsDetails[questionIndex].ansOneImage == ""
+                    : answerIndex == 1
+                        ? questionsDetails[questionIndex].ansTwoImage == ""
+                        : answerIndex == 2
+                            ? questionsDetails[questionIndex].ansThreeImage ==
+                                ""
+                            : questionsDetails[questionIndex].ansFourImage ==
+                                "")
+                ? Container()
+                : Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-              (answerIndex == 0
-                      ? questionsDetails[questionIndex].ansOneImage == ""
-                      : answerIndex == 1
-                          ? questionsDetails[questionIndex].ansTwoImage == ""
-                          : answerIndex == 2
-                              ? questionsDetails[questionIndex].ansThreeImage ==
-                                  ""
-                              : questionsDetails[questionIndex].ansFourImage ==
-                                  "")
-                  ? Container()
-                  : Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    height: 200,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Utility.imageLoader(
+                        baseUrl: AppStrings.answersImage,
+                        url: answerIndex == 0
+                            ? questionsDetails[questionIndex].ansOneImage
+                            : answerIndex == 1
+                                ? questionsDetails[questionIndex].ansTwoImage
+                                : answerIndex == 2
+                                    ? questionsDetails[questionIndex]
+                                        .ansThreeImage
+                                    : questionsDetails[questionIndex]
+                                        .ansFourImage,
+                        placeholder: AppAssets.imagePlaceholder,
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      height: 200,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Utility.imageLoader(
-                          baseUrl: AppStrings.answersImage,
-                          url: answerIndex == 0
-                              ? questionsDetails[questionIndex].ansOneImage
-                              : answerIndex == 1
-                                  ? questionsDetails[questionIndex].ansTwoImage
-                                  : answerIndex == 2
-                                      ? questionsDetails[questionIndex]
-                                          .ansThreeImage
-                                      : questionsDetails[questionIndex]
-                                          .ansFourImage,
-                          placeholder: AppAssets.imagePlaceholder,
-                        ),
-                      ),
-                    )
-            ],
-          ),
+                    ),
+                  )
+          ],
         ),
       ),
     );
@@ -771,7 +769,6 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
   questionAnimateTo(int page) {
     currentQuestion = page;
     _notify();
-
     questionController.jumpToPage(currentQuestion);
   }
 
@@ -788,7 +785,6 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        textAlign: TextAlign.center,
       ),
     );
   }

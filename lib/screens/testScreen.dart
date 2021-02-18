@@ -307,85 +307,79 @@ class _TestScreenState extends State<TestScreen> {
           widget.questionsDetails[questionIndex].selectedAnswer = answerIndex;
           _notify();
         },
-        child: Container(
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              Text(
-                answerIndex == 0
-                    ? "(A) " + widget.questionsDetails[questionIndex].ansOne
-                    : answerIndex == 1
-                        ? "(B) " + widget.questionsDetails[questionIndex].ansTwo
-                        : answerIndex == 2
-                            ? "(C) " +
-                                widget.questionsDetails[questionIndex].ansThree
-                            : "(D) " +
-                                widget.questionsDetails[questionIndex].ansFour,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-                textAlign: TextAlign.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              answerIndex == 0
+                  ? "(A) " + widget.questionsDetails[questionIndex].ansOne
+                  : answerIndex == 1
+                      ? "(B) " + widget.questionsDetails[questionIndex].ansTwo
+                      : answerIndex == 2
+                          ? "(C) " +
+                              widget.questionsDetails[questionIndex].ansThree
+                          : "(D) " +
+                              widget.questionsDetails[questionIndex].ansFour,
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
-              (answerIndex == 0
-                      ? widget.questionsDetails[questionIndex].ansOneImage == ""
-                      : answerIndex == 1
-                          ? widget.questionsDetails[questionIndex]
-                                  .ansTwoImage ==
-                              ""
-                          : answerIndex == 2
-                              ? widget.questionsDetails[questionIndex]
-                                      .ansThreeImage ==
-                                  ""
-                              : widget.questionsDetails[questionIndex]
-                                      .ansFourImage ==
-                                  "")
-                  ? Container()
-                  : SizedBox(
-                      height: 8,
+            ),
+            (answerIndex == 0
+                    ? widget.questionsDetails[questionIndex].ansOneImage == ""
+                    : answerIndex == 1
+                        ? widget.questionsDetails[questionIndex].ansTwoImage ==
+                            ""
+                        : answerIndex == 2
+                            ? widget.questionsDetails[questionIndex]
+                                    .ansThreeImage ==
+                                ""
+                            : widget.questionsDetails[questionIndex]
+                                    .ansFourImage ==
+                                "")
+                ? Container()
+                : SizedBox(
+                    height: 8,
+                  ),
+            (answerIndex == 0
+                    ? widget.questionsDetails[questionIndex].ansOneImage == ""
+                    : answerIndex == 1
+                        ? widget.questionsDetails[questionIndex].ansTwoImage ==
+                            ""
+                        : answerIndex == 2
+                            ? widget.questionsDetails[questionIndex]
+                                    .ansThreeImage ==
+                                ""
+                            : widget.questionsDetails[questionIndex]
+                                    .ansFourImage ==
+                                "")
+                ? Container()
+                : Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-              (answerIndex == 0
-                      ? widget.questionsDetails[questionIndex].ansOneImage == ""
-                      : answerIndex == 1
-                          ? widget.questionsDetails[questionIndex]
-                                  .ansTwoImage ==
-                              ""
-                          : answerIndex == 2
-                              ? widget.questionsDetails[questionIndex]
-                                      .ansThreeImage ==
-                                  ""
-                              : widget.questionsDetails[questionIndex]
-                                      .ansFourImage ==
-                                  "")
-                  ? Container()
-                  : Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    height: 200,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Utility.imageLoader(
+                        baseUrl: AppStrings.answersImage,
+                        url: answerIndex == 0
+                            ? widget.questionsDetails[questionIndex].ansOneImage
+                            : answerIndex == 1
+                                ? widget
+                                    .questionsDetails[questionIndex].ansTwoImage
+                                : answerIndex == 2
+                                    ? widget.questionsDetails[questionIndex]
+                                        .ansThreeImage
+                                    : widget.questionsDetails[questionIndex]
+                                        .ansFourImage,
+                        placeholder: AppAssets.imagePlaceholder,
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      height: 200,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Utility.imageLoader(
-                          baseUrl: AppStrings.answersImage,
-                          url: answerIndex == 0
-                              ? widget
-                                  .questionsDetails[questionIndex].ansOneImage
-                              : answerIndex == 1
-                                  ? widget.questionsDetails[questionIndex]
-                                      .ansTwoImage
-                                  : answerIndex == 2
-                                      ? widget.questionsDetails[questionIndex]
-                                          .ansThreeImage
-                                      : widget.questionsDetails[questionIndex]
-                                          .ansFourImage,
-                          placeholder: AppAssets.imagePlaceholder,
-                        ),
-                      ),
-                    )
-            ],
-          ),
+                    ),
+                  )
+          ],
         ),
       ),
     );
@@ -590,7 +584,6 @@ class _TestScreenState extends State<TestScreen> {
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        textAlign: TextAlign.center,
       ),
     );
   }

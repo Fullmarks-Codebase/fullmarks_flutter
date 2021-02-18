@@ -66,11 +66,11 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               widget.questionDetails.question.length == 0
                   ? Container()
                   : Container(
-                      alignment: Alignment.center,
                       padding: EdgeInsets.only(
                         right: 16,
                         left: 16,
@@ -131,6 +131,7 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
       alignment: Alignment.center,
       decoration: Utility.defaultAnswerDecoration(),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             index == 0
@@ -145,7 +146,6 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
-            textAlign: TextAlign.center,
           ),
           (index == 0
                   ? widget.questionDetails.ansOneImage == ""

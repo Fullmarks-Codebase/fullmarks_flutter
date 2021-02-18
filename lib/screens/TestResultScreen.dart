@@ -302,7 +302,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
         SizedBox(
           height: 8,
         ),
-        timeTakenView(),
+        widget.title.length == 0 ? timeTakenView() : Container(),
         SizedBox(
           height: 8,
         ),

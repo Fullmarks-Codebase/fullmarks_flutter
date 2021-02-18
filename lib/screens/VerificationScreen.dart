@@ -27,7 +27,7 @@ class VerificationScreen extends StatefulWidget {
 }
 
 class _VerificationScreenState extends State<VerificationScreen> {
-  static const _timerDuration = 30;
+  static const _timerDuration = 60;
   StreamController _timerStream = new StreamController<int>();
   Timer _resendCodeTimer;
   bool _isLoading = false;
@@ -82,18 +82,28 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   Widget autoResendOTPView() {
     return StreamBuilder(
-      initialData: 30,
+      initialData: 60,
       stream: _timerStream.stream,
       builder: (BuildContext ctx, AsyncSnapshot snapshot) {
+        bool isEnable = snapshot.data == 0;
         return SizedBox(
-          width: 300,
           height: 30,
-          child: Text(
-            "Auto Resending in " + snapshot.data.toString(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.appColor,
-              fontWeight: FontWeight.w600,
+          child: FlatButton(
+            onPressed: isEnable
+                ? () async {
+                    //delay to give ripple effect
+                    await Future.delayed(
+                        Duration(milliseconds: AppStrings.delay));
+                    _verifyPhoneNumber();
+                  }
+                : null,
+            child: Text(
+              "Resend OTP",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: isEnable ? AppColors.appColor : AppColors.greyColor,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         );
@@ -133,7 +143,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
     await _auth
         .verifyPhoneNumber(
       phoneNumber: "+91" + widget.phoneNumber,
-      timeout: const Duration(seconds: 30),
+      timeout: const Duration(seconds: 60),
       verificationCompleted: verificationCompleted,
       verificationFailed: verificationFailed,
       codeSent: codeSent,
