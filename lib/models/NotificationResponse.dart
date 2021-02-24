@@ -35,7 +35,7 @@ class NotificationDetails {
   String createdAt;
   String updatedAt;
   int userId;
-  int room;
+  String room;
   int notifyType;
 
   NotificationDetails({
@@ -58,7 +58,7 @@ class NotificationDetails {
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
     userId = json['userId'] ?? 0;
-    room = json['room'] ?? 0;
+    room = json['room'] ?? "";
     notifyType = json['notifyType'] ?? 0;
   }
 

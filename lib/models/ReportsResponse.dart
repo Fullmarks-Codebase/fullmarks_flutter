@@ -29,6 +29,7 @@ class ReportsResponse {
 class ReportDetails {
   String correct;
   String incorrect;
+  String skipped;
   String accuracy;
   String timeTaken;
   String avgTime;
@@ -38,6 +39,7 @@ class ReportDetails {
   ReportDetails({
     this.correct,
     this.incorrect,
+    this.skipped,
     this.accuracy,
     this.timeTaken,
     this.avgTime,
@@ -48,6 +50,7 @@ class ReportDetails {
   ReportDetails.fromJson(Map<String, dynamic> json) {
     correct = json['correct'].toString() ?? "";
     incorrect = json['incorrect'].toString() ?? "";
+    skipped = json['skipped'].toString() ?? "";
     accuracy = json['accuracy'].toString() ?? "";
     timeTaken = json['time_taken'].toString() ?? "";
     avgTime = json['avg_time'].toString() ?? "";
@@ -70,6 +73,7 @@ class ReportDetails {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['correct'] = this.correct;
     data['incorrect'] = this.incorrect;
+    data['skipped'] = this.skipped;
     data['accuracy'] = this.accuracy;
     data['time_taken'] = this.timeTaken;
     data['avg_time'] = this.avgTime;

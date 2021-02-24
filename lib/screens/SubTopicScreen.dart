@@ -337,6 +337,7 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                   values: [
                     double.tryParse(subjectReportDetails.incorrect),
                     double.tryParse(subjectReportDetails.correct),
+                    double.tryParse(subjectReportDetails.skipped),
                   ],
                 ),
               ],
@@ -372,6 +373,13 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
               Utility.correctIncorrectView(
                 color: AppColors.myProgressIncorrectcolor,
                 title: "Correct: " + subjectReportDetails.correct,
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Utility.correctIncorrectView(
+                color: AppColors.wrongBorderColor,
+                title: "Skipped: " + subjectReportDetails.skipped,
               ),
               SizedBox(
                 height: 8,

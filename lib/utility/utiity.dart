@@ -513,7 +513,7 @@ class Utility {
 
   static List<PieChartSectionData> showingSections(List<double> values) {
     return List.generate(
-      2,
+      values.length,
       (i) {
         // final isTouched = i == touchedIndex;
         // final double opacity = isTouched ? 1 : 0.6;
@@ -528,6 +528,12 @@ class Utility {
             return PieChartSectionData(
               color: AppColors.myProgressIncorrectcolor,
               value: values[1],
+              showTitle: false,
+            );
+          case 2:
+            return PieChartSectionData(
+              color: AppColors.wrongBorderColor,
+              value: values[2],
               showTitle: false,
             );
           default:
@@ -594,7 +600,7 @@ class Utility {
   }
 
   static Widget pieChart({
-    List<double> values = const [75, 25], //incorrect - correct
+    List<double> values = const [70, 20, 10], //incorrect - correct
   }) {
     return PieChart(
       PieChartData(
@@ -1069,6 +1075,38 @@ class Utility {
         : customer.username == ""
             ? "User" + customer.id.toString()
             : customer.username;
+  }
+
+  static Widget getUserImage({
+    @required String url,
+    double width = 50,
+    double borderWidth = 2,
+    double height = 50,
+    Color bordercolor,
+    double borderRadius = 50,
+  }) {
+    if (bordercolor == null) {
+      bordercolor = AppColors.appColor;
+    }
+    return Container(
+      height: height,
+      width: width,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: bordercolor,
+          width: borderWidth,
+        ),
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: imageLoader(
+          baseUrl: AppStrings.userImage,
+          url: url,
+          placeholder: AppAssets.person,
+        ),
+      ),
+    );
   }
 
   static GuestUserDetails getGuest() {

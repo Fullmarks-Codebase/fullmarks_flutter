@@ -35,6 +35,7 @@ class SetReportResponse {
 class SetReportDetails {
   String correct;
   String incorrect;
+  String skipped;
   String timeTaken;
   SubjectDetails subject;
   SubtopicDetails topic;
@@ -45,6 +46,7 @@ class SetReportDetails {
   SetReportDetails({
     this.correct,
     this.incorrect,
+    this.skipped,
     this.timeTaken,
     this.subject,
     this.topic,
@@ -56,6 +58,7 @@ class SetReportDetails {
   SetReportDetails.fromJson(Map<String, dynamic> json) {
     correct = json['correct'] ?? "";
     incorrect = json['incorrect'] ?? "";
+    skipped = json['skipped'] ?? "";
     timeTaken = json['time_taken'] ?? "";
     subject = json['subject'] != null
         ? new SubjectDetails.fromJson(json['subject'])
@@ -73,6 +76,7 @@ class SetReportDetails {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['correct'] = this.correct;
     data['incorrect'] = this.incorrect;
+    data['skipped'] = this.skipped;
     data['time_taken'] = this.timeTaken;
     if (this.subject != null) {
       data['subject'] = this.subject.toJson();

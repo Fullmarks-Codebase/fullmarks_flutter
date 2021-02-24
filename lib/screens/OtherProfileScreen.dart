@@ -5,7 +5,6 @@ import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/models/UsersResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
-import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -22,8 +21,9 @@ class OtherProfileScreen extends StatefulWidget {
 class _OtherProfileScreenState extends State<OtherProfileScreen> {
   bool _isLoading = false;
   Customer customer;
-  String buddies = "0";
-  String rank = "0";
+  String buddies = "-";
+  String rank = "-";
+  String likes = "-";
 
   @override
   void initState() {
@@ -49,8 +49,9 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       if (response.code == 200) {
         if (response.result != null) {
           _notify();
+          buddies = response.result.buddies.toString();
+          likes = response.result.likes.toString();
           if (response.result.reportMaster.length != 0) {
-            buddies = response.result.buddies.toString();
             rank = response.result.reportMaster.first.rank.toString();
             _notify();
           }
@@ -165,7 +166,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                     SizedBox(
                       height: 8,
                     ),
-                    Utility.leaderBoardView("0", buddies, rank),
+                    Utility.leaderBoardView(likes, buddies, rank),
                   ],
                 ),
               ),
@@ -212,21 +213,11 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
   }
 
   Widget userImage() {
-    return Container(
+    return Utility.getUserImage(
+      url: (customer?.thumbnail ?? ""),
       height: (MediaQuery.of(context).size.height / 3.5) / 2,
-      width: (MediaQuery.of(context).size.height / 3.5),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: AppColors.appColor,
-          width: 2,
-        ),
-        image: DecorationImage(
-          image: NetworkImage(
-            AppStrings.userImage + (customer?.thumbnail ?? ""),
-          ),
-        ),
-      ),
+      width: (MediaQuery.of(context).size.height / 3.5) / 2,
+      borderRadius: (MediaQuery.of(context).size.height / 3.5),
     );
   }
 }

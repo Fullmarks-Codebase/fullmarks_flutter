@@ -26,7 +26,7 @@ dependencies:
   cached_network_image: ^2.5.0
   carousel_slider: ^2.3.1
   connectivity: ^2.0.2
-  contacts_service: ^0.4.6
+  # contacts_service: ^0.4.6
   cupertino_icons: ^1.0.0
   firebase_admob: ^0.10.3
   firebase_analytics: ^6.3.0

@@ -378,23 +378,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
           ),
         );
       },
-      leading: Container(
-        height: 50,
-        width: 50,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: AppColors.appColor,
-            width: 2,
-          ),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkImage(
-              AppStrings.userImage + thumbnail,
-            ),
-          ),
-        ),
-      ),
+      leading: Utility.getUserImage(url: thumbnail),
       title: Text(
         username,
         style: TextStyle(

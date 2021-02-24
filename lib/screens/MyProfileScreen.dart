@@ -613,25 +613,32 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               : customer.thumbnail == ""
                   ? dummyUserView(
                       (MediaQuery.of(context).size.height / 3.5) / 2)
-                  : Container(
-                      height: (MediaQuery.of(context).size.height / 3.5) / 2,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.appColor,
-                          width: 2,
+                  : _image == null
+                      ? Utility.getUserImage(
+                          url: customer.thumbnail,
+                          height:
+                              (MediaQuery.of(context).size.height / 3.5) / 2,
+                          width: (MediaQuery.of(context).size.height / 3.5) / 2,
+                          borderRadius:
+                              (MediaQuery.of(context).size.height / 3.5) / 2,
+                        )
+                      : Container(
+                          height:
+                              (MediaQuery.of(context).size.height / 3.5) / 2,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.appColor,
+                              width: 2,
+                            ),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: FileImage(
+                                _image,
+                              ),
+                            ),
+                          ),
                         ),
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: _image == null
-                              ? NetworkImage(
-                                  AppStrings.userImage + customer.thumbnail)
-                              : FileImage(
-                                  _image,
-                                ),
-                        ),
-                      ),
-                    ),
           Positioned(
             right: 10,
             child: GestureDetector(

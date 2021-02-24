@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,7 +11,6 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class AddFriendScreen extends StatefulWidget {
   String title;
@@ -28,23 +26,36 @@ class AddFriendScreen extends StatefulWidget {
 }
 
 class _AddFriendScreenState extends State<AddFriendScreen> {
-  Iterable<MyFriendsDetails> friends = List();
-  Iterable<MyFriendsDetails> suggestionList = List();
+  List<MyFriendsDetails> friends = List();
+  List<MyFriendsDetails> suggestionList = List();
   ScrollController controller;
   TextEditingController _searchQueryController = TextEditingController();
   List<int> selectedContact = List();
   bool _isLoading = false;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     AppFirebaseAnalytics.init().logEvent(name: AppStrings.addFriendEvent);
     controller = ScrollController();
     if (widget.roomId == null) {
-      getContacts();
+      _getNotFriends();
     } else {
       _getMyFriends();
     }
     super.initState();
+  }
+
+  Future<Null> _handleRefresh() async {
+    _clearSearchQuery();
+    if (widget.roomId == null) {
+      _getNotFriends();
+    } else {
+      _getMyFriends();
+    }
+    await Future.delayed(Duration(milliseconds: AppStrings.delay));
+    return null;
   }
 
   _getMyFriends() async {
@@ -75,41 +86,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     }
   }
 
-  getContacts() async {
-    final PermissionStatus permissionStatus = await _getPermission();
-    if (permissionStatus == PermissionStatus.granted) {
-      //We can now access our contacts here
-      _isLoading = true;
-      _notify();
-      await ContactsService.getContacts().then((value) async {
-        List<String> strContacts = List();
-        await Future.forEach(value, (Contact element) {
-          if (element.phones.length > 0) {
-            String contact = element.phones.first.value.trim();
-            contact = contact.replaceAll("-", "");
-            contact = contact.replaceAll("(", "");
-            contact = contact.replaceAll(")", "");
-            contact = contact.replaceAll("+91", "");
-            contact = contact.replaceAll(" ", "");
-            if (!strContacts.contains(contact)) {
-              strContacts.add(contact);
-            }
-          }
-        });
-        _getNotFriends(strContacts);
-        _notify();
-      }).catchError((onError) {
-        _isLoading = false;
-        _notify();
-        print(onError);
-      });
-    } else {
-      //If permissions have been denied show standard cupertino alert dialog
-      openAppSettings();
-    }
-  }
-
-  _getNotFriends(List<String> strContacts) async {
+  _getNotFriends() async {
     //check internet connection available or not
     if (await ApiManager.checkInternet()) {
       //show progress
@@ -117,7 +94,6 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       _notify();
       //api request
       var request = Map<String, dynamic>();
-      request["numbers"] = jsonEncode(strContacts);
       //api call
       MyFriendsResponse response = MyFriendsResponse.fromJson(
         await ApiManager(context)
@@ -135,20 +111,6 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     } else {
       //show message that internet is not available
       Utility.showToast(AppStrings.noInternet);
-    }
-  }
-
-  //Check contacts permission
-  Future<PermissionStatus> _getPermission() async {
-    final PermissionStatus permission = await Permission.contacts.status;
-    if (permission != PermissionStatus.granted &&
-        permission != PermissionStatus.denied) {
-      final Map<Permission, PermissionStatus> permissionStatus =
-          await [Permission.contacts].request();
-      return permissionStatus[Permission.contacts] ??
-          PermissionStatus.undetermined;
-    } else {
-      return permission;
     }
   }
 
@@ -230,7 +192,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       await Future.forEach(suggestionList, (MyFriendsDetails element) {
         int index = suggestionList.toList().indexOf(element);
         if (selectedContact.contains(index)) {
-          strContacts.add(element.phoneNumber);
+          strContacts.add(element.id.toString());
         }
       });
       request["numbers"] = jsonEncode(strContacts);
@@ -266,7 +228,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       await Future.forEach(suggestionList, (MyFriendsDetails element) {
         int index = suggestionList.toList().indexOf(element);
         if (selectedContact.contains(index)) {
-          strContacts.add(element.phoneNumber);
+          strContacts.add(element.id.toString());
         }
       });
       request["numbers"] = jsonEncode(strContacts);
@@ -377,19 +339,35 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     return Expanded(
       child: _isLoading
           ? Utility.progress(context)
-          : friends.length == 0
-              ? Utility.emptyView("No Friends to add")
-              : ListView.separated(
-                  padding: EdgeInsets.zero,
-                  separatorBuilder: (context, index) {
-                    return Divider();
-                  },
-                  controller: controller,
-                  itemCount: suggestionList.length,
-                  itemBuilder: (context, index) {
-                    return friendsItemView(index);
-                  },
-                ),
+          : RefreshIndicator(
+              key: _refreshIndicatorKey,
+              onRefresh: _handleRefresh,
+              child: friends.length == 0
+                  ? ListView(
+                      padding: EdgeInsets.all(16),
+                      physics: AlwaysScrollableScrollPhysics(),
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height -
+                              ((AppBar().preferredSize.height * 2) + 100),
+                          child: Utility.emptyView("No Friends to add"),
+                        ),
+                      ],
+                    )
+                  : ListView.separated(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.zero,
+                      separatorBuilder: (context, index) {
+                        return Divider();
+                      },
+                      controller: controller,
+                      itemCount: suggestionList.length,
+                      itemBuilder: (context, index) {
+                        return friendsItemView(index);
+                      },
+                    ),
+            ),
     );
   }
 
@@ -407,24 +385,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
             }
             _notify();
           },
-          leading: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.appColor,
-                width: 2,
-              ),
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  AppStrings.userImage +
-                      suggestionList.toList()[index].thumbnail,
-                ),
-              ),
-            ),
-          ),
+          leading: Utility.getUserImage(
+              url: suggestionList.toList()[index].thumbnail),
           title: Text(
             suggestionList.toList()[index].username == ""
                 ? "User" + suggestionList.toList()[index].id.toString()

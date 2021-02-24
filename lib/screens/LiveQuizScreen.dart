@@ -21,9 +21,9 @@ class LiveQuizScreen extends StatefulWidget {
 
 class _LiveQuizScreenState extends State<LiveQuizScreen> {
   Customer customer;
-  String points = "0";
-  String games = "0";
-  String rank = "0";
+  String points = "-";
+  String games = "-";
+  String rank = "-";
 
   @override
   void initState() {
@@ -411,21 +411,11 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
         ? dummyUserView(size)
         : customer.thumbnail == ""
             ? dummyUserView(size)
-            : Container(
+            : Utility.getUserImage(
+                url: customer.thumbnail,
+                bordercolor: AppColors.chartBgColor,
                 height: size,
                 width: size,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.chartBgColor,
-                    width: 2,
-                  ),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image:
-                        NetworkImage(AppStrings.userImage + customer.thumbnail),
-                  ),
-                ),
               );
   }
 

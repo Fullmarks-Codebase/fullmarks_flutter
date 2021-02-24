@@ -33,6 +33,7 @@ class SubjectReportDetails {
   int classId;
   String correct;
   String incorrect;
+  String skipped;
   String timeTaken;
   SubjectDetails subject;
   String accuracy;
@@ -42,6 +43,7 @@ class SubjectReportDetails {
       {this.classId,
       this.correct,
       this.incorrect,
+      this.skipped,
       this.timeTaken,
       this.subject,
       this.accuracy,
@@ -51,6 +53,7 @@ class SubjectReportDetails {
     classId = json['classId'] ?? 0;
     correct = json['correct'] ?? "";
     incorrect = json['incorrect'] ?? "";
+    skipped = json['skipped'] ?? "";
     timeTaken = json['time_taken'] ?? "";
     subject = json['subject'] != null
         ? new SubjectDetails.fromJson(json['subject'])
@@ -63,6 +66,7 @@ class SubjectReportDetails {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['classId'] = this.classId;
     data['correct'] = this.correct;
+    data['skipped'] = this.skipped;
     data['incorrect'] = this.incorrect;
     data['time_taken'] = this.timeTaken;
     if (this.subject != null) {

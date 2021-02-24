@@ -328,79 +328,70 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
             Row(
               children: [
                 Expanded(
-                  flex: 15,
+                  flex: 13,
                   child: Container(),
                 ),
-                Expanded(
-                  flex: 10,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        height: 100,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                              AppStrings.userImage + user1.thumbnail,
-                            ),
+                Container(
+                  color: Colors.transparent,
+                  child: Expanded(
+                    flex: 10,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(
+                            bottom: 8,
                           ),
-                          border: Border.all(
-                            color: AppColors.myProgressIncorrectcolor,
-                            width: 3,
+                          child: Utility.getUserImage(
+                            url: user1.thumbnail,
+                            height: 70,
+                            width: 70,
+                            borderRadius: 70,
+                            borderWidth: 3,
+                            bordercolor: AppColors.myProgressIncorrectcolor,
                           ),
                         ),
-                      )
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Expanded(
-                  flex: 10,
-                  child: Utility.imageLoader(
-                    baseUrl: AppStrings.subjectImage,
-                    url: widget.subject.image,
-                    placeholder: AppAssets.subjectPlaceholder,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                Expanded(
-                  flex: 10,
+                  flex: 15,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       questions.length != 0 && user1 != null && user2 != null
-                          ? Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(
-                                    AppStrings.userImage + user2.thumbnail,
-                                  ),
-                                ),
-                                border: Border.all(
-                                  color: AppColors.myProgressIncorrectcolor,
-                                  width: 3,
-                                ),
-                              ),
+                          ? Utility.getUserImage(
+                              url: user2.thumbnail,
+                              height: 70,
+                              width: 70,
+                              borderRadius: 70,
+                              bordercolor: AppColors.myProgressIncorrectcolor,
+                              borderWidth: 3,
                             )
                           : Container(
+                              height: 80,
+                              width: 80,
                               child: SvgPicture.asset(AppAssets.user),
-                              height: 100,
-                              width: 100,
                             )
                     ],
                   ),
                 ),
                 Expanded(
-                  flex: 15,
+                  flex: 10,
                   child: Container(),
                 ),
               ],
+            ),
+            Container(
+              height: 70,
+              width: 70,
+              child: Utility.imageLoader(
+                baseUrl: AppStrings.subjectImage,
+                url: widget.subject.image,
+                placeholder: AppAssets.subjectPlaceholder,
+                fit: BoxFit.contain,
+              ),
             ),
           ],
         ),

@@ -48,10 +48,11 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   int perQuestionSeconds = 0;
   RewardedVideoAd rewardAd = RewardedVideoAd.instance;
   bool _isLoading = false;
-  int defaultSeconds = 5;
+  int defaultSeconds = 30;
   RandomQuizParticipantsDetails user1;
   RandomQuizParticipantsDetails user2;
   Timer _timerInternet;
+  bool answerSelection = true;
 
   getQuestionSeconds() {
     perQuestionSeconds = widget.isRandomQuiz
@@ -98,7 +99,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
 
       socket.on(AppStrings.allParticipants, (data) {
         print(AppStrings.allParticipants);
-        print(jsonEncode(data));
+        // print(jsonEncode(data));
         RandomQuizParticipantsResponse randomQuizParticipantsResponse =
             RandomQuizParticipantsResponse.fromJson(
                 jsonDecode(jsonEncode(data)));
@@ -132,7 +133,6 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
                 (element) => element.user.id == customer.id,
                 orElse: () => null,
               )
-              ?.user
               ?.score
               .toString();
         _notify();
@@ -225,6 +225,8 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   }
 
   void startTimer() {
+    answerSelection = true;
+    _notify();
     socket.emit(AppStrings.userDetails, {"room": widget.room.room});
     const oneSec = const Duration(seconds: 1);
     _timer = Timer.periodic(
@@ -233,11 +235,26 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         if (perQuestionSeconds == 0) {
           timer.cancel();
 
+          answerSelection = false;
+
           //check answer is correct or not
-          if (Utility.getQuestionCorrectAnswer(
+          if (widget.questions[currentQuestion].selectedAnswer == -1) {
+            Utility.showAnswerToast(
+                context, "Not Attempted", AppColors.yellowColor);
+            // socket.emit(
+            //   AppStrings.updateScore,
+            //   {
+            //     "point": 0,
+            //     "id": Utility.getCustomer().id,
+            //     "room": widget.room.room,
+            //   },
+            // );
+            socket.emit(AppStrings.userDetails, {"room": widget.room.room});
+          } else if (Utility.getQuestionCorrectAnswer(
                   widget.questions[currentQuestion]) ==
               widget.questions[currentQuestion].selectedAnswer) {
             Utility.showAnswerToast(context, "Correct", AppColors.correctColor);
+            print("*");
             socket.emit(
               AppStrings.updateScore,
               {
@@ -250,19 +267,20 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
           } else {
             Utility.showAnswerToast(
                 context, "Incorrect", AppColors.incorrectColor);
-            socket.emit(
-              AppStrings.updateScore,
-              {
-                "point": 0,
-                "id": Utility.getCustomer().id,
-                "room": widget.room.room,
-              },
-            );
+            // socket.emit(
+            //   AppStrings.updateScore,
+            //   {
+            //     "point": 0,
+            //     "id": Utility.getCustomer().id,
+            //     "room": widget.room.room,
+            //   },
+            // );
             socket.emit(AppStrings.userDetails, {"room": widget.room.room});
           }
 
+          //wait to do next task
           Future.delayed(
-            Duration(seconds: 1),
+            Duration(seconds: 3),
             () {
               if ((widget.questions.length - 1) == currentQuestion) {
                 //if last question then submit question
@@ -508,12 +526,14 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
                     : AppColors.blackColor,
           ),
         ),
-        onPressed: () async {
-          //delay to give ripple effect
-          await Future.delayed(Duration(milliseconds: AppStrings.delay));
-          widget.questions[currentQuestion].selectedAnswer = answerIndex;
-          _notify();
-        },
+        onPressed: answerSelection
+            ? () async {
+                //delay to give ripple effect
+                await Future.delayed(Duration(milliseconds: AppStrings.delay));
+                widget.questions[currentQuestion].selectedAnswer = answerIndex;
+                _notify();
+              }
+            : () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -639,25 +659,12 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
           SizedBox(
             width: 8,
           ),
-          Container(
+          Utility.getUserImage(
+            url: user1 == null ? "" : user1.user.thumbnail,
             height: 40,
             width: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  user1 == null
-                      ? ""
-                      : AppStrings.userImage + user1.user.thumbnail,
-                ),
-              ),
-              border: Border.all(
-                color: AppColors.myProgressIncorrectcolor,
-                width: 2,
-              ),
-            ),
-          ),
+            bordercolor: AppColors.myProgressIncorrectcolor,
+          )
         ],
       ),
     );
@@ -729,24 +736,11 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
     return Container(
       child: Row(
         children: [
-          Container(
+          Utility.getUserImage(
+            url: user2 == null ? "" : user2.user.thumbnail,
+            bordercolor: AppColors.myProgressIncorrectcolor,
             height: 40,
             width: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  user2 == null
-                      ? ""
-                      : AppStrings.userImage + user2.user.thumbnail,
-                ),
-              ),
-              border: Border.all(
-                color: AppColors.myProgressIncorrectcolor,
-                width: 2,
-              ),
-            ),
           ),
           SizedBox(
             width: 8,
@@ -906,18 +900,8 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   Widget participantsItemView(int index) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Container(
-        height: 50,
-        width: 50,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkImage(
-              AppStrings.userImage + participants[index].user.thumbnail,
-            ),
-          ),
-        ),
+      leading: Utility.getUserImage(
+        url: participants[index].user.thumbnail,
       ),
       title: Text(
         participants[index].user.username +
@@ -950,7 +934,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
           ],
         ),
         child: Text(
-          "Score : " + participants[index].user.score.toString(),
+          "Score : " + participants[index].score.toString(),
           style: TextStyle(
             fontSize: 12,
             color: AppColors.appColor,

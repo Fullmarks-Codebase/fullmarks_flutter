@@ -218,6 +218,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
                       values: [
                         double.tryParse(widget.reportDetails.incorrect),
                         double.tryParse(widget.reportDetails.correct),
+                        double.tryParse(widget.reportDetails.skipped),
                       ],
                     ),
                   ],
@@ -255,6 +256,14 @@ class _TestResultScreenState extends State<TestResultScreen> {
                     color: AppColors.myProgressIncorrectcolor,
                     title:
                         "Correct: " + widget.reportDetails.correct.toString(),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Utility.correctIncorrectView(
+                    color: AppColors.wrongBorderColor,
+                    title:
+                        "Skipped: " + widget.reportDetails.skipped.toString(),
                   ),
                   SizedBox(
                     height: 8,

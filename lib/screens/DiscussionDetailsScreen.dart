@@ -21,6 +21,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import 'AddCommentScreen.dart';
 import 'AddDiscussionScreen.dart';
+import 'OtherProfileScreen.dart';
 
 class DiscussionDetailsScreen extends StatefulWidget {
   DiscussionDetails discussion;
@@ -178,6 +179,16 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
                 child: Column(
                   children: [
                     DiscussionItemView(
+                      onUserTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OtherProfileScreen(
+                              id: widget.discussion.userId.toString(),
+                            ),
+                          ),
+                        );
+                      },
                       onUpArrowTap: null,
                       isDetails: true,
                       onItemTap: null,
@@ -613,16 +624,8 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
               bottom: 16,
               right: 16,
             ),
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  AppStrings.userImage + comments[index].user.thumbnail,
-                ),
-              ),
+            child: Utility.getUserImage(
+              url: comments[index].user.thumbnail,
             ),
           ),
           Expanded(

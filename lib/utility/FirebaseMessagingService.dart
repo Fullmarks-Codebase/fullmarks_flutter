@@ -21,19 +21,28 @@ class FirebaseMessagingService {
         onMessage: (Map<String, dynamic> message) async {
       print('on message $message');
       _showNotification(
-          message['notification']['title'], message['notification']['body']);
+        message['notification']['title'],
+        message['notification']['body'],
+        message['data'],
+      );
     }, onResume: (Map<String, dynamic> message) async {
       print('on resume $message');
       _showNotification(
-          message['notification']['title'], message['notification']['body']);
+        message['notification']['title'],
+        message['notification']['body'],
+        message['data'],
+      );
     }, onLaunch: (Map<String, dynamic> message) async {
       print('on launch $message');
       _showNotification(
-          message['notification']['title'], message['notification']['body']);
+        message['notification']['title'],
+        message['notification']['body'],
+        message['data'],
+      );
     });
   }
 
-  Future<void> _showNotification(String title, String body) async {
+  Future<void> _showNotification(String title, String body, String data) async {
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: AndroidNotificationDetails(
         'fullmarks_app_channel_id',
@@ -55,7 +64,7 @@ class FirebaseMessagingService {
       title,
       body,
       platformChannelSpecifics,
-      payload: '', //send payload here
+      payload: data == null ? "" : data, //send payload here
     )
         .then((value) {
       print("SUCCESS");

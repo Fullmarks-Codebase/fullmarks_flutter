@@ -27,16 +27,29 @@ class LiveQuizUsersResponse {
 }
 
 class LiveQuizUsersDetails {
+  int id;
+  int score;
+  String socketId;
+  bool submitted;
   Customer user;
 
-  LiveQuizUsersDetails({this.user});
+  LiveQuizUsersDetails(
+      {this.id, this.score, this.socketId, this.submitted, this.user});
 
   LiveQuizUsersDetails.fromJson(Map<String, dynamic> json) {
+    id = json['id'] ?? 0;
+    score = json['score'] ?? 0;
+    socketId = json['socket_id'] ?? "";
+    submitted = json['submitted'] ?? false;
     user = json['user'] != null ? new Customer.fromJson(json['user']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['score'] = this.score;
+    data['socket_id'] = this.socketId;
+    data['submitted'] = this.submitted;
     if (this.user != null) {
       data['user'] = this.user.toJson();
     }

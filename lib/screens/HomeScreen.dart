@@ -110,6 +110,27 @@ class _HomeScreenState extends State<HomeScreen> {
   void _configureSelectNotificationSubject() {
     selectNotificationSubject.stream.listen((String payload) async {
       print(payload);
+      if (payload != null) {
+        var tempPayload = jsonDecode(payload);
+        if (tempPayload['notifyType'].toString() ==
+            AppStrings.friends.toString()) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) => MyFriendsScreen(),
+            ),
+          );
+        } else if (tempPayload['notifyType'].toString() ==
+            AppStrings.joinRoom.toString()) {
+          String room = tempPayload['room'].toString();
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) => JoinQuizScreen(
+                roomId: room,
+              ),
+            ),
+          );
+        }
+      }
     });
   }
 
@@ -262,19 +283,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ? dummyUserView(size)
             : Container(
                 margin: EdgeInsets.all(16),
-                height: size,
-                width: size,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.appColor,
-                    width: 2,
-                  ),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image:
-                        NetworkImage(AppStrings.userImage + customer.thumbnail),
-                  ),
+                child: Utility.getUserImage(
+                  url: customer.thumbnail,
+                  height: size,
+                  width: size,
                 ),
               );
   }
@@ -952,7 +964,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Utility.pieChart(
               values: [
                 double.tryParse(overallReportDetails.incorrect),
-                double.tryParse(overallReportDetails.correct)
+                double.tryParse(overallReportDetails.correct),
+                double.tryParse(overallReportDetails.skipped)
               ],
             ),
           ),
@@ -987,6 +1000,13 @@ class _HomeScreenState extends State<HomeScreen> {
               Utility.correctIncorrectView(
                 color: AppColors.myProgressIncorrectcolor,
                 title: "Correct: " + overallReportDetails.correct.toString(),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Utility.correctIncorrectView(
+                color: AppColors.wrongBorderColor,
+                title: "Skipped: " + overallReportDetails.skipped.toString(),
               ),
               SizedBox(
                 height: 8,

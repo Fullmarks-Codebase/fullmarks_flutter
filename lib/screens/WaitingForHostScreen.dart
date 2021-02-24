@@ -274,24 +274,12 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
 
   Widget participantsItemView(int index) {
     return ListTile(
-      leading: Container(
-        height: 50,
-        width: 50,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkImage(
-              AppStrings.userImage + participants[index].user.thumbnail,
-            ),
-          ),
-          border: Border.all(
-            color: participants[index].user.id == customer.id
-                ? AppColors.myProgressIncorrectcolor
-                : Colors.transparent,
-            width: 3,
-          ),
-        ),
+      leading: Utility.getUserImage(
+        url: participants[index].user.thumbnail,
+        bordercolor: participants[index].user.id == customer.id
+            ? AppColors.myProgressIncorrectcolor
+            : Colors.transparent,
+        borderWidth: 3,
       ),
       title: Text(
         participants[index].user.username +

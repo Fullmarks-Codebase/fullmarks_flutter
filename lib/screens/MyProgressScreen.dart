@@ -202,6 +202,7 @@ class _MyProgressScreenState extends State<MyProgressScreen> {
                   values: [
                     double.tryParse(subjectReportDetails[index].incorrect),
                     double.tryParse(subjectReportDetails[index].correct),
+                    double.tryParse(subjectReportDetails[index].skipped)
                   ],
                 ),
               )

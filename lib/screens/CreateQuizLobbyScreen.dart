@@ -136,6 +136,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
           "id": Utility.getCustomer().id,
           "userObj": Utility.getCustomer(),
         });
+        print("room join");
         socket.emit(AppStrings.userDetails);
       } else {
         Utility.showToast(response.message);
@@ -375,24 +376,12 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
 
   Widget participantsItemView(int index) {
     return ListTile(
-      leading: Container(
-        height: 50,
-        width: 50,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkImage(
-              AppStrings.userImage + participants[index].user.thumbnail,
-            ),
-          ),
-          border: Border.all(
-            color: participants[index].user.id == customer.id
-                ? AppColors.myProgressIncorrectcolor
-                : Colors.transparent,
-            width: 3,
-          ),
-        ),
+      leading: Utility.getUserImage(
+        url: participants[index].user.thumbnail,
+        bordercolor: participants[index].user.id == customer.id
+            ? AppColors.myProgressIncorrectcolor
+            : Colors.transparent,
+        borderWidth: 3,
       ),
       title: Text(
         participants[index].user.username +

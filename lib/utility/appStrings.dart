@@ -196,6 +196,7 @@ class AppStrings {
   static String forceDisconnect = "forceDisconnect";
   static String updateScore = "updateScore";
   static String submit = "submit";
+  static String check = "check";
   static String notSubmitted = "notSubmitted";
   static String completed = "completed";
   //random quiz
@@ -204,6 +205,10 @@ class AppStrings {
   //no internet socket check
   static int timerSecondsForNoInternet = 7;
 
+  //socket check for submitted or not submittes answers
+  static int timerSecondsForCheck = 3;
+
   //notification type
   static int friends = 2;
+  static int joinRoom = 1;
 }

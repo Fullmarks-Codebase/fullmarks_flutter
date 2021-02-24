@@ -35,6 +35,7 @@ class _RankListScreenState extends State<RankListScreen> {
   Customer customer = Utility.getCustomer();
   String notSubmittedString = "";
   Timer _timerInternet;
+  Timer _timerCheck;
 
   @override
   void initState() {
@@ -69,6 +70,11 @@ class _RankListScreenState extends State<RankListScreen> {
         );
       }
     });
+
+    _timerCheck = Timer.periodic(
+        Duration(seconds: AppStrings.timerSecondsForCheck), (timer) {
+      socket.emit(AppStrings.check);
+    });
     super.initState();
   }
 
@@ -76,6 +82,9 @@ class _RankListScreenState extends State<RankListScreen> {
   void dispose() {
     try {
       _timerInternet.cancel();
+    } catch (e) {}
+    try {
+      _timerCheck.cancel();
     } catch (e) {}
     super.dispose();
   }
@@ -96,6 +105,7 @@ class _RankListScreenState extends State<RankListScreen> {
 
       if (response.code == 200) {
         quizLeaderboard = response.result;
+        _timerCheck.cancel();
         _notify();
       }
     } else {
@@ -236,22 +246,9 @@ class _RankListScreenState extends State<RankListScreen> {
           ),
         ),
         ListTile(
-          leading: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.myProgressIncorrectcolor,
-                width: 2,
-              ),
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  AppStrings.userImage + quizLeaderboard[index].user.thumbnail,
-                ),
-              ),
-            ),
+          leading: Utility.getUserImage(
+            url: quizLeaderboard[index].user.thumbnail,
+            bordercolor: AppColors.myProgressIncorrectcolor,
           ),
           title: Text(
             quizLeaderboard[index].user.username +

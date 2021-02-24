@@ -16,6 +16,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import 'AddCommentScreen.dart';
 import 'AddDiscussionScreen.dart';
+import 'OtherProfileScreen.dart';
 
 class DiscussionScreen extends StatefulWidget {
   @override
@@ -453,6 +454,16 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
         } else {
           unsavePost(index);
         }
+      },
+      onUserTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OtherProfileScreen(
+              id: discussions[index].userId.toString(),
+            ),
+          ),
+        );
       },
     );
   }

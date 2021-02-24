@@ -27,6 +27,7 @@ class DiscussionItemView extends StatefulWidget {
   Function onEdit;
   Function onDelete;
   Function onSaveUnsave;
+  Function onUserTap;
   DiscussionItemView({
     @required this.discussion,
     @required this.onUpArrowTap,
@@ -39,6 +40,7 @@ class DiscussionItemView extends StatefulWidget {
     @required this.onEdit,
     @required this.onDelete,
     @required this.onSaveUnsave,
+    @required this.onUserTap,
   });
   @override
   _DiscussionItemViewState createState() => _DiscussionItemViewState();
@@ -80,89 +82,85 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
   }
 
   Widget userView() {
-    return Container(
-      padding: EdgeInsets.only(
-        right: 16,
-        left: 16,
-      ),
-      child: Row(
-        children: [
-          Container(
-            margin: EdgeInsets.only(
-              top: 16,
-              bottom: 16,
-              right: 16,
-            ),
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  AppStrings.userImage + widget.discussion.user.thumbnail,
-                ),
+    return GestureDetector(
+      onTap: widget.onUserTap,
+      child: Container(
+        color: Colors.transparent,
+        padding: EdgeInsets.only(
+          right: 16,
+          left: 16,
+        ),
+        child: Row(
+          children: [
+            Container(
+              margin: EdgeInsets.only(
+                top: 16,
+                bottom: 16,
+                right: 16,
+              ),
+              child: Utility.getUserImage(
+                url: widget.discussion.user.thumbnail,
               ),
             ),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.discussion.user.username,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.discussion.user.username,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Text(
+                        Utility.convertDate(
+                            widget.discussion.createdAt.substring(0, 10)),
                         style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
+                          color: AppColors.lightTextColor,
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        height: 12,
+                        width: 12,
+                        child: Utility.imageLoader(
+                          baseUrl: AppStrings.subjectImage,
+                          url: widget.discussion.subject.image,
+                          placeholder: AppAssets.subjectPlaceholder,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        widget.discussion.subject.name,
+                        style: TextStyle(
+                          color: AppColors.appColor,
                           fontWeight: FontWeight.w500,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Text(
-                      Utility.convertDate(
-                          widget.discussion.createdAt.substring(0, 10)),
-                      style: TextStyle(
-                        color: AppColors.lightTextColor,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 12,
-                      width: 12,
-                      child: Utility.imageLoader(
-                        baseUrl: AppStrings.subjectImage,
-                        url: widget.discussion.subject.image,
-                        placeholder: AppAssets.subjectPlaceholder,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      widget.discussion.subject.name,
-                      style: TextStyle(
-                        color: AppColors.appColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
-          )
-        ],
+                      )
+                    ],
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -204,16 +202,10 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
             margin: EdgeInsets.only(
               right: 16,
             ),
-            height: 35,
-            width: 35,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  AppStrings.userImage + widget.customer.thumbnail,
-                ),
-              ),
+            child: Utility.getUserImage(
+              url: widget.customer.thumbnail,
+              height: 35,
+              width: 35,
             ),
           ),
           Expanded(

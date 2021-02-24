@@ -191,6 +191,7 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
                               double.tryParse(
                                   setReportDetails[index].incorrect),
                               double.tryParse(setReportDetails[index].correct),
+                              double.tryParse(setReportDetails[index].skipped),
                             ],
                           ),
                         ),
@@ -214,6 +215,15 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
                               color: AppColors.myProgressIncorrectcolor,
                               title:
                                   "Correct: " + setReportDetails[index].correct,
+                              fontSize: 14,
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Utility.correctIncorrectView(
+                              color: AppColors.wrongBorderColor,
+                              title:
+                                  "Skipped: " + setReportDetails[index].skipped,
                               fontSize: 14,
                             ),
                           ],

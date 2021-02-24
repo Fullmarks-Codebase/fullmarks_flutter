@@ -45,6 +45,7 @@ class Customer {
   bool submitted;
   int score;
   int buddies;
+  int likes;
   List<ReportMaster> reportMaster;
 
   Customer({
@@ -67,6 +68,7 @@ class Customer {
     this.submitted,
     this.score,
     this.buddies,
+    this.likes,
     this.reportMaster,
   });
 
@@ -83,14 +85,18 @@ class Customer {
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
     token = json['token'] ?? "";
-    classGrades =
-        json['class'] != null ? new ClassDetails.fromJson(json['class']) : null;
+    try {
+      classGrades = json['class'] != null
+          ? new ClassDetails.fromJson(json['class'])
+          : null;
+    } catch (e) {}
     googleId = json['googleId'] ?? "";
     facebookId = json['facebookId'] ?? "";
     phoneId = json['phoneId'] ?? "";
     submitted = json['submitted'] ?? false;
     score = json['score'] ?? 0;
     buddies = json['buddies'] ?? 0;
+    likes = json['likes'] ?? 0;
     if (json['reportMaster'] != null) {
       reportMaster = new List<ReportMaster>();
       json['reportMaster'].forEach((v) {
@@ -122,6 +128,7 @@ class Customer {
     data['submitted'] = this.submitted;
     data['score'] = this.score;
     data['buddies'] = this.buddies;
+    data['likes'] = this.likes;
     if (this.reportMaster != null) {
       data['reportMaster'] = this.reportMaster.map((v) => v.toJson()).toList();
     }

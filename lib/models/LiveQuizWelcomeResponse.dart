@@ -14,7 +14,7 @@ class LiveQuizWelcomeResponse {
 
   LiveQuizWelcomeResponse.fromJson(Map<String, dynamic> json) {
     message = json['message'] ?? "";
-    id = json['id'] ?? 0;
+    id = json['id'] ?? "";
     participants = json['participants'] ?? -1;
     if (json['questions'] != null) {
       questions = new List<LiveQuizWelcomeDetails>();
