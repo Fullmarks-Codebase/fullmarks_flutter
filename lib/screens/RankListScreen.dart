@@ -126,23 +126,35 @@ class _RankListScreenState extends State<RankListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Utility.setSvgFullScreen(context, AppAssets.mockTestBg),
-          Column(
-            children: [
-              Spacer(),
-              SvgPicture.asset(
-                AppAssets.bottomBarbg,
-                width: MediaQuery.of(context).size.width,
-              )
-            ],
-          ),
-          body(),
-        ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Utility.setSvgFullScreen(context, AppAssets.mockTestBg),
+            Column(
+              children: [
+                Spacer(),
+                SvgPicture.asset(
+                  AppAssets.bottomBarbg,
+                  width: MediaQuery.of(context).size.width,
+                )
+              ],
+            ),
+            body(),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<bool> _onBackPressed() {
+    return Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (BuildContext context) => HomeScreen(),
+            ),
+            (Route<dynamic> route) => false) ??
+        false;
   }
 
   Widget body() {

@@ -5,6 +5,7 @@ import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/models/UsersResponse.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
+import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
@@ -213,11 +214,35 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
   }
 
   Widget userImage() {
-    return Utility.getUserImage(
-      url: (customer?.thumbnail ?? ""),
-      height: (MediaQuery.of(context).size.height / 3.5) / 2,
-      width: (MediaQuery.of(context).size.height / 3.5) / 2,
-      borderRadius: (MediaQuery.of(context).size.height / 3.5),
+    return customer == null
+        ? dummyUserView(100)
+        : customer.thumbnail == ""
+            ? dummyUserView(100)
+            : Utility.getUserImage(
+                url: (customer?.thumbnail ?? ""),
+                height: (MediaQuery.of(context).size.height / 3.5) / 2,
+                width: (MediaQuery.of(context).size.height / 3.5) / 2,
+                borderRadius: (MediaQuery.of(context).size.height / 3.5),
+              );
+  }
+
+  Widget dummyUserView(double size) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppColors.chartBgColor,
+          width: 2,
+        ),
+      ),
+      height: size,
+      width: size,
+      child: Icon(
+        Icons.person,
+        color: AppColors.chartBgColor,
+        size: size / 2,
+      ),
     );
   }
 }

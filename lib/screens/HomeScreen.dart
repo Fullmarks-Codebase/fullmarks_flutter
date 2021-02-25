@@ -111,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void _configureSelectNotificationSubject() {
     selectNotificationSubject.stream.listen((String notificationPayload) async {
       String tempNotificationPayload = notificationPayload;
-      print(tempNotificationPayload);
       if (tempNotificationPayload != null) {
         var tempPayload = jsonDecode(tempNotificationPayload);
         _readNotifications(tempPayload['id']);
@@ -157,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     didReceiveLocalNotificationSubject.close();
-    selectNotificationSubject.close();
+    selectNotificationSubject.add(null);
     super.dispose();
   }
 
