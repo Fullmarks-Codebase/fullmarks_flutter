@@ -261,6 +261,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
                 "point": 1,
                 "id": Utility.getCustomer().id,
                 "room": widget.room.room,
+                "roomId": widget.room.id,
               },
             );
             socket.emit(AppStrings.userDetails, {"room": widget.room.room});
@@ -502,6 +503,56 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
     );
   }
 
+  Color getAnswerColor(int answerIndex, bool isborderColor) {
+    if (answerSelection) {
+      if (widget.questions[currentQuestion].selectedAnswer == answerIndex) {
+        return AppColors.myProgressIncorrectcolor;
+      } else {
+        return isborderColor ? AppColors.blackColor : Colors.white;
+      }
+    } else {
+      if ((answerIndex ==
+          Utility.getQuestionCorrectAnswer(
+              widget.questions[currentQuestion]))) {
+        // show green to correct answer of question
+        return AppColors.strongCyan;
+      } else {
+        //if you are here
+        //then it means that your answer is wrong
+        if (widget.questions[currentQuestion].selectedAnswer == answerIndex) {
+          //show user selected current answer as red
+          return AppColors.wrongBorderColor;
+        } else {
+          //default
+          return isborderColor ? AppColors.blackColor : Colors.white;
+        }
+      }
+    }
+  }
+
+  Color getAnswerTextColor(int answerIndex) {
+    if (answerSelection) {
+      return AppColors.blackColor;
+    } else {
+      if ((answerIndex ==
+          Utility.getQuestionCorrectAnswer(
+              widget.questions[currentQuestion]))) {
+        // show green to correct answer of question
+        return Colors.white;
+      } else {
+        //if you are here
+        //then it means that your answer is wrong
+        if (widget.questions[currentQuestion].selectedAnswer == answerIndex) {
+          //show user selected current answer as red
+          return Colors.white;
+        } else {
+          //default
+          return AppColors.blackColor;
+        }
+      }
+    }
+  }
+
   Widget textAnswerItemView(int answerIndex) {
     return Container(
       margin: EdgeInsets.only(
@@ -514,16 +565,11 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
           horizontal: 8,
           vertical: 12,
         ),
-        color: widget.questions[currentQuestion].selectedAnswer == answerIndex
-            ? AppColors.myProgressIncorrectcolor
-            : Colors.white,
+        color: getAnswerColor(answerIndex, false),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
           side: BorderSide(
-            color:
-                widget.questions[currentQuestion].selectedAnswer == answerIndex
-                    ? AppColors.myProgressIncorrectcolor
-                    : AppColors.blackColor,
+            color: getAnswerColor(answerIndex, true),
           ),
         ),
         onPressed: answerSelection
@@ -546,7 +592,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
                           ? "(C) " + widget.questions[currentQuestion].ansThree
                           : "(D) " + widget.questions[currentQuestion].ansFour,
               style: TextStyle(
-                color: Colors.black,
+                color: getAnswerTextColor(answerIndex),
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
@@ -904,7 +950,9 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         url: participants[index].user.thumbnail,
       ),
       title: Text(
-        participants[index].user.username +
+        (participants[index].user.username.trim().length == 0
+                ? "User" + participants[index].user.id.toString()
+                : participants[index].user.username) +
             (participants[index].user.id == customer.id ? " (You)" : ""),
         style: TextStyle(
           color: Colors.black,

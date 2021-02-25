@@ -86,6 +86,10 @@ class _RankListScreenState extends State<RankListScreen> {
     try {
       _timerCheck.cancel();
     } catch (e) {}
+    socket.emit(
+      AppStrings.forceDisconnect,
+      {"userObj": Utility.getCustomer()},
+    );
     super.dispose();
   }
 
@@ -251,7 +255,9 @@ class _RankListScreenState extends State<RankListScreen> {
             bordercolor: AppColors.myProgressIncorrectcolor,
           ),
           title: Text(
-            quizLeaderboard[index].user.username +
+            (quizLeaderboard[index].user.username.trim().length == 0
+                    ? "User" + quizLeaderboard[index].user.id.toString()
+                    : quizLeaderboard[index].user.username) +
                 (quizLeaderboard[index].user.id == customer.id
                     ? " (You)"
                     : "") +

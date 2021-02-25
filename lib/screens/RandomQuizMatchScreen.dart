@@ -331,28 +331,22 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                   flex: 13,
                   child: Container(),
                 ),
-                Container(
-                  color: Colors.transparent,
-                  child: Expanded(
-                    flex: 10,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(
-                            bottom: 8,
-                          ),
-                          child: Utility.getUserImage(
-                            url: user1.thumbnail,
-                            height: 70,
-                            width: 70,
-                            borderRadius: 70,
-                            borderWidth: 3,
-                            bordercolor: AppColors.myProgressIncorrectcolor,
-                          ),
+                Expanded(
+                  flex: 10,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        child: Utility.getUserImage(
+                          url: user1.thumbnail,
+                          height: 70,
+                          width: 70,
+                          borderRadius: 70,
+                          borderWidth: 3,
+                          bordercolor: AppColors.myProgressIncorrectcolor,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
@@ -384,8 +378,8 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
               ],
             ),
             Container(
-              height: 70,
-              width: 70,
+              height: 50,
+              width: 50,
               child: Utility.imageLoader(
                 baseUrl: AppStrings.subjectImage,
                 url: widget.subject.image,

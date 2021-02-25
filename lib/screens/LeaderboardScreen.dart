@@ -46,6 +46,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
       _notify();
 
       if (response.code == 200) {
+        customers.clear();
         await Future.forEach(response.result, (Customer element) {
           if (element.reportMaster.length != 0) {
             customers.add(element);

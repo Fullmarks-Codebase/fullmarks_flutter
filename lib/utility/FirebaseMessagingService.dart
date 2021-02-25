@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -23,21 +25,27 @@ class FirebaseMessagingService {
       _showNotification(
         message['notification']['title'],
         message['notification']['body'],
-        message['data'],
+        Platform.isIOS
+            ? message['data'].toString()
+            : message['data']['data'].toString(),
       );
     }, onResume: (Map<String, dynamic> message) async {
       print('on resume $message');
       _showNotification(
         message['notification']['title'],
         message['notification']['body'],
-        message['data'],
+        Platform.isIOS
+            ? message['data'].toString()
+            : message['data']['data'].toString(),
       );
     }, onLaunch: (Map<String, dynamic> message) async {
       print('on launch $message');
       _showNotification(
         message['notification']['title'],
         message['notification']['body'],
-        message['data'],
+        Platform.isIOS
+            ? message['data'].toString()
+            : message['data']['data'].toString(),
       );
     });
   }
@@ -64,7 +72,9 @@ class FirebaseMessagingService {
       title,
       body,
       platformChannelSpecifics,
-      payload: data == null ? "" : data, //send payload here
+      payload: data == null || data == "null" || data.trim().length == 0
+          ? ""
+          : data, //send payload here
     )
         .then((value) {
       print("SUCCESS");

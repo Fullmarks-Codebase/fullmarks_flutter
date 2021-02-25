@@ -106,7 +106,7 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
                   text: "My Friends",
                 )
               : Container(),
-          widget.notificationDetail.room != 0
+          widget.notificationDetail.room.length != 0
               ? Utility.button(
                   context,
                   gradientColor1: AppColors.buttonGradient1,

@@ -41,7 +41,15 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
   LiveQuizDetails liveQuizDetail;
   IO.Socket socket = AppSocket.init();
   Customer customer = Utility.getCustomer();
-  List<LiveQuizUsersDetails> participants = List();
+  List<LiveQuizUsersDetails> participants = [
+    LiveQuizUsersDetails(
+      id: 0,
+      score: 0,
+      socketId: "",
+      submitted: false,
+      user: Utility.getCustomer(),
+    )
+  ];
   String waitingText = "";
   Timer _timer;
   int _start = 5;
@@ -56,8 +64,10 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
       print(data);
       LiveQuizUsersResponse response =
           LiveQuizUsersResponse.fromJson(json.decode(jsonEncode(data)));
-      participants = response.users;
-      _notify();
+      if (response.users.length != 0) {
+        participants = response.users;
+        _notify();
+      }
     });
 
     socket.onError((data) {
@@ -384,7 +394,9 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
         borderWidth: 3,
       ),
       title: Text(
-        participants[index].user.username +
+        (participants[index].user.username.trim().length == 0
+                ? "User" + participants[index].user.id.toString()
+                : participants[index].user.username) +
             (participants[index].user.id == customer.id ? " (You)" : ""),
         style: TextStyle(
           color: Colors.white,

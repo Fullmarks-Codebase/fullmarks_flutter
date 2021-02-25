@@ -282,7 +282,9 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
         borderWidth: 3,
       ),
       title: Text(
-        participants[index].user.username +
+        (participants[index].user.username.trim().length == 0
+                ? "User" + participants[index].user.id.toString()
+                : participants[index].user.username) +
             (participants[index].user.id == customer.id ? " (You)" : ""),
         style: TextStyle(
           color: Colors.white,
