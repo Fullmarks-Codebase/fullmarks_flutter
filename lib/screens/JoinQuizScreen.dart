@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/main.dart';
 import 'package:fullmarks/models/LiveQuizWelcomeResponse.dart';
 import 'package:fullmarks/screens/WaitingForHostScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
@@ -37,6 +38,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
   void initState() {
     super.initState();
     AppFirebaseAnalytics.init().logEvent(name: AppStrings.joinQuizEvent);
+    selectNotificationSubject.add(null);
     roomIdController.text = widget.roomId;
     //this will get room and questions
     socket.on(AppStrings.welcome, (data) {

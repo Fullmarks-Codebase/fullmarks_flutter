@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fullmarks/main.dart';
 import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/FriendRequestResponse.dart';
 import 'package:fullmarks/models/MyFriendsResponse.dart';
@@ -31,6 +32,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
   @override
   void initState() {
     AppFirebaseAnalytics.init().logEvent(name: AppStrings.myFriendsEvent);
+    selectNotificationSubject.add(null);
     _getMyFriends();
     _getRequestsReceived();
     _getRequestsSent();

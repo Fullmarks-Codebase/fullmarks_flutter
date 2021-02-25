@@ -109,10 +109,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _configureSelectNotificationSubject() {
-    selectNotificationSubject.stream.listen((String payload) async {
-      print(payload);
-      if (payload != null) {
-        var tempPayload = jsonDecode(payload);
+    selectNotificationSubject.stream.listen((String notificationPayload) async {
+      String tempNotificationPayload = notificationPayload;
+      print(tempNotificationPayload);
+      if (tempNotificationPayload != null) {
+        var tempPayload = jsonDecode(tempNotificationPayload);
         _readNotifications(tempPayload['id']);
         if (tempPayload['notifyType'].toString() ==
             AppStrings.friends.toString()) {
