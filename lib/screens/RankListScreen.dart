@@ -10,7 +10,6 @@ import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
-import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:share/share.dart';
@@ -20,10 +19,12 @@ class RankListScreen extends StatefulWidget {
   bool isRandomQuiz;
   String title;
   LiveQuizRoom room;
+  IO.Socket socket;
   RankListScreen({
     @required this.isRandomQuiz,
     @required this.title,
     @required this.room,
+    @required this.socket,
   });
   @override
   _RankListScreenState createState() => _RankListScreenState();
@@ -39,7 +40,7 @@ class _RankListScreenState extends State<RankListScreen> {
 
   @override
   void initState() {
-    socket = widget.isRandomQuiz ? AppSocket.initRandom() : AppSocket.init();
+    socket = widget.socket;
     socket.emit(AppStrings.submit);
 
     socket.on(AppStrings.notSubmitted, (data) {

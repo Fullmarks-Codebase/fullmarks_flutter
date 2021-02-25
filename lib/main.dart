@@ -65,9 +65,8 @@ Future<void> main() async {
     onSelectNotification: (String payload) async {
       if (payload != null) {
         debugPrint('notification payload: $payload');
+        selectNotificationSubject.add(payload);
       }
-      // selectedNotificationPayload = payload;
-      selectNotificationSubject.add(payload);
     },
   );
 

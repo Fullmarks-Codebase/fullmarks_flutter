@@ -7,7 +7,6 @@ import 'package:fullmarks/screens/WaitingForHostScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
-import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -23,7 +22,15 @@ class JoinQuizScreen extends StatefulWidget {
 
 class _JoinQuizScreenState extends State<JoinQuizScreen> {
   TextEditingController roomIdController = TextEditingController();
-  IO.Socket socket = AppSocket.init();
+  IO.Socket socket = IO
+      .io(
+        AppStrings.baseUrl,
+        IO.OptionBuilder()
+            .setTransports(['websocket']) // for Flutter or Dart VM
+            .disableAutoConnect() // disable auto-connection
+            .build(),
+      )
+      .connect();
   bool _isLoading = false;
 
   @override
@@ -31,7 +38,6 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
     super.initState();
     AppFirebaseAnalytics.init().logEvent(name: AppStrings.joinQuizEvent);
     roomIdController.text = widget.roomId;
-
     //this will get room and questions
     socket.on(AppStrings.welcome, (data) {
       print(AppStrings.welcome);
@@ -48,6 +54,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
           MaterialPageRoute(
             builder: (context) => WaitingForHostScreen(
               liveQuizWelcomeResponse: response,
+              socket: socket,
             ),
           ),
         );

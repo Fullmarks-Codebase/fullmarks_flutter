@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/GuestUserResponse.dart';
 import 'package:fullmarks/models/NotificationCountResponse.dart';
 import 'package:fullmarks/models/ReportsResponse.dart';
@@ -112,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
       print(payload);
       if (payload != null) {
         var tempPayload = jsonDecode(payload);
+        _readNotifications(tempPayload['id']);
         if (tempPayload['notifyType'].toString() ==
             AppStrings.friends.toString()) {
           Navigator.of(context).push(
@@ -132,6 +134,23 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     });
+  }
+
+  _readNotifications(String id) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      request["id"] = id;
+      //api call
+      CommonResponse.fromJson(
+        await ApiManager(context)
+            .putCall(url: AppStrings.readNotification, request: request),
+      );
+    } else {
+      //show message that internet is not available
+      Utility.showToast(AppStrings.noInternet);
+    }
   }
 
   @override

@@ -13,7 +13,6 @@ import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
-import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:share/share.dart';
@@ -39,7 +38,15 @@ class CreateQuizLobbyScreen extends StatefulWidget {
 class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
   bool _isLoading = false;
   LiveQuizDetails liveQuizDetail;
-  IO.Socket socket = AppSocket.init();
+  IO.Socket socket = IO
+      .io(
+        AppStrings.baseUrl,
+        IO.OptionBuilder()
+            .setTransports(['websocket']) // for Flutter or Dart VM
+            .disableAutoConnect() // disable auto-connection
+            .build(),
+      )
+      .connect();
   Customer customer = Utility.getCustomer();
   List<LiveQuizUsersDetails> participants = [
     LiveQuizUsersDetails(
@@ -326,6 +333,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
                 questions: liveQuizDetail.questions,
                 room: liveQuizDetail.room,
                 isCustomQuiz: widget.isCustomQuiz,
+                socket: socket,
               ),
             ),
           );
@@ -390,8 +398,9 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
         url: participants[index].user.thumbnail,
         bordercolor: participants[index].user.id == customer.id
             ? AppColors.myProgressIncorrectcolor
-            : Colors.transparent,
+            : AppColors.whiteColor,
         borderWidth: 3,
+        placeholderColor: Colors.white,
       ),
       title: Text(
         (participants[index].user.username.trim().length == 0

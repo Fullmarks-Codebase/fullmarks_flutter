@@ -76,9 +76,13 @@ class Utility {
     @required String url,
     @required String placeholder,
     BoxFit fit = BoxFit.cover,
+    Color placeholderColor,
   }) {
     return (url == "null" || url == null || url.trim() == "")
-        ? Image.asset(placeholder)
+        ? Image.asset(
+            placeholder,
+            color: placeholderColor,
+          )
         : CachedNetworkImage(
             imageUrl: (url.startsWith("http")) ? url : baseUrl + url,
             imageBuilder: (context, imageProvider) => Container(
@@ -1083,6 +1087,7 @@ class Utility {
     double borderWidth = 2,
     double height = 50,
     Color bordercolor,
+    Color placeholderColor,
     double borderRadius = 50,
   }) {
     if (bordercolor == null) {
@@ -1104,6 +1109,7 @@ class Utility {
           baseUrl: AppStrings.userImage,
           url: url,
           placeholder: AppAssets.person,
+          placeholderColor: placeholderColor,
         ),
       ),
     );

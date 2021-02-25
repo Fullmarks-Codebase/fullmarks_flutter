@@ -110,7 +110,9 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
                     children: [
                       Expanded(
                         child: Text(
-                          widget.discussion.user.username,
+                          widget.discussion.user.username.trim().length == 0
+                              ? "User" + widget.discussion.user.id.toString()
+                              : widget.discussion.user.username,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,

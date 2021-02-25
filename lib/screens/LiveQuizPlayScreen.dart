@@ -15,7 +15,6 @@ import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
-import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -28,11 +27,13 @@ class LiveQuizPlayScreen extends StatefulWidget {
   bool isCustomQuiz;
   List<QuestionDetails> questions;
   LiveQuizRoom room;
+  IO.Socket socket;
   LiveQuizPlayScreen({
     @required this.isRandomQuiz,
     @required this.isCustomQuiz,
     @required this.questions,
     @required this.room,
+    @required this.socket,
   });
   @override
   _LiveQuizPlayScreenState createState() => _LiveQuizPlayScreenState();
@@ -73,7 +74,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         "isCustomQuiz": widget.isCustomQuiz,
       },
     );
-    socket = widget.isRandomQuiz ? AppSocket.initRandom() : AppSocket.init();
+    socket = widget.socket;
     getQuestionSeconds();
     startTimer();
 
@@ -241,14 +242,6 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
           if (widget.questions[currentQuestion].selectedAnswer == -1) {
             Utility.showAnswerToast(
                 context, "Not Attempted", AppColors.yellowColor);
-            // socket.emit(
-            //   AppStrings.updateScore,
-            //   {
-            //     "point": 0,
-            //     "id": Utility.getCustomer().id,
-            //     "room": widget.room.room,
-            //   },
-            // );
             socket.emit(AppStrings.userDetails, {"room": widget.room.room});
           } else if (Utility.getQuestionCorrectAnswer(
                   widget.questions[currentQuestion]) ==
@@ -262,20 +255,14 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
                 "id": Utility.getCustomer().id,
                 "room": widget.room.room,
                 "roomId": widget.room.id,
+                (widget.isCustomQuiz ? "customQuestionId" : "questionId"):
+                    widget.questions[currentQuestion].id,
               },
             );
             socket.emit(AppStrings.userDetails, {"room": widget.room.room});
           } else {
             Utility.showAnswerToast(
                 context, "Incorrect", AppColors.incorrectColor);
-            // socket.emit(
-            //   AppStrings.updateScore,
-            //   {
-            //     "point": 0,
-            //     "id": Utility.getCustomer().id,
-            //     "room": widget.room.room,
-            //   },
-            // );
             socket.emit(AppStrings.userDetails, {"room": widget.room.room});
           }
 
@@ -365,6 +352,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
               isRandomQuiz: widget.isRandomQuiz,
               title: widget.isRandomQuiz ? "Live Quiz Result" : "Rank List",
               room: widget.room,
+              socket: socket,
             ),
           ),
         );
@@ -682,7 +670,11 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  user1 == null ? "-" : user1.user.username,
+                  user1?.user?.username?.trim()?.length == 0
+                      ? "User" + user1.user.id.toString()
+                      : user1 == null
+                          ? "-"
+                          : user1.user.username,
                   style: TextStyle(
                     color: Colors.white,
                   ),
@@ -710,6 +702,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
             height: 40,
             width: 40,
             bordercolor: AppColors.myProgressIncorrectcolor,
+            placeholderColor: Colors.white,
           )
         ],
       ),
@@ -787,6 +780,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
             bordercolor: AppColors.myProgressIncorrectcolor,
             height: 40,
             width: 40,
+            placeholderColor: Colors.white,
           ),
           SizedBox(
             width: 8,
@@ -796,7 +790,11 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  user2 == null ? "-" : user2.user.username,
+                  user2?.user?.username?.trim()?.length == 0
+                      ? "User" + user2.user.id.toString()
+                      : user2 == null
+                          ? "-"
+                          : user2.user.username,
                   style: TextStyle(
                     color: Colors.white,
                   ),

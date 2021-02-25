@@ -636,7 +636,9 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        comments[index].user.username,
+                        comments[index].user.username.trim().length == 0
+                            ? "User" + comments[index].user.id.toString()
+                            : comments[index].user.username,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 18,

@@ -206,7 +206,6 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
         await ApiManager(context)
             .putCall(url: AppStrings.readNotification, request: request),
       );
-      //hide progress
       if (response.code == 200) {
         _getNotifications();
       }

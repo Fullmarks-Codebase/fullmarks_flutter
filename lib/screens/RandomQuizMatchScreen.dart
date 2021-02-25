@@ -13,10 +13,10 @@ import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
-import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+
 import 'LiveQuizPlayScreen.dart';
 
 class RandomQuizMatchScreen extends StatefulWidget {
@@ -29,7 +29,15 @@ class RandomQuizMatchScreen extends StatefulWidget {
 }
 
 class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
-  IO.Socket socket = AppSocket.initRandom();
+  IO.Socket socket = IO
+      .io(
+        AppStrings.baseUrl + "random",
+        IO.OptionBuilder()
+            .setTransports(['websocket']) // for Flutter or Dart VM
+            .disableAutoConnect() // disable auto-connection
+            .build(),
+      )
+      .connect();
   Customer customer = Utility.getCustomer();
   Timer _timer;
   Timer _timerInternet;
@@ -140,6 +148,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                   room: room.toString(),
                   userId: Utility.getCustomer().id,
                 ),
+                socket: socket,
               ),
             ),
           );
@@ -258,7 +267,9 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        searchingText(user1.username),
+                        searchingText(user1.username.trim().length == 0
+                            ? "User" + user1.id.toString()
+                            : user1.username),
                         SizedBox(
                           height: 16,
                         ),
@@ -283,7 +294,9 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        searchingText(user2.username),
+                        searchingText(user2.username.trim().length == 0
+                            ? "User" + user2.id.toString()
+                            : user2.username),
                         SizedBox(
                           height: 16,
                         ),
@@ -344,6 +357,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                           borderRadius: 70,
                           borderWidth: 3,
                           bordercolor: AppColors.myProgressIncorrectcolor,
+                          placeholderColor: Colors.white,
                         ),
                       ),
                     ],
@@ -362,6 +376,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                               borderRadius: 70,
                               bordercolor: AppColors.myProgressIncorrectcolor,
                               borderWidth: 3,
+                              placeholderColor: Colors.white,
                             )
                           : Container(
                               height: 80,
@@ -385,6 +400,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                 url: widget.subject.image,
                 placeholder: AppAssets.subjectPlaceholder,
                 fit: BoxFit.contain,
+                placeholderColor: Colors.white,
               ),
             ),
           ],

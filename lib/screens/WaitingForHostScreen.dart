@@ -11,7 +11,6 @@ import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
-import 'package:fullmarks/utility/AppSocket.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:share/share.dart';
@@ -22,8 +21,10 @@ import 'LiveQuizPlayScreen.dart';
 
 class WaitingForHostScreen extends StatefulWidget {
   LiveQuizWelcomeResponse liveQuizWelcomeResponse;
+  IO.Socket socket;
   WaitingForHostScreen({
     @required this.liveQuizWelcomeResponse,
+    @required this.socket,
   });
   @override
   _WaitingForHostScreenState createState() => _WaitingForHostScreenState();
@@ -31,18 +32,19 @@ class WaitingForHostScreen extends StatefulWidget {
 
 class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
   LiveQuizUsersResponse liveQuizUsersResponse;
-  IO.Socket socket = AppSocket.init();
   List<LiveQuizUsersDetails> participants = List();
   Customer customer = Utility.getCustomer();
   String waitingText = "Waiting for Host to Start the Quiz...";
   Timer _timer;
   Timer _timerInternet;
   int _start = 5;
+  IO.Socket socket;
 
   @override
   void initState() {
     AppFirebaseAnalytics.init().logEvent(name: AppStrings.waitingForHostEvent);
     super.initState();
+    socket = widget.socket;
     //when this is emited then get all participants
     socket.emit(AppStrings.userDetails);
 
@@ -139,6 +141,7 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
                 questions: questions,
                 room: widget.liveQuizWelcomeResponse.room,
                 isCustomQuiz: isCustomQuiz,
+                socket: socket,
               ),
             ),
           );
@@ -278,8 +281,9 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
         url: participants[index].user.thumbnail,
         bordercolor: participants[index].user.id == customer.id
             ? AppColors.myProgressIncorrectcolor
-            : Colors.transparent,
+            : AppColors.whiteColor,
         borderWidth: 3,
+        placeholderColor: Colors.white,
       ),
       title: Text(
         (participants[index].user.username.trim().length == 0
