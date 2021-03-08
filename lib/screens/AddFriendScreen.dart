@@ -82,7 +82,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -110,7 +110,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -166,7 +166,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
           //delay to give ripple effect
           await Future.delayed(Duration(milliseconds: AppStrings.delay));
           if (selectedContact.length == 0) {
-            Utility.showToast("Please select atleast one friend.");
+            Utility.showToast(context, "Please select atleast one friend.");
           } else {
             if (widget.roomId == null) {
               sendRequest();
@@ -205,14 +205,14 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       _isLoading = false;
       _notify();
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         Navigator.pop(context);
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -242,14 +242,14 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       _isLoading = false;
       _notify();
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         Navigator.pop(context);
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

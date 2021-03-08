@@ -66,7 +66,7 @@ class _MyProgressScreenState extends State<MyProgressScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

@@ -88,7 +88,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
       //hide progress
       _isLoading = false;
       _notify();
-      Utility.showToast(jsonEncode(data));
+      Utility.showToast(context, jsonEncode(data));
     });
 
     socket.on(AppStrings.join, (data) {
@@ -156,11 +156,11 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
         print("room join");
         socket.emit(AppStrings.userDetails);
       } else {
-        Utility.showToast(response.message);
+        Utility.showToast(context, response.message);
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -256,7 +256,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
                                 Duration(milliseconds: AppStrings.delay));
 
                             if (participants.length == 1) {
-                              Utility.showToast(
+                              Utility.showToast(context,
                                   "Quiz cannot start with 1 participants");
                             } else {
                               //if more than 1 participants then start quiz

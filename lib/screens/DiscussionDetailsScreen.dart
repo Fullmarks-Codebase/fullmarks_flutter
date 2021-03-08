@@ -74,7 +74,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -110,7 +110,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -290,7 +290,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
         ),
       );
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       //hide progress
       _isLoading = false;
@@ -301,7 +301,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -323,7 +323,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -345,7 +345,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -368,7 +368,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -391,7 +391,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -547,7 +547,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
         ),
       );
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       //hide progress
       _isLoading = false;
@@ -560,7 +560,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -583,7 +583,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -606,7 +606,7 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

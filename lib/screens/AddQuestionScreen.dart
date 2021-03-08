@@ -279,14 +279,14 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
       _isLoading = false;
       _notify();
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         Navigator.pop(context);
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -529,28 +529,33 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
     if (!widget.isEdit &&
         question_image == null &&
         questionController.text.trim().length == 0) {
-      Utility.showToast("Please select question image or type question");
+      Utility.showToast(
+          context, "Please select question image or type question");
     } else if (!widget.isEdit &&
         answerFileImages[0] == null &&
         answers[0].length == 0) {
-      Utility.showToast("Please select option 1 image or type option 1");
+      Utility.showToast(
+          context, "Please select option 1 image or type option 1");
     } else if (!widget.isEdit &&
         answerFileImages[1] == null &&
         answers[1].length == 0) {
-      Utility.showToast("Please select option 2 image or type option 2");
+      Utility.showToast(
+          context, "Please select option 2 image or type option 2");
     } else if (!widget.isEdit &&
         answerFileImages[2] == null &&
         answers[2].length == 0) {
-      Utility.showToast("Please select option 3 image or type option 3");
+      Utility.showToast(
+          context, "Please select option 3 image or type option 3");
     } else if (!widget.isEdit &&
         answerFileImages[3] == null &&
         answers[3].length == 0) {
-      Utility.showToast("Please select option 4 image or type option 4");
+      Utility.showToast(
+          context, "Please select option 4 image or type option 4");
     } else if (!answerStatus[0] &&
         !answerStatus[1] &&
         !answerStatus[2] &&
         !answerStatus[3]) {
-      Utility.showToast("Please select any one right answer");
+      Utility.showToast(context, "Please select any one right answer");
     } else {
       _addEditQuestion();
     }
@@ -654,15 +659,15 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
       if (response.statusCode == 200) {
         CommonResponse commonResponse =
             CommonResponse.fromJson(jsonDecode(response.body));
-        Utility.showToast(commonResponse.message);
+        Utility.showToast(context, commonResponse.message);
         Navigator.pop(context);
       } else {
         CommonResponse commonResponse =
             CommonResponse.fromJson(jsonDecode(response.body));
-        Utility.showToast(commonResponse.message);
+        Utility.showToast(context, commonResponse.message);
       }
     } else {
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 }

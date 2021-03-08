@@ -51,7 +51,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -211,7 +211,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 }

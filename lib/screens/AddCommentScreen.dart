@@ -180,7 +180,7 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
 
   addCommentTap() {
     if (_controller.plainTextEditingValue.text.trim().length == 0) {
-      Utility.showToast("Please type your comment");
+      Utility.showToast(context, "Please type your comment");
     } else {
       addComment();
     }
@@ -243,15 +243,15 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
       if (response.statusCode == 200) {
         CommonResponse commonResponse =
             CommonResponse.fromJson(jsonDecode(response.body));
-        Utility.showToast(commonResponse.message);
+        Utility.showToast(context, commonResponse.message);
         Navigator.pop(context, true);
       } else {
         CommonResponse commonResponse =
             CommonResponse.fromJson(jsonDecode(response.body));
-        Utility.showToast(commonResponse.message);
+        Utility.showToast(context, commonResponse.message);
       }
     } else {
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

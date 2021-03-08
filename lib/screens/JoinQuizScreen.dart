@@ -49,7 +49,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
       _notify();
       LiveQuizWelcomeResponse response =
           LiveQuizWelcomeResponse.fromJson(json.decode(jsonEncode(data)));
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
       if (context != null) {
         Navigator.push(
           context,
@@ -69,7 +69,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
       //hide progress
       _isLoading = false;
       _notify();
-      Utility.showToast(jsonEncode(data));
+      Utility.showToast(context, jsonEncode(data));
     });
 
     //this shows error from socket
@@ -88,7 +88,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
       //hide progress
       _isLoading = false;
       _notify();
-      Utility.showToast(jsonEncode(data));
+      Utility.showToast(context, jsonEncode(data));
     });
   }
 
@@ -182,7 +182,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
                       //   context: context,
                       //   pageBuilder: (_, __, ___) {
                       //     return Align(
-                      //       alignment: Alignment.bottomCenter,
+                      //       alignment: Alignment.center,
                       //       child: Container(
                       //         alignment: Alignment.center,
                       //         width: MediaQuery.of(context).size.width / 2,
@@ -220,7 +220,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
                       //     );
                       //   },
                       // );
-                      Utility.showToast("Room id is required");
+                      Utility.showToast(context, "Room id is required");
                     } else {
                       //show progress
                       _isLoading = true;

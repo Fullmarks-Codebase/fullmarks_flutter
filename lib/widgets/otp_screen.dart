@@ -374,7 +374,7 @@ class _OtpScreenState extends State<OtpScreen>
         if (value == null) {
           widget.routeCallback(context);
         } else if (value.isNotEmpty) {
-          Utility.showToast(value);
+          Utility.showToast(context, value);
           clearOtp();
         }
       });

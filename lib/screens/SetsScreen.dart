@@ -77,7 +77,7 @@ class _SetsScreenState extends State<SetsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -257,11 +257,11 @@ class _SetsScreenState extends State<SetsScreen> {
           (Route<dynamic> route) => false,
         );
       } else {
-        Utility.showToast(response.message);
+        Utility.showToast(context, response.message);
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 }

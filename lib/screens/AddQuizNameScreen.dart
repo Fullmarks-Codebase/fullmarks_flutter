@@ -129,7 +129,7 @@ class _AddQuizNameScreenState extends State<AddQuizNameScreen> {
 
   _addTap() {
     if (quizNameController.text.trim().length == 0) {
-      Utility.showToast("Please type the quiz name");
+      Utility.showToast(context, "Please type the quiz name");
     } else {
       _addQuiz();
     }
@@ -153,7 +153,7 @@ class _AddQuizNameScreenState extends State<AddQuizNameScreen> {
       _isLoading = false;
       _notify();
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         Navigator.pushReplacement(
@@ -167,7 +167,7 @@ class _AddQuizNameScreenState extends State<AddQuizNameScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

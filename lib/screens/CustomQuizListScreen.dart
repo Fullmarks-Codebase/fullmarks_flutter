@@ -87,7 +87,7 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -397,7 +397,7 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
         ),
       );
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         _getQuestions();
@@ -408,7 +408,7 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

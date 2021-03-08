@@ -86,7 +86,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
       socket.on(AppStrings.disconnected, (data) {
         print(AppStrings.disconnected);
         print(jsonEncode(data));
-        Utility.showToast(jsonEncode(data));
+        Utility.showToast(context, jsonEncode(data));
         socket.emit(
           AppStrings.forceDisconnect,
         );
@@ -152,7 +152,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
       socket.on(AppStrings.error, (data) {
         print(AppStrings.error);
         print(data);
-        Utility.showToast(jsonEncode(data));
+        Utility.showToast(context, jsonEncode(data));
       });
     }
 
@@ -351,7 +351,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         _isLoading = false;
         _notify();
 
-        Utility.showToast(response.message);
+        Utility.showToast(context, response.message);
 
         if (response.code == 200) {
           if (context != null)
@@ -368,7 +368,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         }
       } else {
         //show message that internet is not available
-        Utility.showToast(AppStrings.noInternet);
+        Utility.showToast(context, AppStrings.noInternet);
       }
     }
   }

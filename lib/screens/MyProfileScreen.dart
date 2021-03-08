@@ -83,7 +83,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -288,7 +288,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       if (response.statusCode == 200) {
         UserResponse userResponse =
             UserResponse.fromJson(jsonDecode(response.body));
-        Utility.showToast(userResponse.message);
+        Utility.showToast(context, userResponse.message);
         Customer tempCustomer = userResponse.result;
         tempCustomer.token = customer.token;
         await PreferenceUtils.setString(
@@ -298,20 +298,20 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       } else {
         CommonResponse commonResponse =
             CommonResponse.fromJson(jsonDecode(response.body));
-        Utility.showToast(commonResponse.message);
+        Utility.showToast(context, commonResponse.message);
       }
     } else {
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
   _updateProfile() {
     if (_emailController.text.trim() != "" &&
         !Utility.isValidEmail(_emailController.text.trim())) {
-      Utility.showToast("Invalid email");
+      Utility.showToast(context, "Invalid email");
     } else if (_phoneController.text.trim() != "" &&
         _phoneController.text.trim().length != 10) {
-      Utility.showToast("Phone number must be 10 digits");
+      Utility.showToast(context, "Phone number must be 10 digits");
     } else {
       updateProfile();
     }
@@ -347,7 +347,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       _isLoading = false;
       _notify();
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         Customer tempCustomer = response.result;
@@ -359,7 +359,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

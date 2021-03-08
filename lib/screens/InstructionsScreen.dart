@@ -61,7 +61,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

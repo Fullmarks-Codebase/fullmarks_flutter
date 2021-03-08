@@ -72,7 +72,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

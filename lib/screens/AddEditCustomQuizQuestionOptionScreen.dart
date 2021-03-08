@@ -151,7 +151,8 @@ class _AddEditCustomQuizQuestionOptionScreenState
               await Future.delayed(Duration(milliseconds: AppStrings.delay));
               if (optionController.text.trim().length == 0 &&
                   optionImage == null) {
-                Utility.showToast("Please select option image or type option");
+                Utility.showToast(
+                    context, "Please select option image or type option");
               } else {
                 Navigator.pop(
                   context,
@@ -193,14 +194,14 @@ class _AddEditCustomQuizQuestionOptionScreenState
       _isLoading = false;
       _notify();
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         Navigator.of(context)..pop()..pop();
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

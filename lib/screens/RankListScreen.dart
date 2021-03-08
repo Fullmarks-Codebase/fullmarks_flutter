@@ -123,7 +123,7 @@ class _RankListScreenState extends State<RankListScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -273,7 +273,7 @@ class _RankListScreenState extends State<RankListScreen> {
                             if (value == PermissionStatus.granted) {
                               shareRank();
                             } else {
-                              Utility.showToast(
+                              Utility.showToast(context,
                                   "Please grant permission to share your rank");
                             }
                           });

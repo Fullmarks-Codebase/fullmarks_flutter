@@ -125,7 +125,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -152,7 +152,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -179,7 +179,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -462,7 +462,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
       _isLoading = false;
       _notify();
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         _getMyFriends();
@@ -471,7 +471,7 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

@@ -72,7 +72,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
           RandomQuizWelcomeResponse.fromJson(jsonDecode(jsonEncode(data)));
       room = randomQuizWelcomeResponse.room;
       roomId = randomQuizWelcomeResponse.roomId;
-      Utility.showToast(randomQuizWelcomeResponse.message);
+      Utility.showToast(context, randomQuizWelcomeResponse.message);
       questions = randomQuizWelcomeResponse.questions;
       _notify();
       socket.emit(
@@ -107,7 +107,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
     socket.on(AppStrings.disconnected, (data) {
       print(AppStrings.disconnected);
       print(data);
-      Utility.showToast(jsonEncode(data));
+      Utility.showToast(context, jsonEncode(data));
       socket.emit(
         AppStrings.forceDisconnect,
       );
@@ -175,7 +175,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
           _notify();
 
           //on timer complete
-          Utility.showToast("No Player Available");
+          Utility.showToast(context, "No Player Available");
           socket.emit(
             AppStrings.forceDisconnect,
           );

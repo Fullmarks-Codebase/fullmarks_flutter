@@ -54,7 +54,7 @@ class _MockTestScreenState extends State<MockTestScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -177,11 +177,11 @@ class _MockTestScreenState extends State<MockTestScreen> {
           (Route<dynamic> route) => false,
         );
       } else {
-        Utility.showToast(response.message);
+        Utility.showToast(context, response.message);
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -192,9 +192,9 @@ class _MockTestScreenState extends State<MockTestScreen> {
           getTestResult(index);
         } else {
           if (mocktests[index].questionCount == 0) {
-            Utility.showToast("No questions in this mock test");
+            Utility.showToast(context, "No questions in this mock test");
           } else if (mocktests[index].time <= 0) {
-            Utility.showToast("Invalid time for this mock test");
+            Utility.showToast(context, "Invalid time for this mock test");
           } else {
             Utility.showStartQuizDialog(
               context: context,

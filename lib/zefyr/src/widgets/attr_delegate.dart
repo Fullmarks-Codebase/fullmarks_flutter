@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 abstract class ZefyrAttrDelegate {
-  void onLinkTap(String link);
+  void onLinkTap(BuildContext context, String link);
 }

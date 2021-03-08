@@ -77,7 +77,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -241,7 +241,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
             .putCall(url: AppStrings.changeClassGuest, request: request),
       );
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         _getGuest();
@@ -252,7 +252,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -272,7 +272,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
             .postCall(url: AppStrings.changeClass, request: request),
       );
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         _getCustomer();
@@ -283,7 +283,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -308,7 +308,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
       _isLoading = false;
       _notify();
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         await PreferenceUtils.setString(AppStrings.guestUserPreference,
@@ -319,7 +319,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -354,7 +354,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

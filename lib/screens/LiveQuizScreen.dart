@@ -57,7 +57,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

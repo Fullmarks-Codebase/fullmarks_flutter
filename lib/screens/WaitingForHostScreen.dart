@@ -86,7 +86,7 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
     socket.on(AppStrings.error, (data) {
       print(AppStrings.error);
       print(data);
-      Utility.showToast(jsonEncode(data));
+      Utility.showToast(context, jsonEncode(data));
     });
 
     //when any user disconnects or leaves quiz

@@ -60,7 +60,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -118,7 +118,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

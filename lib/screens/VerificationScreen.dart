@@ -117,14 +117,15 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
     final PhoneVerificationFailed verificationFailed =
         (FirebaseAuthException authException) {
-      Utility.showToast(authException.message);
+      Utility.showToast(context, authException.message);
       print(authException.code);
       print(authException.message);
     };
 
     final PhoneCodeSent codeSent =
         (String verificationId, [int forceResendingToken]) async {
-      Utility.showToast("Please check your phone for the verification code.");
+      Utility.showToast(
+          context, "Please check your phone for the verification code.");
       _verificationId = verificationId;
       _forceResendingToken = forceResendingToken;
       _notify();
@@ -217,7 +218,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
       _notify();
 
       if (response.code == 200) {
-        Utility.showToast(response.message);
+        Utility.showToast(context, response.message);
         loggedinCustomer = response.result;
         await PreferenceUtils.setString(
             AppStrings.userPreference, jsonEncode(response.result.toJson()));
@@ -254,7 +255,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   //     _notify();
 
   //     if (response.customer != null) {
-  //       Utility.showToast("User Logged in Successfully");
+  //       Utility.showToast(context,"User Logged in Successfully");
   // PreferenceUtils.setString(
   //     AppStrings.userPreference, jsonEncode(response.customer.toJson()));
   //       return null;

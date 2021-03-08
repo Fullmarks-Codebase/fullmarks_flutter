@@ -21,7 +21,7 @@ import 'AppAssets.dart';
 import 'AppColors.dart';
 
 class Utility {
-  static showToast(String msg) {
+  static showToast(BuildContext context, String msg) {
     Fluttertoast.showToast(
       msg: msg,
     );
@@ -112,11 +112,11 @@ class Utility {
     );
   }
 
-  static launchURL(String url) async {
+  static launchURL(BuildContext context, String url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      showToast("Invalid url");
+      showToast(context, "Invalid url");
     }
   }
 

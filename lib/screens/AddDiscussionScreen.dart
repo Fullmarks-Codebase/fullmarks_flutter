@@ -153,7 +153,7 @@ class _AddDiscussionScreenState extends State<AddDiscussionScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -243,9 +243,9 @@ class _AddDiscussionScreenState extends State<AddDiscussionScreen> {
 
   addQuestionTap() {
     if (selectedCategory == -1) {
-      Utility.showToast("Please select category");
+      Utility.showToast(context, "Please select category");
     } else if (_controller.plainTextEditingValue.text.trim().length == 0) {
-      Utility.showToast("Please type your question");
+      Utility.showToast(context, "Please type your question");
     } else {
       addQuestion();
     }
@@ -307,15 +307,15 @@ class _AddDiscussionScreenState extends State<AddDiscussionScreen> {
       if (response.statusCode == 200) {
         CommonResponse commonResponse =
             CommonResponse.fromJson(jsonDecode(response.body));
-        Utility.showToast(commonResponse.message);
+        Utility.showToast(context, commonResponse.message);
         Navigator.pop(context, true);
       } else {
         CommonResponse commonResponse =
             CommonResponse.fromJson(jsonDecode(response.body));
-        Utility.showToast(commonResponse.message);
+        Utility.showToast(context, commonResponse.message);
       }
     } else {
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

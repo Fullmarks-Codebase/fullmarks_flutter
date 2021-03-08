@@ -458,7 +458,7 @@ class _TestScreenState extends State<TestScreen> {
       _isLoading = false;
       _notify();
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         Navigator.of(context).pushAndRemoveUntil(
@@ -478,7 +478,7 @@ class _TestScreenState extends State<TestScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 

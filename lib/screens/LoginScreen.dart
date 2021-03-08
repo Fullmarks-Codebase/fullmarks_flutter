@@ -164,9 +164,10 @@ class _LoginScreenState extends State<LoginScreen> {
   googleSignin() {
     _googleSignIn.signIn().then((value) async {
       if (value.id == null || value.id.length == 0) {
-        Utility.showToast("Invalid google id");
+        Utility.showToast(context, "Invalid google id");
       } else if (value.email == null || value.email.length == 0) {
-        Utility.showToast("Email not found. Cannot login without email.");
+        Utility.showToast(
+            context, "Email not found. Cannot login without email.");
       } else {
         var request = Map<String, dynamic>();
         request["email"] = value.email;
@@ -176,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
         checkin(request, AppStrings.loginWithgoogleEvent);
       }
     }).catchError((onError) {
-      Utility.showToast(onError.toString());
+      Utility.showToast(context, onError.toString());
     });
   }
 
@@ -188,11 +189,13 @@ class _LoginScreenState extends State<LoginScreen> {
           getFacebookData(result.accessToken.token);
           break;
         case FacebookLoginStatus.cancelledByUser:
-          Utility.showToast("Login cancelled by the user.");
+          Utility.showToast(context, "Login cancelled by the user.");
           break;
         case FacebookLoginStatus.error:
           print(result.errorMessage);
-          Utility.showToast('Something went wrong with the login process.\n'
+          Utility.showToast(
+              context,
+              'Something went wrong with the login process.\n'
               'Here\'s the error Facebook gave us: ${result.errorMessage}');
           break;
       }
@@ -229,7 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -248,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
       _notify();
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         await PreferenceUtils.setString(
@@ -279,7 +282,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -325,7 +328,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
       _notify();
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       if (response.code == 200) {
         AppFirebaseAnalytics.init().logEvent(name: AppStrings.guestLoginEvent);
@@ -352,7 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -370,9 +373,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _verifyTap() {
     if (_phoneNumberController.text.trim().length == 0) {
-      Utility.showToast("Please enter your mobile phone");
+      Utility.showToast(context, "Please enter your mobile phone");
     } else if (_phoneNumberController.text.trim().length < 10) {
-      Utility.showToast("Please enter your mobile phone with 10 digits");
+      Utility.showToast(
+          context, "Please enter your mobile phone with 10 digits");
     } else {
       FocusScope.of(context).requestFocus(new FocusNode());
       Navigator.of(context).push(

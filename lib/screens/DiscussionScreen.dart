@@ -78,7 +78,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -123,7 +123,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -481,7 +481,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
         ),
       );
 
-      Utility.showToast(response.message);
+      Utility.showToast(context, response.message);
 
       //hide progress
       _isLoading = false;
@@ -493,7 +493,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -515,7 +515,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -541,7 +541,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -564,7 +564,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 
@@ -587,7 +587,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
       }
     } else {
       //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
+      Utility.showToast(context, AppStrings.noInternet);
     }
   }
 }
