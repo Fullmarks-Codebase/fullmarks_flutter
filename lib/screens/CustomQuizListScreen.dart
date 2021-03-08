@@ -108,63 +108,65 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
           textColor: Colors.white,
         ),
         questionsList(),
-        Container(
-          padding: EdgeInsets.all(16),
-          margin: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(48),
-              bottomRight: Radius.circular(16),
-              bottomLeft: Radius.circular(48),
-            ),
-          ),
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              Utility.button(
-                context,
-                onPressed: () async {
-                  //delay to give ripple effect
-                  await Future.delayed(
-                      Duration(milliseconds: AppStrings.delay));
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddQuestionScreen(
-                        isEdit: false,
-                        questionDetails: null,
-                        quizDetails: widget.quiz,
-                      ),
+        widget.quiz.submitted == 1
+            ? Container()
+            : Container(
+                padding: EdgeInsets.all(16),
+                margin: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(48),
+                    bottomRight: Radius.circular(16),
+                    bottomLeft: Radius.circular(48),
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Column(
+                  children: [
+                    Utility.button(
+                      context,
+                      onPressed: () async {
+                        //delay to give ripple effect
+                        await Future.delayed(
+                            Duration(milliseconds: AppStrings.delay));
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddQuestionScreen(
+                              isEdit: false,
+                              questionDetails: null,
+                              quizDetails: widget.quiz,
+                            ),
+                          ),
+                        );
+                        _getQuestions();
+                      },
+                      bgColor: AppColors.chartBgColor,
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      gradientColor1: AppColors.buttonGradient1,
+                      gradientColor2: AppColors.buttonGradient2,
+                      text: "Add More Question",
                     ),
-                  );
-                  _getQuestions();
-                },
-                bgColor: AppColors.chartBgColor,
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                gradientColor1: AppColors.buttonGradient1,
-                gradientColor2: AppColors.buttonGradient2,
-                text: "Add More Question",
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Utility.button(
-                context,
-                onPressed: () async {
-                  //delay to give ripple effect
-                  await Future.delayed(
-                      Duration(milliseconds: AppStrings.delay));
-                  Navigator.pop(context);
-                },
-                text: "Submit",
-                bgColor: AppColors.myProgressCorrectcolor,
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Utility.button(
+                      context,
+                      onPressed: () async {
+                        //delay to give ripple effect
+                        await Future.delayed(
+                            Duration(milliseconds: AppStrings.delay));
+                        Navigator.pop(context);
+                      },
+                      text: "Submit",
+                      bgColor: AppColors.myProgressCorrectcolor,
+                    )
+                  ],
+                ),
               )
-            ],
-          ),
-        )
       ],
     );
   }
@@ -330,41 +332,49 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                     ),
                   );
                 }),
-                SizedBox(
-                  width: 8,
-                ),
-                questionItemViewButton(
-                  AppAssets.edit,
-                  () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddQuestionScreen(
-                          isEdit: true,
-                          questionDetails: questionsDetails[index],
-                          quizDetails: null,
-                        ),
+                widget.quiz.submitted == 1
+                    ? Container()
+                    : SizedBox(
+                        width: 8,
                       ),
-                    );
-                    _getQuestions();
-                  },
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                questionItemViewButton(AppAssets.delete, () {
-                  Utility.showDeleteDialog(
-                    context: context,
-                    title: "Do you want to delete this Question?",
-                    onDeletePress: () async {
-                      //delay to give ripple effect
-                      await Future.delayed(
-                          Duration(milliseconds: AppStrings.delay));
-                      Navigator.pop(context);
-                      _deleteQuestion(index);
-                    },
-                  );
-                }),
+                widget.quiz.submitted == 1
+                    ? Container()
+                    : questionItemViewButton(
+                        AppAssets.edit,
+                        () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddQuestionScreen(
+                                isEdit: true,
+                                questionDetails: questionsDetails[index],
+                                quizDetails: null,
+                              ),
+                            ),
+                          );
+                          _getQuestions();
+                        },
+                      ),
+                widget.quiz.submitted == 1
+                    ? Container()
+                    : SizedBox(
+                        width: 8,
+                      ),
+                widget.quiz.submitted == 1
+                    ? Container()
+                    : questionItemViewButton(AppAssets.delete, () {
+                        Utility.showDeleteDialog(
+                          context: context,
+                          title: "Do you want to delete this Question?",
+                          onDeletePress: () async {
+                            //delay to give ripple effect
+                            await Future.delayed(
+                                Duration(milliseconds: AppStrings.delay));
+                            Navigator.pop(context);
+                            _deleteQuestion(index);
+                          },
+                        );
+                      }),
               ],
             ),
           )

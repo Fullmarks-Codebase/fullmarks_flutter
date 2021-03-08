@@ -315,9 +315,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
             jsonEncode(response.result.toJson()));
         guest = response.result;
         _notify();
-        if (widget.isFirstTime) {
-          gotoNext();
-        }
+        gotoNext();
       }
     } else {
       //show message that internet is not available
@@ -351,9 +349,7 @@ class _ChangeGradeScreenState extends State<ChangeGradeScreen> {
               AppStrings.userPreference, jsonEncode(tempCustomer.toJson()));
           customer = Utility.getCustomer();
           _notify();
-          if (widget.isFirstTime) {
-            gotoNext();
-          }
+          gotoNext();
         }
       }
     } else {

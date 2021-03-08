@@ -602,69 +602,61 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   }
 
   Widget userImage() {
-    return Container(
-      height: (MediaQuery.of(context).size.height / 3.5) / 2,
-      width: (MediaQuery.of(context).size.width / 3.5),
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          customer == null
-              ? dummyUserView((MediaQuery.of(context).size.height / 3.5) / 2)
-              : customer.thumbnail == ""
-                  ? dummyUserView(
-                      (MediaQuery.of(context).size.height / 3.5) / 2)
-                  : _image == null
-                      ? Utility.getUserImage(
-                          url: customer.thumbnail,
-                          height:
-                              (MediaQuery.of(context).size.height / 3.5) / 2,
-                          width: (MediaQuery.of(context).size.height / 3.5) / 2,
-                          borderRadius:
-                              (MediaQuery.of(context).size.height / 3.5) / 2,
-                        )
-                      : Container(
-                          height:
-                              (MediaQuery.of(context).size.height / 3.5) / 2,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: AppColors.appColor,
-                              width: 2,
-                            ),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: FileImage(
-                                _image,
-                              ),
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        customer == null
+            ? dummyUserView((MediaQuery.of(context).size.height / 3.5) / 2)
+            : customer.thumbnail == ""
+                ? dummyUserView((MediaQuery.of(context).size.height / 3.5) / 2)
+                : _image == null
+                    ? Utility.getUserImage(
+                        url: customer.thumbnail,
+                        height: (MediaQuery.of(context).size.height / 3.5) / 2,
+                        width: (MediaQuery.of(context).size.height / 3.5) / 2,
+                        borderRadius: MediaQuery.of(context).size.height,
+                      )
+                    : Container(
+                        height: (MediaQuery.of(context).size.height / 3.5) / 2,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.appColor,
+                            width: 2,
+                          ),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: FileImage(
+                              _image,
                             ),
                           ),
                         ),
-          Positioned(
-            right: 10,
-            child: GestureDetector(
-              onTap: () {
-                _onProfilePicTap();
-              },
-              child: Container(
-                height: 35,
-                width: 35,
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.myProgressIncorrectcolor,
-                    width: 2,
-                  ),
+                      ),
+        Positioned(
+          right: 10,
+          child: GestureDetector(
+            onTap: () {
+              _onProfilePicTap();
+            },
+            child: Container(
+              height: 35,
+              width: 35,
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.myProgressIncorrectcolor,
+                  width: 2,
                 ),
-                child: SvgPicture.asset(
-                  AppAssets.pencil,
-                ),
+              ),
+              child: SvgPicture.asset(
+                AppAssets.pencil,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

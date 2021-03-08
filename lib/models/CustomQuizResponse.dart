@@ -35,15 +35,18 @@ class CustomQuizDetails {
   String updatedAt;
   int userId;
   int totalQuestion;
+  int submitted;
 
-  CustomQuizDetails(
-      {this.id,
-      this.name,
-      this.createdBy,
-      this.createdAt,
-      this.updatedAt,
-      this.userId,
-      this.totalQuestion});
+  CustomQuizDetails({
+    this.id,
+    this.name,
+    this.createdBy,
+    this.createdAt,
+    this.updatedAt,
+    this.userId,
+    this.totalQuestion,
+    this.submitted,
+  });
 
   CustomQuizDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
@@ -53,6 +56,7 @@ class CustomQuizDetails {
     updatedAt = json['updatedAt'] ?? "";
     userId = json['userId'] ?? 0;
     totalQuestion = json['total_question'] ?? 0;
+    submitted = json['submitted'] ?? 0;
   }
 
   Map<String, dynamic> toJson() {
@@ -64,6 +68,7 @@ class CustomQuizDetails {
     data['updatedAt'] = this.updatedAt;
     data['userId'] = this.userId;
     data['total_question'] = this.totalQuestion;
+    data['submitted'] = this.submitted;
     return data;
   }
 }

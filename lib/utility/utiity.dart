@@ -5,7 +5,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:fullmarks/models/DiscussionResponse.dart';
 import 'package:fullmarks/models/GuestUserResponse.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
@@ -23,7 +22,9 @@ import 'AppColors.dart';
 
 class Utility {
   static showToast(String msg) {
-    Fluttertoast.showToast(msg: msg);
+    Fluttertoast.showToast(
+      msg: msg,
+    );
   }
 
   static showAnswerToast(BuildContext context, String msg, Color textColor) {
@@ -502,14 +503,16 @@ class Utility {
         SizedBox(
           width: 8,
         ),
-        Text(
-          title,
-          style: TextStyle(
-            color: textColor,
-            fontSize: fontSize,
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: textColor,
+              fontSize: fontSize,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

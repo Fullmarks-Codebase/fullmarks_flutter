@@ -54,6 +54,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   RandomQuizParticipantsDetails user2;
   Timer _timerInternet;
   bool answerSelection = true;
+  bool isSubmitReport = false;
 
   getQuestionSeconds() {
     perQuestionSeconds = widget.isRandomQuiz
@@ -89,13 +90,17 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         socket.emit(
           AppStrings.forceDisconnect,
         );
-        if (context != null)
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (BuildContext context) => HomeScreen(),
-            ),
-            (Route<dynamic> route) => false,
-          );
+        if (widget.isRandomQuiz) {
+          showRewardAd();
+        } else {
+          if (context != null)
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (BuildContext context) => HomeScreen(),
+              ),
+              (Route<dynamic> route) => false,
+            );
+        }
       });
 
       socket.on(AppStrings.allParticipants, (data) {
@@ -247,7 +252,6 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
                   widget.questions[currentQuestion]) ==
               widget.questions[currentQuestion].selectedAnswer) {
             Utility.showAnswerToast(context, "Correct", AppColors.correctColor);
-            print("*");
             socket.emit(
               AppStrings.updateScore,
               {
@@ -306,60 +310,66 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   }
 
   submitQuestions() async {
-    //check internet connection available or not
-    if (await ApiManager.checkInternet()) {
-      //show progress
-      _isLoading = true;
+    if (!isSubmitReport) {
+      isSubmitReport = true;
       _notify();
-      //api request
-      List<LiveQuestionReportRequest> questionReportsAnswersList = List();
+      //check internet connection available or not
+      if (await ApiManager.checkInternet()) {
+        //show progress
+        _isLoading = true;
+        _notify();
+        //api request
+        List<LiveQuestionReportRequest> questionReportsAnswersList = List();
 
-      var request = Map<String, dynamic>();
+        var request = Map<String, dynamic>();
 
-      request["mode"] = widget.isCustomQuiz ? "custom" : "default";
+        request["mode"] = widget.isCustomQuiz ? "custom" : "default";
 
-      await Future.forEach(widget.questions, (QuestionDetails element) {
-        questionReportsAnswersList.add(
-          LiveQuestionReportRequest(
-            userId: Utility.getCustomer().id.toString(),
-            questionId: element.id.toString(),
-            correctAnswer: Utility.getQuestionCorrectAnswer(element).toString(),
-            timeTaken: element.timeTaken.toString(),
-            userAnswer: element.selectedAnswer.toString(),
-            roomId: widget.room.id.toString(),
-          ),
-        );
-      });
-      request["answers"] = jsonEncode(questionReportsAnswersList);
-
-      //api call
-      ReportsResponse response = ReportsResponse.fromJson(
-        await ApiManager(context).postCall(
-          url: AppStrings.liveReport,
-          request: request,
-        ),
-      );
-      //hide progress
-      _isLoading = false;
-      _notify();
-
-      Utility.showToast(response.message);
-
-      if (response.code == 200) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (BuildContext context) => RankListScreen(
-              isRandomQuiz: widget.isRandomQuiz,
-              title: widget.isRandomQuiz ? "Live Quiz Result" : "Rank List",
-              room: widget.room,
-              socket: socket,
+        await Future.forEach(widget.questions, (QuestionDetails element) {
+          questionReportsAnswersList.add(
+            LiveQuestionReportRequest(
+              userId: Utility.getCustomer().id.toString(),
+              questionId: element.id.toString(),
+              correctAnswer:
+                  Utility.getQuestionCorrectAnswer(element).toString(),
+              timeTaken: element.timeTaken.toString(),
+              userAnswer: element.selectedAnswer.toString(),
+              roomId: widget.room.id.toString(),
             ),
+          );
+        });
+        request["answers"] = jsonEncode(questionReportsAnswersList);
+
+        //api call
+        ReportsResponse response = ReportsResponse.fromJson(
+          await ApiManager(context).postCall(
+            url: AppStrings.liveReport,
+            request: request,
           ),
         );
+        //hide progress
+        _isLoading = false;
+        _notify();
+
+        Utility.showToast(response.message);
+
+        if (response.code == 200) {
+          if (context != null)
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (BuildContext context) => RankListScreen(
+                  isRandomQuiz: widget.isRandomQuiz,
+                  title: widget.isRandomQuiz ? "Live Quiz Result" : "Rank List",
+                  room: widget.room,
+                  socket: socket,
+                ),
+              ),
+            );
+        }
+      } else {
+        //show message that internet is not available
+        Utility.showToast(AppStrings.noInternet);
       }
-    } else {
-      //show message that internet is not available
-      Utility.showToast(AppStrings.noInternet);
     }
   }
 

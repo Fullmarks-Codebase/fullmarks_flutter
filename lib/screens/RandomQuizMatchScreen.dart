@@ -41,7 +41,9 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
   Customer customer = Utility.getCustomer();
   Timer _timer;
   Timer _timerInternet;
+  Timer _timerNoPlayerAvailable;
   int _start = 5;
+  int _startNoPlayerAvailable = (3 * 60); //3 min
   List<QuestionDetails> questions = List();
   Customer user1;
   Customer user2;
@@ -60,6 +62,8 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
       }
     };
     socket.emit(AppStrings.choose, chooseData);
+
+    startTimerNoPlayerAvailable();
 
     socket.on(AppStrings.welcome, (data) {
       print(AppStrings.welcome);
@@ -128,6 +132,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
   }
 
   void startTimer() {
+    _timerNoPlayerAvailable.cancel();
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
@@ -160,6 +165,29 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
     );
   }
 
+  void startTimerNoPlayerAvailable() {
+    const oneSec = const Duration(seconds: 1);
+    _timerNoPlayerAvailable = new Timer.periodic(
+      oneSec,
+      (Timer timer) async {
+        if (_startNoPlayerAvailable == 0) {
+          timer.cancel();
+          _notify();
+
+          //on timer complete
+          Utility.showToast("No Player Available");
+          socket.emit(
+            AppStrings.forceDisconnect,
+          );
+          Navigator.pop(context);
+        } else {
+          _startNoPlayerAvailable--;
+          _notify();
+        }
+      },
+    );
+  }
+
   @override
   void dispose() {
     try {
@@ -167,6 +195,9 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
     } catch (e) {}
     try {
       _timerInternet.cancel();
+    } catch (e) {}
+    try {
+      _timerNoPlayerAvailable.cancel();
     } catch (e) {}
     super.dispose();
   }

@@ -174,6 +174,52 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
                     await Future.delayed(
                         Duration(milliseconds: AppStrings.delay));
                     if (roomIdController.text.trim().length == 0) {
+                      // showGeneralDialog(
+                      //   barrierLabel: "Barrier",
+                      //   barrierDismissible: true,
+                      //   barrierColor: Colors.black.withOpacity(0.5),
+                      //   transitionDuration: Duration(milliseconds: 700),
+                      //   context: context,
+                      //   pageBuilder: (_, __, ___) {
+                      //     return Align(
+                      //       alignment: Alignment.bottomCenter,
+                      //       child: Container(
+                      //         alignment: Alignment.center,
+                      //         width: MediaQuery.of(context).size.width / 2,
+                      //         height: 50,
+                      //         child: SizedBox.expand(
+                      //           child: Material(
+                      //             color: Colors.transparent,
+                      //             child: Container(
+                      //               alignment: Alignment.center,
+                      //               child: Text(
+                      //                 "Room id is required",
+                      //                 style: TextStyle(
+                      //                   color: Colors.black,
+                      //                   fontWeight: FontWeight.bold,
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         margin: EdgeInsets.only(
+                      //             bottom: 50, left: 12, right: 12),
+                      //         decoration: BoxDecoration(
+                      //           color: Colors.white,
+                      //           borderRadius: BorderRadius.circular(40),
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      //   transitionBuilder: (_, anim, __, child) {
+                      //     return SlideTransition(
+                      //       position:
+                      //           Tween(begin: Offset(0, 1), end: Offset(0, 0))
+                      //               .animate(anim),
+                      //       child: child,
+                      //     );
+                      //   },
+                      // );
                       Utility.showToast("Room id is required");
                     } else {
                       //show progress

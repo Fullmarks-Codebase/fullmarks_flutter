@@ -305,96 +305,95 @@ class _CreateCustomQuizScreenState extends State<CreateCustomQuizScreen> {
                   ),
                 ),
                 Expanded(
-                    child:
-                        //TODO handle if quiz is played
-                        // index == 0
-                        //     ?
-                        Column(
-                  children: [
-                    Utility.button(
-                      context,
-                      onPressed: () async {
-                        //delay to give ripple effect
-                        await Future.delayed(
-                            Duration(milliseconds: AppStrings.delay));
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddQuestionScreen(
-                              isEdit: false,
-                              questionDetails: null,
-                              quizDetails: customQuizDetails[index],
+                  child: customQuizDetails[index].submitted == 0
+                      ? Column(
+                          children: [
+                            Utility.button(
+                              context,
+                              onPressed: () async {
+                                //delay to give ripple effect
+                                await Future.delayed(
+                                    Duration(milliseconds: AppStrings.delay));
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddQuestionScreen(
+                                      isEdit: false,
+                                      questionDetails: null,
+                                      quizDetails: customQuizDetails[index],
+                                    ),
+                                  ),
+                                );
+                                _getQuiz();
+                              },
+                              text: "Add Question",
+                              bgColor: AppColors.chartBgColor,
+                              borderColor: AppColors.myProgressIncorrectcolor,
+                              assetName: AppAssets.list,
+                              isPrefix: true,
+                              fontSize: 12,
+                              padding: 8,
+                            ),
+                            customQuizDetails[index].totalQuestion == 0
+                                ? Container()
+                                : SizedBox(
+                                    height: 4,
+                                  ),
+                            customQuizDetails[index].totalQuestion == 0
+                                ? Container()
+                                : Utility.button(
+                                    context,
+                                    onPressed: () async {
+                                      //delay to give ripple effect
+                                      await Future.delayed(Duration(
+                                          milliseconds: AppStrings.delay));
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CreateQuizLobbyScreen(
+                                            subject: null,
+                                            customQuiz:
+                                                customQuizDetails[index],
+                                            isCustomQuiz: true,
+                                          ),
+                                        ),
+                                      );
+                                      _getQuiz();
+                                    },
+                                    text: "Start Quiz",
+                                    bgColor: AppColors.strongCyan,
+                                    assetName: AppAssets.enterWhite,
+                                    isSufix: true,
+                                    isSpacer: true,
+                                    fontSize: 12,
+                                    padding: 8,
+                                  ),
+                          ],
+                        )
+                      : Container(
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: Offset(0, 1),
+                                  blurRadius: 3,
+                                  color: Colors.black12,
+                                ),
+                              ],
+                            ),
+                            child: SvgPicture.asset(
+                              AppAssets.submit,
+                              color: AppColors.myProgressCorrectcolor,
                             ),
                           ),
-                        );
-                        _getQuiz();
-                      },
-                      text: "Add Question",
-                      bgColor: AppColors.chartBgColor,
-                      borderColor: AppColors.myProgressIncorrectcolor,
-                      assetName: AppAssets.list,
-                      isPrefix: true,
-                      fontSize: 12,
-                      padding: 8,
-                    ),
-                    customQuizDetails[index].totalQuestion == 0
-                        ? Container()
-                        : SizedBox(
-                            height: 4,
-                          ),
-                    customQuizDetails[index].totalQuestion == 0
-                        ? Container()
-                        : Utility.button(
-                            context,
-                            onPressed: () async {
-                              //delay to give ripple effect
-                              await Future.delayed(
-                                  Duration(milliseconds: AppStrings.delay));
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CreateQuizLobbyScreen(
-                                    subject: null,
-                                    customQuiz: customQuizDetails[index],
-                                    isCustomQuiz: true,
-                                  ),
-                                ),
-                              );
-                              _getQuiz();
-                            },
-                            text: "Start Quiz",
-                            bgColor: AppColors.strongCyan,
-                            assetName: AppAssets.enterWhite,
-                            isSufix: true,
-                            isSpacer: true,
-                            fontSize: 12,
-                            padding: 8,
-                          ),
-                  ],
+                        ),
                 )
-                    // : Container(
-                    //     alignment: Alignment.centerRight,
-                    //     child: Container(
-                    //       height: 40,
-                    //       width: 40,
-                    //       decoration: BoxDecoration(
-                    //         color: Colors.white,
-                    //         shape: BoxShape.circle,
-                    //         boxShadow: [
-                    //           BoxShadow(
-                    //             offset: Offset(0, 1),
-                    //             blurRadius: 3,
-                    //             color: Colors.black12,
-                    //           ),
-                    //         ],
-                    //       ),
-                    //       child: SvgPicture.asset(
-                    //         AppAssets.submit,
-                    //         color: AppColors.myProgressCorrectcolor,
-                    //       ),
-                    //     ),
-                    //   ),
-                    )
               ],
             )
           ],

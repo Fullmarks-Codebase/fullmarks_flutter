@@ -99,7 +99,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
               isHome: false,
               textColor: Colors.white,
             ),
-            widget.isEdit ? Container() : timerView(),
+            timerView(),
           ],
         ),
         Expanded(
@@ -476,6 +476,12 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
             if (data != null) {
               answers[index] = data["option"];
               answerFileImages[index] = data["optionFileImage"];
+              if (data["isAnswer"]) {
+                answerStatus[0] = false;
+                answerStatus[1] = false;
+                answerStatus[2] = false;
+                answerStatus[3] = false;
+              }
               answerStatus[index] = data["isAnswer"];
             }
           },

@@ -129,7 +129,10 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
         vertical: 12,
       ),
       alignment: Alignment.center,
-      decoration: Utility.defaultAnswerDecoration(),
+      decoration:
+          Utility.getQuestionCorrectAnswer(widget.questionDetails) == index
+              ? Utility.resultAnswerDecoration(AppColors.strongCyan)
+              : Utility.defaultAnswerDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -142,7 +145,10 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
                         ? "(C) " + widget.questionDetails.ansThree
                         : "(D) " + widget.questionDetails.ansFour,
             style: TextStyle(
-              color: Colors.black,
+              color: Utility.getQuestionCorrectAnswer(widget.questionDetails) ==
+                      index
+                  ? Colors.white
+                  : Colors.black,
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),

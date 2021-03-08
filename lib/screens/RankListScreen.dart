@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,8 +13,11 @@ import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:screenshot/screenshot.dart';
 
 class RankListScreen extends StatefulWidget {
   bool isRandomQuiz;
@@ -37,6 +41,8 @@ class _RankListScreenState extends State<RankListScreen> {
   String notSubmittedString = "";
   Timer _timerInternet;
   Timer _timerCheck;
+
+  ScreenshotController screenshotController = ScreenshotController();
 
   @override
   void initState() {
@@ -74,7 +80,9 @@ class _RankListScreenState extends State<RankListScreen> {
 
     _timerCheck = Timer.periodic(
         Duration(seconds: AppStrings.timerSecondsForCheck), (timer) {
-      socket.emit(AppStrings.check);
+      socket.emit(AppStrings.check, {
+        "room": widget.room.room,
+      });
     });
     super.initState();
   }
@@ -179,7 +187,11 @@ class _RankListScreenState extends State<RankListScreen> {
   }
 
   Widget noLeaderboardView() {
-    return Utility.emptyView(notSubmittedString, textColor: Colors.white);
+    return Utility.emptyView(
+        notSubmittedString.trim().length == 0
+            ? "Loading ..."
+            : notSubmittedString,
+        textColor: Colors.white);
   }
 
   Widget ranklistView() {
@@ -206,22 +218,40 @@ class _RankListScreenState extends State<RankListScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Expanded(
-                    child: ListView.separated(
-                      padding: EdgeInsets.only(
-                        top: 32,
-                        right: 16,
-                        left: 16,
+                    child: SingleChildScrollView(
+                      child: Screenshot(
+                        controller: screenshotController,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                              topRight: Radius.circular(48),
+                              bottomRight: Radius.circular(16),
+                              bottomLeft: Radius.circular(48),
+                            ),
+                          ),
+                          child: ListView.separated(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            padding: EdgeInsets.only(
+                              top: 32,
+                              right: 16,
+                              left: 16,
+                            ),
+                            itemCount: quizLeaderboard.length,
+                            separatorBuilder: (context, index) {
+                              return Divider(
+                                color: AppColors.lightAppColor,
+                                thickness: 1,
+                              );
+                            },
+                            itemBuilder: (context, index) {
+                              return rankItemView(index);
+                            },
+                          ),
+                        ),
                       ),
-                      itemCount: quizLeaderboard.length,
-                      separatorBuilder: (context, index) {
-                        return Divider(
-                          color: AppColors.lightAppColor,
-                          thickness: 1,
-                        );
-                      },
-                      itemBuilder: (context, index) {
-                        return rankItemView(index);
-                      },
                     ),
                   ),
                   Container(
@@ -235,7 +265,19 @@ class _RankListScreenState extends State<RankListScreen> {
                         //delay to give ripple effect
                         await Future.delayed(
                             Duration(milliseconds: AppStrings.delay));
-                        Share.share("Dummy share message");
+                        if (await Permission.storage.isGranted) {
+                          shareRank();
+                        } else {
+                          Permission.storage.request().then((value) {
+                            print(value);
+                            if (value == PermissionStatus.granted) {
+                              shareRank();
+                            } else {
+                              Utility.showToast(
+                                  "Please grant permission to share your rank");
+                            }
+                          });
+                        }
                       },
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -248,6 +290,31 @@ class _RankListScreenState extends State<RankListScreen> {
               ),
             ),
     );
+  }
+
+  shareRank() {
+    screenshotController.capture().then((Uint8List image) {
+      ImageGallerySaver.saveImage(
+        image,
+        isReturnImagePathOfIOS: true,
+      ).then((value) {
+        print(jsonEncode(value));
+        if (value != null) {
+          if (value["isSuccess"]) {
+            Share.shareFiles(
+              [value["filePath"].toString().replaceAll("file://", "")],
+              text: "My rank",
+            ).then((value) {
+              print("share success");
+            }).catchError((onError) {
+              print(onError.toString());
+            });
+          }
+        }
+      });
+    }).catchError((onError) {
+      print(onError);
+    });
   }
 
   Widget rankItemView(int index) {
