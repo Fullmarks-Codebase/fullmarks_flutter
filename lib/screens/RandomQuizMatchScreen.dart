@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/DisconnectedResponse.dart';
 import 'package:fullmarks/models/LiveQuizResponse.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/models/RandomQuizParticipantsResponse.dart';
@@ -49,6 +50,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
   Customer user2;
   int room = 0;
   int roomId = 0;
+  bool isDisconnectMessageShown = false;
 
   @override
   void initState() {
@@ -105,13 +107,21 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
     });
 
     socket.on(AppStrings.disconnected, (data) {
-      print(AppStrings.disconnected);
+      print(AppStrings.disconnected + " match screen");
       print(data);
-      Utility.showToast(context, jsonEncode(data));
-      socket.emit(
-        AppStrings.forceDisconnect,
-      );
-      if (context != null) Navigator.pop(context);
+      DisconnectedResponse disconnectedResponse =
+          DisconnectedResponse.fromJson(jsonDecode(jsonEncode(data)));
+      if ((disconnectedResponse.users.userId != Utility.getCustomer().id) &&
+          !isDisconnectMessageShown) {
+        Utility.showToast(
+          context,
+          disconnectedResponse.message,
+        );
+        socket.emit(
+          AppStrings.forceDisconnect,
+        );
+        if (context != null) Navigator.pop(context);
+      }
     });
 
     _timerInternet = Timer.periodic(

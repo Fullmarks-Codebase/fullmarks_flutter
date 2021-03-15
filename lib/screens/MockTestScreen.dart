@@ -157,7 +157,7 @@ class _MockTestScreenState extends State<MockTestScreen> {
 
       if (response.code == 200) {
         List<QuestionDetails> questionsDetails = List();
-        await Future.forEach(response.result.reportDetail,
+        await Future.forEach(response.result.submitReport.reportDetail,
             (ReportDetail element) {
           element.question.selectedAnswer = int.tryParse(element.userAnswer);
           questionsDetails.add(element.question);
@@ -169,8 +169,9 @@ class _MockTestScreenState extends State<MockTestScreen> {
               subtopic: null,
               subject: null,
               setDetails: null,
-              reportDetails:
-                  Utility.getCustomer() == null ? null : response.result,
+              reportDetails: Utility.getCustomer() == null
+                  ? null
+                  : response.result.submitReport,
               title: mocktests[index].name,
             ),
           ),

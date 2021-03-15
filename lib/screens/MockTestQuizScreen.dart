@@ -752,8 +752,9 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
               subtopic: null,
               subject: null,
               setDetails: null,
-              reportDetails:
-                  Utility.getCustomer() == null ? null : response.result,
+              reportDetails: Utility.getCustomer() == null
+                  ? null
+                  : response.result.submitReport,
               title: widget.mockTest.name,
             ),
           ),

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/DisconnectedResponse.dart';
 import 'package:fullmarks/models/LiveQuestionReportRequest.dart';
 import 'package:fullmarks/models/LiveQuizResponse.dart';
 import 'package:fullmarks/models/LiveQuizUsersResponse.dart';
@@ -55,6 +56,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   Timer _timerInternet;
   bool answerSelection = true;
   bool isSubmitReport = false;
+  bool isDisconnectMessageShown = false;
 
   getQuestionSeconds() {
     perQuestionSeconds = widget.isRandomQuiz
@@ -84,22 +86,32 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
 
       //if other user disconnects then you also force quits the quiz
       socket.on(AppStrings.disconnected, (data) {
-        print(AppStrings.disconnected);
+        print(AppStrings.disconnected + " play quiz ");
         print(jsonEncode(data));
-        Utility.showToast(context, jsonEncode(data));
-        socket.emit(
-          AppStrings.forceDisconnect,
-        );
-        if (widget.isRandomQuiz) {
-          showRewardAd();
-        } else {
-          if (context != null)
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (BuildContext context) => HomeScreen(),
-              ),
-              (Route<dynamic> route) => false,
-            );
+        DisconnectedResponse disconnectedResponse =
+            DisconnectedResponse.fromJson(jsonDecode(jsonEncode(data)));
+        if ((disconnectedResponse.users.userId != Utility.getCustomer().id) &&
+            !isDisconnectMessageShown) {
+          isDisconnectMessageShown = true;
+          _notify();
+          Utility.showToast(
+            context,
+            disconnectedResponse.message,
+          );
+          socket.emit(
+            AppStrings.forceDisconnect,
+          );
+          if (widget.isRandomQuiz) {
+            showRewardAd();
+          } else {
+            if (context != null)
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => HomeScreen(),
+                ),
+                (Route<dynamic> route) => false,
+              );
+          }
         }
       });
 
@@ -160,6 +172,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
       print("Reward ad load");
       print(value);
     });
+
     rewardAd.listener =
         (RewardedVideoAdEvent event, {String rewardType, int rewardAmount}) {
       print("Reward ad listener");
@@ -351,7 +364,10 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         _isLoading = false;
         _notify();
 
-        Utility.showToast(context, response.message);
+        Utility.showToast(
+          context,
+          response.message,
+        );
 
         if (response.code == 200) {
           if (context != null)
