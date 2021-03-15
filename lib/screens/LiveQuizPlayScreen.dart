@@ -627,7 +627,9 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Utility.imageLoader(
-                        baseUrl: AppStrings.answersImage,
+                        baseUrl: widget.isCustomQuiz
+                            ? AppStrings.customAnswers
+                            : AppStrings.answersImage,
                         url: answerIndex == 0
                             ? widget.questions[currentQuestion].ansOneImage
                             : answerIndex == 1
@@ -649,13 +651,17 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
 
   Widget questionImageView() {
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      height: 200,
       margin: EdgeInsets.only(
         top: 16,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Utility.imageLoader(
-          baseUrl: AppStrings.questionImage,
+          baseUrl: widget.isCustomQuiz
+              ? AppStrings.customQuestion
+              : AppStrings.questionImage,
           url: widget.questions[currentQuestion].questionImage,
           placeholder: AppAssets.imagePlaceholder,
         ),
