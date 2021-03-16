@@ -117,6 +117,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
     final PhoneVerificationFailed verificationFailed =
         (FirebaseAuthException authException) {
+      print("PhoneVerificationFailed");
       Utility.showToast(context, authException.message);
       print(authException.code);
       print(authException.message);
@@ -124,6 +125,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
     final PhoneCodeSent codeSent =
         (String verificationId, [int forceResendingToken]) async {
+      print("codeSent");
       Utility.showToast(
           context, "Please check your phone for the verification code.");
       _verificationId = verificationId;
@@ -154,6 +156,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
         .then((value) {
       print("then");
     }).catchError((onError) {
+      print("error");
       print(onError);
     });
 
@@ -187,7 +190,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
         print(e);
         _isLoading = false;
         _notify();
-        return e.toString();
+        return "Please enter correct OTP";
       }
     } else {
       _isLoading = false;
