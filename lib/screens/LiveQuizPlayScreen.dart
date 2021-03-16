@@ -208,6 +208,7 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
               AppStrings.forceDisconnect,
               {"userObj": Utility.getCustomer()},
             );
+            socket.destroy();
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (BuildContext context) => HomeScreen(),

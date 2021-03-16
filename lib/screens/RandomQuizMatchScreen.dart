@@ -246,6 +246,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
             socket.emit(
               AppStrings.forceDisconnect,
             );
+            socket.destroy();
             Navigator.pop(context);
             return true;
           },

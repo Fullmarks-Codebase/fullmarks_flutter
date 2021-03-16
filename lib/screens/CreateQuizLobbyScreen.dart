@@ -180,6 +180,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
               AppStrings.forceDisconnect,
               {"userObj": Utility.getCustomer()},
             );
+            socket.destroy();
             Navigator.pop(context);
           },
         ) ??

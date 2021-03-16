@@ -205,6 +205,7 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
               AppStrings.forceDisconnect,
               {"userObj": Utility.getCustomer()},
             );
+            socket.destroy();
             Navigator.pop(context);
             return true;
           },

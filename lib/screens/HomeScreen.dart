@@ -272,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _notify();
 
       if (response.code == 200) {
-        overallReportDetails = response.result.submitReport;
+        overallReportDetails = response.result;
         _notify();
       }
     } else {

@@ -237,7 +237,7 @@ class _SetsScreenState extends State<SetsScreen> {
 
       if (response.code == 200) {
         List<QuestionDetails> questionsDetails = List();
-        await Future.forEach(response.result.submitReport.reportDetail,
+        await Future.forEach(response.result.reportDetail,
             (ReportDetail element) {
           element.question.selectedAnswer = int.tryParse(element.userAnswer);
           questionsDetails.add(element.question);
@@ -249,9 +249,8 @@ class _SetsScreenState extends State<SetsScreen> {
               subtopic: widget.subtopic,
               subject: widget.subject,
               setDetails: setDetails,
-              reportDetails: Utility.getCustomer() == null
-                  ? null
-                  : response.result.submitReport,
+              reportDetails:
+                  Utility.getCustomer() == null ? null : response.result,
               title: "",
             ),
           ),

@@ -468,9 +468,8 @@ class _TestScreenState extends State<TestScreen> {
               subtopic: widget.subtopic,
               subject: widget.subject,
               setDetails: widget.setDetails,
-              reportDetails: Utility.getCustomer() == null
-                  ? null
-                  : response.result.submitReport,
+              reportDetails:
+                  Utility.getCustomer() == null ? null : response.result,
               title: "",
             ),
           ),

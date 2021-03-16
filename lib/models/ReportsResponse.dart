@@ -3,7 +3,7 @@ import 'package:fullmarks/models/QuestionsResponse.dart';
 class ReportsResponse {
   int code;
   String message;
-  ReportResult result;
+  ReportDetails result;
 
   ReportsResponse({this.code, this.message, this.result});
 
@@ -11,7 +11,7 @@ class ReportsResponse {
     code = json['code'] ?? 0;
     message = json['message'] ?? "";
     result = json['result'] != null
-        ? new ReportResult.fromJson(json['result'])
+        ? new ReportDetails.fromJson(json['result'])
         : null;
   }
 
@@ -21,31 +21,6 @@ class ReportsResponse {
     data['message'] = this.message;
     if (this.result != null) {
       data['result'] = this.result.toJson();
-    }
-    return data;
-  }
-}
-
-class ReportResult {
-  ReportDetails submitReport;
-  User user;
-
-  ReportResult({this.submitReport, this.user});
-
-  ReportResult.fromJson(Map<String, dynamic> json) {
-    submitReport = json['submitReport'] != null
-        ? new ReportDetails.fromJson(json['submitReport'])
-        : null;
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.submitReport != null) {
-      data['submitReport'] = this.submitReport.toJson();
-    }
-    if (this.user != null) {
-      data['user'] = this.user.toJson();
     }
     return data;
   }
@@ -187,22 +162,6 @@ class ReportDetail {
     if (this.question != null) {
       data['question'] = this.question.toJson();
     }
-    return data;
-  }
-}
-
-class User {
-  int id;
-
-  User({this.id});
-
-  User.fromJson(Map<String, dynamic> json) {
-    id = json['id'] ?? 0;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
     return data;
   }
 }

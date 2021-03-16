@@ -99,6 +99,7 @@ class _RankListScreenState extends State<RankListScreen> {
       AppStrings.forceDisconnect,
       {"userObj": Utility.getCustomer()},
     );
+    socket.destroy();
     super.dispose();
   }
 
