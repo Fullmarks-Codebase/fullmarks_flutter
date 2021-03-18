@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_math/flutter_math.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
@@ -76,12 +77,17 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
                         left: 16,
                         top: 16,
                       ),
-                      child: Text(
-                        widget.questionDetails.question,
-                        style: TextStyle(
-                          color: AppColors.appColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Math.tex(
+                            widget.questionDetails.question,
+                            textStyle: TextStyle(
+                              color: AppColors.appColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -136,21 +142,27 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            index == 0
-                ? "(A) " + widget.questionDetails.ansOne
-                : index == 1
-                    ? "(B) " + widget.questionDetails.ansTwo
-                    : index == 2
-                        ? "(C) " + widget.questionDetails.ansThree
-                        : "(D) " + widget.questionDetails.ansFour,
-            style: TextStyle(
-              color: Utility.getQuestionCorrectAnswer(widget.questionDetails) ==
-                      index
-                  ? Colors.white
-                  : Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
+          Scrollbar(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Math.tex(
+                index == 0
+                    ? "(A) \\ " + widget.questionDetails.ansOne
+                    : index == 1
+                        ? "(B) \\ " + widget.questionDetails.ansTwo
+                        : index == 2
+                            ? "(C) \\ " + widget.questionDetails.ansThree
+                            : "(D) \\ " + widget.questionDetails.ansFour,
+                textStyle: TextStyle(
+                  color: Utility.getQuestionCorrectAnswer(
+                              widget.questionDetails) ==
+                          index
+                      ? Colors.white
+                      : Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
             ),
           ),
           (index == 0

@@ -8,6 +8,7 @@ import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/CustomQuizResponse.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/screens/AddEditCustomQuizQuestionOptionScreen.dart';
+import 'package:fullmarks/screens/EquationEditorScreen.dart';
 import 'package:fullmarks/screens/SetTimeLimitScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
@@ -128,26 +129,44 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
       ),
       child: Column(
         children: [
-          TextField(
-            controller: questionController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: AppColors.appColor,
-                  width: 2,
+          GestureDetector(
+            onTap: () async {
+              String equation = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EquationEditorScreen(
+                    expression: questionController.text,
+                  ),
+                ),
+              );
+              if (equation != null) {
+                questionController.text = equation;
+                _notify();
+              }
+            },
+            child: AbsorbPointer(
+              child: TextField(
+                controller: questionController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: AppColors.appColor,
+                      width: 2,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: AppColors.appColor,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: "Type the Question...",
                 ),
               ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: AppColors.appColor,
-                  width: 2,
-                ),
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              hintText: "Type the Question...",
             ),
           ),
           SizedBox(

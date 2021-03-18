@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_math/flutter_math.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/DisconnectedResponse.dart';
 import 'package:fullmarks/models/LiveQuestionReportRequest.dart';
@@ -499,14 +500,28 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         right: 16,
         left: 16,
       ),
-      child: Text(
-        widget.questions[currentQuestion].question,
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      child: widget.isCustomQuiz
+          ? Scrollbar(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Math.tex(
+                  widget.questions[currentQuestion].question,
+                  textStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            )
+          : Text(
+              widget.questions[currentQuestion].question,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
     );
   }
 
@@ -598,20 +613,48 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              answerIndex == 0
-                  ? "(A) " + widget.questions[currentQuestion].ansOne
-                  : answerIndex == 1
-                      ? "(B) " + widget.questions[currentQuestion].ansTwo
-                      : answerIndex == 2
-                          ? "(C) " + widget.questions[currentQuestion].ansThree
-                          : "(D) " + widget.questions[currentQuestion].ansFour,
-              style: TextStyle(
-                color: getAnswerTextColor(answerIndex),
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
+            widget.isCustomQuiz
+                ? Scrollbar(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Math.tex(
+                        answerIndex == 0
+                            ? "(A) \\ " +
+                                widget.questions[currentQuestion].ansOne
+                            : answerIndex == 1
+                                ? "(B) \\ " +
+                                    widget.questions[currentQuestion].ansTwo
+                                : answerIndex == 2
+                                    ? "(C) \\ " +
+                                        widget
+                                            .questions[currentQuestion].ansThree
+                                    : "(D) \\ " +
+                                        widget
+                                            .questions[currentQuestion].ansFour,
+                        textStyle: TextStyle(
+                          color: getAnswerTextColor(answerIndex),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  )
+                : Text(
+                    answerIndex == 0
+                        ? "(A) " + widget.questions[currentQuestion].ansOne
+                        : answerIndex == 1
+                            ? "(B) " + widget.questions[currentQuestion].ansTwo
+                            : answerIndex == 2
+                                ? "(C) " +
+                                    widget.questions[currentQuestion].ansThree
+                                : "(D) " +
+                                    widget.questions[currentQuestion].ansFour,
+                    style: TextStyle(
+                      color: getAnswerTextColor(answerIndex),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
             (answerIndex == 0
                     ? widget.questions[currentQuestion].ansOneImage == ""
                     : answerIndex == 1

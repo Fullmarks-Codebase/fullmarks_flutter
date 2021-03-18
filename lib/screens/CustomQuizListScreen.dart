@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_math/flutter_math.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/CustomQuestionResponse.dart';
@@ -265,12 +266,17 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
               ? Container(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    questionsDetails[index].question,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Math.tex(
+                        questionsDetails[index].question,
+                        textStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ),
                 )

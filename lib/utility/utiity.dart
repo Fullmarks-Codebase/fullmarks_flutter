@@ -260,9 +260,13 @@ class Utility {
     bool isSpacer = false,
     double height = 60,
     double borderWidth = 1.0,
+    double width,
   }) {
+    if (width == null) {
+      width = MediaQuery.of(context).size.width;
+    }
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: width,
       height: height,
       decoration: BoxDecoration(
         color: bgColor,

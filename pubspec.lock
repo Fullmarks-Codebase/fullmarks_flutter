@@ -293,6 +293,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0+1"
+  flutter_math:
+    dependency: "direct main"
+    description:
+      name: flutter_math
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.1"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -471,6 +478,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.9.7"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.4"
   octo_image:
     dependency: transitive
     description:
@@ -590,6 +604,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.13"
+  provider:
+    dependency: transitive
+    description:
+      name: provider
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.3.3"
   quill_delta:
     dependency: "direct main"
     description:
@@ -763,6 +784,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.5.9"
+  tuple:
+    dependency: transitive
+    description:
+      name: tuple
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
   typed_data:
     dependency: transitive
     description:

@@ -12,6 +12,8 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'EquationEditorScreen.dart';
+
 class AddEditCustomQuizQuestionOptionScreen extends StatefulWidget {
   bool isEdit;
   String option;
@@ -107,26 +109,44 @@ class _AddEditCustomQuizQuestionOptionScreenState
       ),
       child: Column(
         children: [
-          TextField(
-            controller: optionController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: AppColors.appColor,
-                  width: 2,
+          GestureDetector(
+            onTap: () async {
+              String equation = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EquationEditorScreen(
+                    expression: optionController.text,
+                  ),
+                ),
+              );
+              if (equation != null) {
+                optionController.text = equation;
+                _notify();
+              }
+            },
+            child: AbsorbPointer(
+              child: TextField(
+                controller: optionController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: AppColors.appColor,
+                      width: 2,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: AppColors.appColor,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: "Type the Option...",
                 ),
               ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: AppColors.appColor,
-                  width: 2,
-                ),
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              hintText: "Type the Option...",
             ),
           ),
           SizedBox(

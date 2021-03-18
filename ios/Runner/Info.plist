@@ -58,7 +58,7 @@
 	<key>NSMotionUsageDescription</key>
 	<string>This app needs access to motion</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to photos tp upload profile picture</string>
+	<string>This app needs access to photos to upload profile picture</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>This app needs access to reminders</string>
 	<key>CFBundleURLTypes</key>
