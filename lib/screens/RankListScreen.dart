@@ -175,11 +175,12 @@ class _RankListScreenState extends State<RankListScreen> {
           homeassetName: AppAssets.home,
           textColor: Colors.white,
           onBackPressed: () {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (BuildContext context) => HomeScreen(),
-                ),
-                (Route<dynamic> route) => false);
+            Navigator.pop(context);
+            // Navigator.of(context).pushAndRemoveUntil(
+            //     MaterialPageRoute(
+            //       builder: (BuildContext context) => HomeScreen(),
+            //     ),
+            //     (Route<dynamic> route) => false);
           },
         ),
         ranklistView(),

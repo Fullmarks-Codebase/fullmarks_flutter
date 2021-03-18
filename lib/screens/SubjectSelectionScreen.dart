@@ -173,7 +173,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
   Widget subjectItemView(int index) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => widget.isRandomQuiz

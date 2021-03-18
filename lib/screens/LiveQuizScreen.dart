@@ -117,12 +117,13 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                   //delay to give ripple effect
                   await Future.delayed(
                       Duration(milliseconds: AppStrings.delay));
-                  Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => JoinQuizScreen(),
                     ),
                   );
+                  _getLeaderboard();
                 },
                 text: "Join a Quiz",
                 assetName: AppAssets.join,
@@ -142,12 +143,13 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                   //delay to give ripple effect
                   await Future.delayed(
                       Duration(milliseconds: AppStrings.delay));
-                  Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => CreateNewQuizScreen(),
                     ),
                   );
+                  _getLeaderboard();
                 },
                 text: "Create New Quiz",
                 bgColor: AppColors.strongCyan,
@@ -164,7 +166,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                   //delay to give ripple effect
                   await Future.delayed(
                       Duration(milliseconds: AppStrings.delay));
-                  Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => SubjectSelectionScreen(
@@ -173,6 +175,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                       ),
                     ),
                   );
+                  _getLeaderboard();
                 },
                 text: "Random Quiz",
                 gradientColor1: AppColors.buttonGradient1,
@@ -234,7 +237,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                     //delay to give ripple effect
                     await Future.delayed(
                         Duration(milliseconds: AppStrings.delay));
-                    Navigator.push(
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => AddFriendScreen(
@@ -244,6 +247,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                         ),
                       ),
                     );
+                    _getLeaderboard();
                   },
                   assetName: AppAssets.addFriend,
                   text: "Add a Friend",
@@ -259,12 +263,13 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                     //delay to give ripple effect
                     await Future.delayed(
                         Duration(milliseconds: AppStrings.delay));
-                    Navigator.push(
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => MyFriendsScreen(),
                       ),
                     );
+                    _getLeaderboard();
                   },
                   assetName: AppAssets.contacts,
                   text: "My Friends",
@@ -378,13 +383,14 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
                     width: 8,
                   ),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => LeaderboardScreen(),
                         ),
                       );
+                      _getLeaderboard();
                     },
                     child: Container(
                       padding: EdgeInsets.all(8),

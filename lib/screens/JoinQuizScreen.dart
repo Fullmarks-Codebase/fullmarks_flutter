@@ -51,7 +51,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
           LiveQuizWelcomeResponse.fromJson(json.decode(jsonEncode(data)));
       Utility.showToast(context, response.message);
       if (context != null) {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => WaitingForHostScreen(

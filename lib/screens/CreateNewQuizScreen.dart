@@ -90,7 +90,7 @@ class _CreateNewQuizScreenState extends State<CreateNewQuizScreen> {
                         //delay to give ripple effect
                         await Future.delayed(
                             Duration(milliseconds: AppStrings.delay));
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => SubjectSelectionScreen(
@@ -120,7 +120,7 @@ class _CreateNewQuizScreenState extends State<CreateNewQuizScreen> {
                         //delay to give ripple effect
                         await Future.delayed(
                             Duration(milliseconds: AppStrings.delay));
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => CreateCustomQuizScreen(),
