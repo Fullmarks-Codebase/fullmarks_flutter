@@ -309,13 +309,15 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        searchingText(user1.username.trim().length == 0
-                            ? "User" + user1.id.toString()
-                            : user1.username),
+                        searchingText(
+                            user1.username.trim().length == 0
+                                ? "User" + user1.id.toString()
+                                : user1.username,
+                            22),
                         SizedBox(
                           height: 16,
                         ),
-                        searchingText("India"),
+                        searchingText("India", 22),
                       ],
                     ),
                   ),
@@ -336,33 +338,43 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        searchingText(user2.username.trim().length == 0
-                            ? "User" + user2.id.toString()
-                            : user2.username),
+                        searchingText(
+                            user2.username.trim().length == 0
+                                ? "User" + user2.id.toString()
+                                : user2.username,
+                            22),
                         SizedBox(
                           height: 16,
                         ),
-                        searchingText("India"),
+                        searchingText("India", 22),
                       ],
                     ),
                   ),
                 ],
               )
-            : Container(
-                alignment: Alignment.center,
-                child: searchingText("Searching..."),
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  searchingText("Searching...", 22),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  searchingText("Waiting time", 25),
+                  searchingText(_startNoPlayerAvailable.toString() + " s", 25),
+                ],
               ),
       ),
     );
   }
 
-  Widget searchingText(String text) {
+  Widget searchingText(String text, double fontSize) {
     return Text(
       text,
       style: TextStyle(
         color: AppColors.myProgressIncorrectcolor,
         fontWeight: FontWeight.bold,
-        fontSize: 22,
+        fontSize: fontSize,
       ),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
