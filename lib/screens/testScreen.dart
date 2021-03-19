@@ -461,7 +461,7 @@ class _TestScreenState extends State<TestScreen> {
       Utility.showToast(context, response.message);
 
       if (response.code == 200) {
-        Navigator.of(context).pushAndRemoveUntil(
+        Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (BuildContext context) => TestResultScreen(
               questionsDetails: widget.questionsDetails,
@@ -473,7 +473,6 @@ class _TestScreenState extends State<TestScreen> {
               title: "",
             ),
           ),
-          (Route<dynamic> route) => false,
         );
       }
     } else {

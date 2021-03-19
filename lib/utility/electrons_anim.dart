@@ -19,8 +19,9 @@ class ElectronsAnim extends StatefulWidget {
 }
 
 /// State creation of the electron's animation widget.
-class _ElectronsAnimState extends State<ElectronsAnim>
-    with TickerProviderStateMixin {
+class _ElectronsAnimState extends State<ElectronsAnim> {
+  /// Controllers for each electron.
+
   /// Animation type as [double] for each electron.
   Animation<double> _animation1, _animation2;
 
@@ -56,7 +57,7 @@ class _ElectronsAnimState extends State<ElectronsAnim>
   }
 
   /// Handles first electron's animation.
-  void _anim1() {
+  void _anim1(bool didUpdate) {
     _animation1 =
         Tween<double>(begin: 0.0, end: widget._atom.orbitAnimEndHeight).animate(
             CurvedAnimation(
@@ -64,7 +65,7 @@ class _ElectronsAnimState extends State<ElectronsAnim>
           ..addListener(() {
             _animX1 = _animation1.value;
             _animY1 = _animY(_isAnimHalfDone1, _animX1);
-            _notify();
+            setState(() {});
           })
           ..addStatusListener((status) {
             if (status == AnimationStatus.forward) {
@@ -78,7 +79,7 @@ class _ElectronsAnimState extends State<ElectronsAnim>
   }
 
   /// Handles second electron's animation.
-  void _anim2() {
+  void _anim2(bool didUpdate) {
     _animation2 =
         Tween<double>(begin: 0.0, end: widget._atom.orbitAnimEndHeight).animate(
             CurvedAnimation(
@@ -86,7 +87,7 @@ class _ElectronsAnimState extends State<ElectronsAnim>
           ..addListener(() {
             _animX2 = _animation2.value;
             _animY2 = _animY(_isAnimHalfDone2, _animX2);
-            _notify();
+            setState(() {});
           })
           ..addStatusListener((status) {
             if (status == AnimationStatus.forward) {
@@ -102,8 +103,8 @@ class _ElectronsAnimState extends State<ElectronsAnim>
   @override
   void initState() {
     super.initState();
-    _anim1();
-    _anim2();
+    _anim1(false);
+    _anim2(false);
   }
 
   // Widget electron() {
@@ -127,10 +128,12 @@ class _ElectronsAnimState extends State<ElectronsAnim>
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.width,
           color: Colors.transparent,
-          padding: EdgeInsets.only(
-            // top: 21,
-            left: 21,
-          ),
+          padding: MediaQuery.of(context).size.width > 400
+              ? EdgeInsets.only(
+                  top: 21,
+                  left: 21,
+                )
+              : EdgeInsets.zero,
           child: Stack(
             children: <Widget>[
               Positioned(
@@ -139,8 +142,10 @@ class _ElectronsAnimState extends State<ElectronsAnim>
                 child: Transform.rotate(
                   angle: -pi,
                   child: Container(
-                    height: widget._atom.electronSize * 4,
-                    width: widget._atom.electronSize * 4,
+                    height: widget._atom.electronSize *
+                        (MediaQuery.of(context).size.width > 400 ? 4 : 3),
+                    width: widget._atom.electronSize *
+                        (MediaQuery.of(context).size.width > 400 ? 4 : 3),
                     child: widget._atom.electronsWidget1,
                   ),
                 ),
@@ -154,29 +159,30 @@ class _ElectronsAnimState extends State<ElectronsAnim>
 
   Widget electronStack2() {
     return Center(
-      child: Transform.translate(
-        offset: Offset(0, 0),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.only(
-            // top: 21,
-            left: 21,
-          ),
-          child: Stack(
-            overflow: Overflow.visible,
-            children: <Widget>[
-              Positioned(
-                top: _animX2,
-                left: _animY2,
-                child: Container(
-                  height: widget._atom.electronSize * 4,
-                  width: widget._atom.electronSize * 4,
-                  child: widget._atom.electronsWidget2,
-                ),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.width,
+        padding: MediaQuery.of(context).size.width > 400
+            ? EdgeInsets.only(
+                top: 21,
+                left: 21,
+              )
+            : EdgeInsets.zero,
+        child: Stack(
+          overflow: Overflow.visible,
+          children: <Widget>[
+            Positioned(
+              top: _animX2,
+              left: _animY2,
+              child: Container(
+                height: widget._atom.electronSize *
+                    (MediaQuery.of(context).size.width > 400 ? 4 : 3),
+                width: widget._atom.electronSize *
+                    (MediaQuery.of(context).size.width > 400 ? 4 : 3),
+                child: widget._atom.electronsWidget2,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -193,10 +199,5 @@ class _ElectronsAnimState extends State<ElectronsAnim>
         ],
       ),
     );
-  }
-
-  _notify() {
-    //notify internal state change in objects
-    if (mounted) setState(() {});
   }
 }

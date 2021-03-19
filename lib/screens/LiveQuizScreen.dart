@@ -68,6 +68,7 @@ class _LiveQuizScreenState extends State<LiveQuizScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).size.width / 1.5);
     return Scaffold(
       body: Stack(
         children: [

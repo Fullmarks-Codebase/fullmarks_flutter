@@ -300,7 +300,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
                   await Future.delayed(
                       Duration(milliseconds: AppStrings.delay));
                   Navigator.pop(context);
-                  Navigator.of(context).push(
+                  Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (BuildContext context) => TestScreen(
                         subtopic: widget.subtopic,

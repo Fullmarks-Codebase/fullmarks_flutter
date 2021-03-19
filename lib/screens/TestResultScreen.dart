@@ -70,7 +70,6 @@ class _TestResultScreenState extends State<TestResultScreen> {
         Utility.appbar(
           context,
           text: "Test Result",
-          isBack: false,
         ),
         Expanded(
           child: Container(

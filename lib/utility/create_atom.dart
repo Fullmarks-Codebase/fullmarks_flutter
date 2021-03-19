@@ -49,6 +49,7 @@ class Atom extends StatefulWidget {
 
   Widget electronsWidget1;
   Widget electronsWidget2;
+
   AnimationController controller1, controller2;
 
   Atom({
@@ -81,7 +82,7 @@ class _AtomState extends State<Atom> {
             child: widget.centerWidget == null
                 ? Container()
                 : Transform.scale(
-                    scale: 0.00465 * widget.containerSize,
+                    scale: 0.0043 * widget.containerSize,
                     child: widget.centerWidget,
                   ),
           ),

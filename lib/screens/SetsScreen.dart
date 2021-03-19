@@ -242,7 +242,7 @@ class _SetsScreenState extends State<SetsScreen> {
           element.question.selectedAnswer = int.tryParse(element.userAnswer);
           questionsDetails.add(element.question);
         });
-        Navigator.of(context).pushAndRemoveUntil(
+        Navigator.of(context).push(
           MaterialPageRoute(
             builder: (BuildContext context) => TestResultScreen(
               questionsDetails: questionsDetails,
@@ -254,7 +254,6 @@ class _SetsScreenState extends State<SetsScreen> {
               title: "",
             ),
           ),
-          (Route<dynamic> route) => false,
         );
       } else {
         Utility.showToast(context, response.message);

@@ -72,6 +72,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
       duration: animDuration,
       vsync: this,
     );
+
     var chooseData = {
       "users": customer,
       "data": {
@@ -79,6 +80,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
         "classId": customer.classGrades.id
       }
     };
+
     socket.emit(AppStrings.choose, chooseData);
 
     startTimerNoPlayerAvailable();
@@ -273,39 +275,41 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
   }
 
   Widget body() {
-    return Column(
-      children: [
-        Utility.appbar(
-          context,
-          text: questions.length != 0 && user1 != null && user2 != null
-              ? "Matched"
-              : "Searching for Player",
-          isHome: false,
-          textColor: Colors.white,
-          onBackPressed: _onBackPressed,
-        ),
-        userImageView(),
-        searchingView(),
-        SizedBox(
-          height: 16,
-        ),
-        Expanded(child: SvgPicture.asset(AppAssets.fly)),
-        SizedBox(
-          height: 16,
-        ),
-        Text(
-          questions.length != 0 && user1 != null && user2 != null
-              ? "Get Ready to Play in  $_start  Second..."
-              : "",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+    return Container(
+      child: Column(
+        children: [
+          Utility.appbar(
+            context,
+            text: questions.length != 0 && user1 != null && user2 != null
+                ? "Matched"
+                : "Searching for Player",
+            isHome: false,
+            textColor: Colors.white,
+            onBackPressed: _onBackPressed,
           ),
-        ),
-        SizedBox(
-          height: 32,
-        )
-      ],
+          userImageView(),
+          searchingView(),
+          SizedBox(
+            height: 8,
+          ),
+          Expanded(child: SvgPicture.asset(AppAssets.fly)),
+          SizedBox(
+            height: 8,
+          ),
+          Text(
+            questions.length != 0 && user1 != null && user2 != null
+                ? "Get Ready to Play in  $_start  Second..."
+                : "",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(
+            height: 16,
+          ),
+        ],
+      ),
     );
   }
 
@@ -331,11 +335,11 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                             user1.username.trim().length == 0
                                 ? "User" + user1.id.toString()
                                 : user1.username,
-                            22),
+                            20),
                         SizedBox(
                           height: 16,
                         ),
-                        searchingText("India", 22),
+                        searchingText("India", 20),
                       ],
                     ),
                   ),
@@ -360,11 +364,11 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                             user2.username.trim().length == 0
                                 ? "User" + user2.id.toString()
                                 : user2.username,
-                            22),
+                            20),
                         SizedBox(
                           height: 16,
                         ),
-                        searchingText("India", 22),
+                        searchingText("India", 20),
                       ],
                     ),
                   ),
@@ -374,11 +378,11 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  searchingText("Searching...", 22),
+                  searchingText("Searching...", 20),
                   SizedBox(
                     height: 16,
                   ),
-                  searchingText("Waiting time", 25),
+                  searchingText("Waiting time", 22),
                   SizedBox(
                     height: 8,
                   ),
@@ -393,7 +397,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                         width: 8,
                       ),
                       searchingText(
-                          _startNoPlayerAvailable.toString() + " s", 25),
+                          _startNoPlayerAvailable.toString() + " s", 23),
                     ],
                   )
                 ],
@@ -418,47 +422,52 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
 
   Widget userImageView() {
     return Expanded(
-      flex: 2,
-      child: Center(
-        child: Atom(
-          controller1: _controller1,
-          controller2: _controller2,
-          size: 300,
-          centerWidget: Stack(
-            overflow: Overflow.visible,
-            alignment: Alignment.center,
-            children: [
-              SvgPicture.asset("assets/randomQuizSearchBg.svg"),
-              Container(
-                height: 50,
-                width: 50,
-                child: Utility.imageLoader(
-                  baseUrl: AppStrings.subjectImage,
-                  url: widget.subject.image,
-                  placeholder: AppAssets.subjectPlaceholder,
-                  fit: BoxFit.contain,
-                  placeholderColor: Colors.white,
+      flex: 3,
+      child: Container(
+        margin: EdgeInsets.only(
+          top: 16,
+        ),
+        child: Center(
+          child: Atom(
+            controller1: _controller1,
+            controller2: _controller2,
+            size: 300,
+            centerWidget: Stack(
+              overflow: Overflow.visible,
+              alignment: Alignment.center,
+              children: [
+                SvgPicture.asset("assets/randomQuizSearchBg.svg"),
+                Container(
+                  height: 70,
+                  width: 70,
+                  child: Utility.imageLoader(
+                    baseUrl: AppStrings.subjectImage,
+                    url: widget.subject.image,
+                    placeholder: AppAssets.subjectPlaceholder,
+                    fit: BoxFit.contain,
+                    placeholderColor: Colors.white,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
+            electronsWidget1: Utility.getUserImage(
+              url: user1.thumbnail,
+              borderRadius: 70,
+              borderWidth: 3,
+              bordercolor: AppColors.myProgressIncorrectcolor,
+              placeholderColor: Colors.white,
+            ),
+            electronsWidget2:
+                questions.length != 0 && user1 != null && user2 != null
+                    ? Utility.getUserImage(
+                        url: user2.thumbnail,
+                        borderRadius: 70,
+                        bordercolor: AppColors.myProgressIncorrectcolor,
+                        borderWidth: 3,
+                        placeholderColor: Colors.white,
+                      )
+                    : SvgPicture.asset(AppAssets.user),
           ),
-          electronsWidget1: Utility.getUserImage(
-            url: user1.thumbnail,
-            borderRadius: 70,
-            borderWidth: 3,
-            bordercolor: AppColors.myProgressIncorrectcolor,
-            placeholderColor: Colors.white,
-          ),
-          electronsWidget2:
-              questions.length != 0 && user1 != null && user2 != null
-                  ? Utility.getUserImage(
-                      url: user2.thumbnail,
-                      borderRadius: 70,
-                      bordercolor: AppColors.myProgressIncorrectcolor,
-                      borderWidth: 3,
-                      placeholderColor: Colors.white,
-                    )
-                  : SvgPicture.asset(AppAssets.user),
         ),
       ),
     );
