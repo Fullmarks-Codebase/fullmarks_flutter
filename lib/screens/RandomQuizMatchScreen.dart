@@ -292,7 +292,10 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
           SizedBox(
             height: 8,
           ),
-          Expanded(child: SvgPicture.asset(AppAssets.fly)),
+          Expanded(
+            flex: 5,
+            child: SvgPicture.asset(AppAssets.fly),
+          ),
           SizedBox(
             height: 8,
           ),
@@ -306,7 +309,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
             ),
           ),
           SizedBox(
-            height: 16,
+            height: 8,
           ),
         ],
       ),
@@ -320,6 +323,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
 
   Widget searchingView() {
     return Expanded(
+      flex: 7,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: 16,
@@ -337,7 +341,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                                 : user1.username,
                             20),
                         SizedBox(
-                          height: 16,
+                          height: 8,
                         ),
                         searchingText("India", 20),
                       ],
@@ -350,7 +354,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                         "VS",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 30,
+                          fontSize: 25,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -366,7 +370,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                                 : user2.username,
                             20),
                         SizedBox(
-                          height: 16,
+                          height: 8,
                         ),
                         searchingText("India", 20),
                       ],
@@ -380,11 +384,11 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                 children: [
                   searchingText("Searching...", 20),
                   SizedBox(
-                    height: 16,
-                  ),
-                  searchingText("Waiting time", 22),
-                  SizedBox(
                     height: 8,
+                  ),
+                  searchingText("Waiting time", 20),
+                  SizedBox(
+                    height: 4,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -422,11 +426,8 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
 
   Widget userImageView() {
     return Expanded(
-      flex: 3,
+      flex: 20,
       child: Container(
-        margin: EdgeInsets.only(
-          top: 16,
-        ),
         child: Center(
           child: Atom(
             controller1: _controller1,
