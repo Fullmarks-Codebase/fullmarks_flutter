@@ -16,6 +16,7 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:fullmarks/utility/create_atom.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'LiveQuizPlayScreen.dart';
@@ -29,7 +30,8 @@ class RandomQuizMatchScreen extends StatefulWidget {
   _RandomQuizMatchScreenState createState() => _RandomQuizMatchScreenState();
 }
 
-class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
+class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
+    with TickerProviderStateMixin {
   IO.Socket socket = IO
       .io(
         AppStrings.baseUrl + "random",
@@ -52,10 +54,24 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
   int roomId = 0;
   bool isDisconnectMessageShown = false;
 
+  /// Controllers for each electron.
+  AnimationController _controller1, _controller2;
+  Duration animDuration = Duration(seconds: 3);
+
   @override
   void initState() {
     AppFirebaseAnalytics.init().logEvent(name: AppStrings.randomQuizMatchEvent);
     user1 = Utility.getCustomer();
+
+    _controller1 = AnimationController(
+      duration: animDuration,
+      vsync: this,
+    );
+
+    _controller2 = AnimationController(
+      duration: animDuration,
+      vsync: this,
+    );
     var chooseData = {
       "users": customer,
       "data": {
@@ -209,6 +225,8 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
     try {
       _timerNoPlayerAvailable.cancel();
     } catch (e) {}
+    _controller1.dispose();
+    _controller2.dispose();
     super.dispose();
   }
 
@@ -361,7 +379,23 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
                     height: 16,
                   ),
                   searchingText("Waiting time", 25),
-                  searchingText(_startNoPlayerAvailable.toString() + " s", 25),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        AppAssets.whiteClock,
+                        color: AppColors.myProgressIncorrectcolor,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      searchingText(
+                          _startNoPlayerAvailable.toString() + " s", 25),
+                    ],
+                  )
                 ],
               ),
       ),
@@ -384,82 +418,127 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen> {
 
   Widget userImageView() {
     return Expanded(
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 16,
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            SvgPicture.asset(AppAssets.randomQuizSearchBg),
-            Row(
-              children: [
-                Expanded(
-                  flex: 13,
-                  child: Container(),
+      flex: 2,
+      child: Center(
+        child: Atom(
+          controller1: _controller1,
+          controller2: _controller2,
+          size: 300,
+          centerWidget: Stack(
+            overflow: Overflow.visible,
+            alignment: Alignment.center,
+            children: [
+              SvgPicture.asset("assets/randomQuizSearchBg.svg"),
+              Container(
+                height: 50,
+                width: 50,
+                child: Utility.imageLoader(
+                  baseUrl: AppStrings.subjectImage,
+                  url: widget.subject.image,
+                  placeholder: AppAssets.subjectPlaceholder,
+                  fit: BoxFit.contain,
+                  placeholderColor: Colors.white,
                 ),
-                Expanded(
-                  flex: 10,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        child: Utility.getUserImage(
-                          url: user1.thumbnail,
-                          height: 70,
-                          width: 70,
-                          borderRadius: 70,
-                          borderWidth: 3,
-                          bordercolor: AppColors.myProgressIncorrectcolor,
-                          placeholderColor: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 15,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      questions.length != 0 && user1 != null && user2 != null
-                          ? Utility.getUserImage(
-                              url: user2.thumbnail,
-                              height: 70,
-                              width: 70,
-                              borderRadius: 70,
-                              bordercolor: AppColors.myProgressIncorrectcolor,
-                              borderWidth: 3,
-                              placeholderColor: Colors.white,
-                            )
-                          : Container(
-                              height: 80,
-                              width: 80,
-                              child: SvgPicture.asset(AppAssets.user),
-                            )
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 10,
-                  child: Container(),
-                ),
-              ],
-            ),
-            Container(
-              height: 50,
-              width: 50,
-              child: Utility.imageLoader(
-                baseUrl: AppStrings.subjectImage,
-                url: widget.subject.image,
-                placeholder: AppAssets.subjectPlaceholder,
-                fit: BoxFit.contain,
-                placeholderColor: Colors.white,
               ),
-            ),
-          ],
+            ],
+          ),
+          electronsWidget1: Utility.getUserImage(
+            url: user1.thumbnail,
+            borderRadius: 70,
+            borderWidth: 3,
+            bordercolor: AppColors.myProgressIncorrectcolor,
+            placeholderColor: Colors.white,
+          ),
+          electronsWidget2:
+              questions.length != 0 && user1 != null && user2 != null
+                  ? Utility.getUserImage(
+                      url: user2.thumbnail,
+                      borderRadius: 70,
+                      bordercolor: AppColors.myProgressIncorrectcolor,
+                      borderWidth: 3,
+                      placeholderColor: Colors.white,
+                    )
+                  : SvgPicture.asset(AppAssets.user),
         ),
       ),
     );
+    // return Expanded(
+    //   child: Container(
+    //     padding: EdgeInsets.symmetric(
+    //       horizontal: 16,
+    //     ),
+    //     child: Stack(
+    //       alignment: Alignment.center,
+    //       children: [
+    //         SvgPicture.asset(AppAssets.randomQuizSearchBg),
+    //         Row(
+    //           children: [
+    //             Expanded(
+    //               flex: 13,
+    //               child: Container(),
+    //             ),
+    //             Expanded(
+    //               flex: 10,
+    //               child: Column(
+    //                 mainAxisAlignment: MainAxisAlignment.end,
+    //                 children: [
+    //                   Container(
+    //                     child: Utility.getUserImage(
+    //                       url: user1.thumbnail,
+    //                       height: 70,
+    //                       width: 70,
+    //                       borderRadius: 70,
+    //                       borderWidth: 3,
+    //                       bordercolor: AppColors.myProgressIncorrectcolor,
+    //                       placeholderColor: Colors.white,
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //             Expanded(
+    //               flex: 15,
+    //               child: Column(
+    //                 mainAxisAlignment: MainAxisAlignment.start,
+    //                 children: [
+    //                   questions.length != 0 && user1 != null && user2 != null
+    //                       ? Utility.getUserImage(
+    //                           url: user2.thumbnail,
+    //                           height: 70,
+    //                           width: 70,
+    //                           borderRadius: 70,
+    //                           bordercolor: AppColors.myProgressIncorrectcolor,
+    //                           borderWidth: 3,
+    //                           placeholderColor: Colors.white,
+    //                         )
+    //                       : Container(
+    //                           height: 80,
+    //                           width: 80,
+    //                           child: SvgPicture.asset(AppAssets.user),
+    //                         )
+    //                 ],
+    //               ),
+    //             ),
+    //             Expanded(
+    //               flex: 10,
+    //               child: Container(),
+    //             ),
+    //           ],
+    //         ),
+    //         Container(
+    //           height: 50,
+    //           width: 50,
+    //           child: Utility.imageLoader(
+    //             baseUrl: AppStrings.subjectImage,
+    //             url: widget.subject.image,
+    //             placeholder: AppAssets.subjectPlaceholder,
+    //             fit: BoxFit.contain,
+    //             placeholderColor: Colors.white,
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }
