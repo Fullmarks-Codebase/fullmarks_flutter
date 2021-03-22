@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -66,12 +67,24 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
     _controller1 = AnimationController(
       duration: animDuration,
       vsync: this,
-    );
+    )..addListener(() {
+        if (questions.length != 0 && user1 != null && user2 != null) {
+          if (_controller1.value.toString().substring(0, 4) == "0.99") {
+            _controller1.stop();
+          }
+        }
+      });
 
     _controller2 = AnimationController(
       duration: animDuration,
       vsync: this,
-    );
+    )..addListener(() {
+        if (questions.length != 0 && user1 != null && user2 != null) {
+          if (_controller2.value.toString().substring(0, 4) == "0.99") {
+            _controller2.stop();
+          }
+        }
+      });
 
     var chooseData = {
       "users": customer,
@@ -119,7 +132,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
       _notify();
       if (user1 != null && user2 != null) {
         if (_timer == null) {
-          startTimer();
+          // startTimer();
         }
       }
     });
@@ -302,7 +315,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
             ),
           ),
           SizedBox(
-            height: 8,
+            height: 16,
           ),
         ],
       ),
@@ -316,58 +329,70 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
 
   Widget searchingView() {
     return Expanded(
-      flex: 13,
+      flex: 12,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: 16,
         ),
         child: questions.length != 0 && user1 != null && user2 != null
-            ? Row(
+            ? Column(
                 children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        searchingText(
-                            user1.username.trim().length == 0
-                                ? "User" + user1.id.toString()
-                                : user1.username,
-                            20),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        searchingText("India", 20),
-                      ],
-                    ),
+                  searchingText(
+                    "Matched",
+                    25,
+                    color: AppColors.introColor4,
                   ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "VS",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 25,
-                          fontWeight: FontWeight.w900,
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            searchingText(
+                                user1.username.trim().length == 0
+                                    ? "User" + user1.id.toString()
+                                    : user1.username,
+                                20),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            searchingText("India", 20),
+                          ],
                         ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        searchingText(
-                            user2.username.trim().length == 0
-                                ? "User" + user2.id.toString()
-                                : user2.username,
-                            20),
-                        SizedBox(
-                          height: 8,
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "VS",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
                         ),
-                        searchingText("India", 20),
-                      ],
-                    ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            searchingText(
+                                user2.username.trim().length == 0
+                                    ? "User" + user2.id.toString()
+                                    : user2.username,
+                                20),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            searchingText("India", 20),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               )
@@ -393,8 +418,14 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                       SizedBox(
                         width: 8,
                       ),
-                      searchingText(
-                          _startNoPlayerAvailable.toString() + " s", 25),
+                      GestureDetector(
+                        onTap: () {
+                          print("123");
+                          _controller1.stop();
+                        },
+                        child: searchingText(
+                            _startNoPlayerAvailable.toString() + " s", 25),
+                      ),
                     ],
                   ),
                   Expanded(child: SvgPicture.asset(AppAssets.fly))
@@ -404,11 +435,14 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
     );
   }
 
-  Widget searchingText(String text, double fontSize) {
+  Widget searchingText(String text, double fontSize, {Color color}) {
+    if (color == null) {
+      color = AppColors.myProgressIncorrectcolor;
+    }
     return Text(
       text,
       style: TextStyle(
-        color: AppColors.myProgressIncorrectcolor,
+        color: color,
         fontWeight: FontWeight.bold,
         fontSize: fontSize,
       ),
