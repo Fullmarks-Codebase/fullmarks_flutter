@@ -132,7 +132,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
       _notify();
       if (user1 != null && user2 != null) {
         if (_timer == null) {
-          // startTimer();
+          startTimer();
         }
       }
     });
