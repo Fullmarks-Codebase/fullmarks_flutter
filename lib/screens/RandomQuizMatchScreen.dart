@@ -292,13 +292,6 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
           SizedBox(
             height: 8,
           ),
-          Expanded(
-            flex: 5,
-            child: SvgPicture.asset(AppAssets.fly),
-          ),
-          SizedBox(
-            height: 8,
-          ),
           Text(
             questions.length != 0 && user1 != null && user2 != null
                 ? "Get Ready to Play in  $_start  Second..."
@@ -323,7 +316,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
 
   Widget searchingView() {
     return Expanded(
-      flex: 7,
+      flex: 13,
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: 16,
@@ -382,14 +375,14 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  searchingText("Searching...", 20),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  searchingText("Waiting time", 20),
-                  SizedBox(
-                    height: 4,
-                  ),
+                  // searchingText("Searching...", 20),
+                  // SizedBox(
+                  //   height: 8,
+                  // ),
+                  // searchingText("Waiting time", 20),
+                  // SizedBox(
+                  //   height: 4,
+                  // ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -401,9 +394,10 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                         width: 8,
                       ),
                       searchingText(
-                          _startNoPlayerAvailable.toString() + " s", 23),
+                          _startNoPlayerAvailable.toString() + " s", 25),
                     ],
-                  )
+                  ),
+                  Expanded(child: SvgPicture.asset(AppAssets.fly))
                 ],
               ),
       ),
@@ -439,8 +433,8 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
               children: [
                 SvgPicture.asset("assets/randomQuizSearchBg.svg"),
                 Container(
-                  height: 70,
-                  width: 70,
+                  height: 60,
+                  width: 60,
                   child: Utility.imageLoader(
                     baseUrl: AppStrings.subjectImage,
                     url: widget.subject.image,
