@@ -7,7 +7,6 @@ class CustomAttrDelegate implements ZefyrAttrDelegate {
 
   @override
   void onLinkTap(BuildContext context, String value) {
-    print(value);
     Utility.launchURL(context, value.trim());
   }
 }
