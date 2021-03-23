@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -418,14 +417,8 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                       SizedBox(
                         width: 8,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          print("123");
-                          _controller1.stop();
-                        },
-                        child: searchingText(
-                            _startNoPlayerAvailable.toString() + " s", 25),
-                      ),
+                      searchingText(
+                          _startNoPlayerAvailable.toString() + " s", 25),
                     ],
                   ),
                   Expanded(child: SvgPicture.asset(AppAssets.fly))
@@ -495,7 +488,18 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                         borderWidth: 3,
                         placeholderColor: Colors.white,
                       )
-                    : SvgPicture.asset(AppAssets.user),
+                    : Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: Color(0xffd9d9d9),
+                          border: Border.all(
+                            color: Color(0xffd9d9d9),
+                          ),
+                          borderRadius: BorderRadius.circular(70),
+                        ),
+                        child: SvgPicture.asset(AppAssets.user),
+                      ),
           ),
         ),
       ),
