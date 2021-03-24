@@ -42,26 +42,14 @@ class _TestResultScreenState extends State<TestResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Utility.setSvgFullScreen(context, AppAssets.commonBg),
-            body(),
-          ],
-        ),
+    return Scaffold(
+      body: Stack(
+        children: [
+          Utility.setSvgFullScreen(context, AppAssets.commonBg),
+          body(),
+        ],
       ),
     );
-  }
-
-  Future<bool> _onBackPressed() {
-    return Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (BuildContext context) => HomeScreen(),
-            ),
-            (Route<dynamic> route) => false) ??
-        false;
   }
 
   Widget body() {

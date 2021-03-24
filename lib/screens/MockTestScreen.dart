@@ -162,7 +162,7 @@ class _MockTestScreenState extends State<MockTestScreen> {
           element.question.selectedAnswer = int.tryParse(element.userAnswer);
           questionsDetails.add(element.question);
         });
-        Navigator.of(context).pushAndRemoveUntil(
+        Navigator.of(context).push(
           MaterialPageRoute(
             builder: (BuildContext context) => TestResultScreen(
               questionsDetails: questionsDetails,
@@ -174,7 +174,6 @@ class _MockTestScreenState extends State<MockTestScreen> {
               title: mocktests[index].name,
             ),
           ),
-          (Route<dynamic> route) => false,
         );
       } else {
         Utility.showToast(context, response.message);

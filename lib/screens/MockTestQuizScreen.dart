@@ -745,7 +745,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
       Utility.showToast(context, response.message);
 
       if (response.code == 200) {
-        Navigator.of(context).pushAndRemoveUntil(
+        Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (BuildContext context) => TestResultScreen(
               questionsDetails: questionsDetails,
@@ -757,7 +757,6 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
               title: widget.mockTest.name,
             ),
           ),
-          (Route<dynamic> route) => false,
         );
       }
     } else {
