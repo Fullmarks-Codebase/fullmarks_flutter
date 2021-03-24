@@ -1406,4 +1406,19 @@ class Utility {
       borderRadius: BorderRadius.circular(8),
     );
   }
+
+  static String getRankShareText(int rank) {
+    String rankTitleStr = rank.toString().endsWith("11") ||
+            rank.toString().endsWith("12") ||
+            rank.toString().endsWith("13")
+        ? "th"
+        : rank.toString().endsWith("1")
+            ? "st"
+            : rank.toString().endsWith("2")
+                ? "nd"
+                : rank.toString().endsWith("3")
+                    ? "rd"
+                    : "th";
+    return "I just got $rank$rankTitleStr rank in Fullmarks- The Learning App.\nCome join and beat me on Fullmarks- The Learning App where learning is fun.\n${AppStrings.playStore} \nIf you already have the app, click here - ${AppStrings.deepLinkURL}";
+  }
 }

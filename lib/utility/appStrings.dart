@@ -110,11 +110,12 @@ class AppStrings {
       "https://play.google.com/store/apps/details?id=app.fullmarks.com"; //change this
   // static String appstore =
   //     "https://apps.apple.com/in/app/apple-store/id375380948"; //change this
+  static String deepLinkURL = "https://fullmarks.app";
   static String commonShareText =
       "Hey, Checkout “Fullmarks – Learn CBSE, Math, English, Science”, download the app – $playStore \n\nIf you already have the app, click here - ";
-  static String shareAppText = "$commonShareText https://fullmarks.app";
+  static String shareAppText = "$commonShareText $deepLinkURL";
   static String addFriendText =
-      "$commonShareText https://fullmarks.app/friends to become my friend";
+      "$commonShareText $deepLinkURL/friends to become my friend";
   static String joinLiveQuizDeepLinkKey = "Live_Quiz";
   // "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore";
   // "Check out “Fullmarks” - Learn CBSE Maths, English, Science in a very easy manner. Practice with mock tests at your own pace.\nDownload Android app - $playStore \nDownload iOS app - $appstore";

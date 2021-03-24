@@ -41,7 +41,7 @@ class _RankListScreenState extends State<RankListScreen> {
   String notSubmittedString = "";
   Timer _timerInternet;
   Timer _timerCheck;
-
+  int myRank = -1;
   ScreenshotController screenshotController = ScreenshotController();
 
   @override
@@ -119,6 +119,12 @@ class _RankListScreenState extends State<RankListScreen> {
 
       if (response.code == 200) {
         quizLeaderboard = response.result;
+        response.result.forEach((element) {
+          if (element.user.id == customer.id) {
+            myRank = element.rank;
+          }
+        });
+
         _timerCheck.cancel();
         _notify();
       }
@@ -305,7 +311,7 @@ class _RankListScreenState extends State<RankListScreen> {
           if (value["isSuccess"]) {
             Share.shareFiles(
               [value["filePath"].toString().replaceAll("file://", "")],
-              text: "My rank",
+              text: Utility.getRankShareText(myRank),
             ).then((value) {
               print("share success");
             }).catchError((onError) {
