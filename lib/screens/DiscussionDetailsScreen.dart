@@ -1,22 +1,24 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fullmarks/models/CommentResponse.dart';
 import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/DiscussionResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
-import 'package:fullmarks/notus/src/document.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
-import 'package:fullmarks/widgets/CustomAttrDelegate.dart';
-import 'package:fullmarks/widgets/CustomImageDelegate.dart';
+import 'package:fullmarks/widgets/CommentsItemView.dart';
 import 'package:fullmarks/widgets/DiscussionItemView.dart';
-import 'package:fullmarks/zefyr/src/widgets/view.dart';
-import 'package:quill_delta/quill_delta.dart';
+import 'package:http/http.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'AddCommentScreen.dart';
@@ -43,6 +45,8 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
   bool stop = false;
   List<CommentDetails> comments = List();
   Customer customer = Utility.getCustomer();
+  File _image;
+  final _picker = ImagePicker();
 
   @override
   void initState() {
@@ -179,6 +183,10 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
                 child: Column(
                   children: [
                     DiscussionItemView(
+                      onCommentTap: () {},
+                      onCameraTap: () {
+                        _onPicTap();
+                      },
                       onUserTap: () {
                         Navigator.push(
                           context,
@@ -189,12 +197,10 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
                           ),
                         );
                       },
-                      onUpArrowTap: null,
                       isDetails: true,
                       onItemTap: null,
                       customer: Utility.getCustomer(),
                       discussion: widget.discussion,
-                      isLast: false,
                       onAddComment: () async {
                         bool isComment = await Navigator.push(
                           context,
@@ -275,6 +281,147 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
               ),
             ),
     );
+  }
+
+  _onPicTap() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) {
+        return CupertinoActionSheet(
+          title: Text("Select Post Picture"),
+          message: Text("Select from"),
+          actions: [
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                _getImage(ImageSource.camera);
+              },
+              child: Text("Camera"),
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                _getImage(ImageSource.gallery);
+              },
+              child: Text("Gallery"),
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Cancel"),
+          ),
+        );
+      },
+    );
+  }
+
+  _getImage(ImageSource source) async {
+    _picker.getImage(source: source).then((value) {
+      if (value != null) {
+        _image = File(value.path);
+        _notify();
+        _cropImage();
+      } else {
+        print('No image selected.');
+      }
+      _notify();
+    }).catchError((onError) {
+      print(onError);
+    });
+  }
+
+  Future<Null> _cropImage() async {
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: _image.path,
+        aspectRatioPresets: [CropAspectRatioPreset.square],
+        compressQuality: 80,
+        cropStyle: CropStyle.circle,
+        androidUiSettings: AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: AppColors.appColor,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+    if (croppedFile != null) {
+      _image = croppedFile;
+      _notify();
+      addComment();
+    }
+  }
+
+  addComment() async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //headers
+      var headers = Map<String, String>();
+      headers["Accept"] = "application/json";
+      if (Utility.getCustomer() != null) {
+        headers["Authorization"] = Utility.getCustomer().token;
+      }
+
+      //api request
+      var uri = Uri.parse(AppStrings.addPostsComments);
+      var request = MultipartRequest('POST', uri);
+      request.headers.addAll(headers);
+
+      request.fields["postId"] = widget.discussion.id.toString();
+      List question = [
+        {
+          "insert": "​",
+          "attributes": {
+            "embed": {
+              "type": "image",
+              "source": _image.path,
+            }
+          }
+        },
+        {"insert": "\n"}
+      ];
+      request.fields["comment"] = jsonEncode(question);
+
+      if (_image != null) {
+        request.files.add(
+          await MultipartFile.fromPath(
+            'postimages',
+            _image.path,
+            contentType: MediaType('image', _image.path.split(".").last),
+            filename: _image.path.split("/").last,
+          ),
+        );
+      }
+
+      print(request.fields);
+      print(request.files);
+
+      //api call
+      Response response = await Response.fromStream(await request.send());
+      //hide progress
+      _isLoading = false;
+      _notify();
+      print(response.body);
+      if (response.statusCode == 200) {
+        CommonResponse commonResponse =
+            CommonResponse.fromJson(jsonDecode(response.body));
+        Utility.showToast(context, commonResponse.message);
+        _getDiscussions();
+        refresh();
+      } else {
+        CommonResponse commonResponse =
+            CommonResponse.fromJson(jsonDecode(response.body));
+        Utility.showToast(context, commonResponse.message);
+      }
+    } else {
+      Utility.showToast(context, AppStrings.noInternet);
+    }
   }
 
   _deleteDiscussion() async {
@@ -426,111 +573,59 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
   }
 
   Widget commentsItemView(int index) {
-    return Container(
-      color: AppColors.lightAppColor,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Utility.discussionListSeparator(),
-          userView(index),
-          Container(
-            margin: EdgeInsets.only(
-              left: 16,
-              right: 16,
-            ),
-            child: ZefyrView(
-              document: NotusDocument.fromDelta(
-                Delta.fromJson(json.decode(comments[index].comment) as List),
-              ),
-              imageDelegate: CustomImageDelegate(AppStrings.commentImage),
-              attrDelegate: CustomAttrDelegate(),
+    return CommentsItemView(
+      onUserTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OtherProfileScreen(
+              id: widget.discussion.userId.toString(),
             ),
           ),
-          SizedBox(
-            height: 16,
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              left: 16,
-              right: 16,
-            ),
-            child: Row(
-              children: [
-                Utility.likeCommentView(
-                  assetName: comments[index].liked == 1
-                      ? AppAssets.liked
-                      : AppAssets.postLike,
-                  count: comments[index].likes.toString(),
-                  onPressed: () async {
-                    //delay to give ripple effect
-                    await Future.delayed(
-                        Duration(milliseconds: AppStrings.delay));
-                    if (comments[index].liked == 1) {
-                      disLikeComment(index);
-                    } else {
-                      likeComment(index);
-                    }
-                  },
-                ),
-                Spacer(),
-                comments[index].userId != customer.id
-                    ? Container()
-                    : Utility.iconButton(
-                        assetName: AppAssets.postEdit,
-                        onPressed: () async {
-                          //delay to give ripple effect
-                          await Future.delayed(
-                              Duration(milliseconds: AppStrings.delay));
-                          bool isRefresh = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddCommentScreen(
-                                isEdit: true,
-                                discussion: widget.discussion,
-                                comment: comments[index],
-                              ),
-                            ),
-                          );
-                          if (isRefresh != null) {
-                            _getDiscussions();
-                            refresh();
-                          }
-                        },
-                      ),
-                comments[index].userId != customer.id
-                    ? Container()
-                    : Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 16,
-                        ),
-                        child: VerticalDivider(),
-                      ),
-                comments[index].userId != customer.id
-                    ? Container()
-                    : Utility.iconButton(
-                        assetName: AppAssets.postDelete,
-                        onPressed: () {
-                          Utility.showDeleteDialog(
-                            context: context,
-                            title: "Do you want to delete this Comment?",
-                            onDeletePress: () async {
-                              //delay to give ripple effect
-                              await Future.delayed(
-                                  Duration(milliseconds: AppStrings.delay));
-                              Navigator.pop(context);
-                              _deleteComment(index);
-                            },
-                          );
-                        },
-                      ),
-              ],
+        );
+      },
+      customer: customer,
+      discussion: widget.discussion,
+      comment: comments[index],
+      onDeleteTap: () {
+        Utility.showDeleteDialog(
+          context: context,
+          title: "Do you want to delete this Comment?",
+          onDeletePress: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
+            Navigator.pop(context);
+            _deleteComment(index);
+          },
+        );
+      },
+      onEditTap: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        bool isRefresh = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddCommentScreen(
+              isEdit: true,
+              discussion: widget.discussion,
+              comment: comments[index],
             ),
           ),
-          SizedBox(
-            height: 16,
-          ),
-        ],
-      ),
+        );
+        if (isRefresh != null) {
+          _getDiscussions();
+          refresh();
+        }
+      },
+      onLikeDislikeTap: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        if (comments[index].liked == 1) {
+          disLikeComment(index);
+        } else {
+          likeComment(index);
+        }
+      },
     );
   }
 
@@ -608,87 +703,5 @@ class _DiscussionDetailsScreenState extends State<DiscussionDetailsScreen> {
       //show message that internet is not available
       Utility.showToast(context, AppStrings.noInternet);
     }
-  }
-
-  Widget userView(int index) {
-    return Container(
-      padding: EdgeInsets.only(
-        right: 16,
-        left: 16,
-      ),
-      child: Row(
-        children: [
-          Container(
-            margin: EdgeInsets.only(
-              top: 16,
-              bottom: 16,
-              right: 16,
-            ),
-            child: Utility.getUserImage(
-              url: comments[index].user.thumbnail,
-            ),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        comments[index].user.username.trim().length == 0
-                            ? "User" + comments[index].user.id.toString()
-                            : comments[index].user.username,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Text(
-                      Utility.convertDate(
-                          comments[index].createdAt.substring(0, 10)),
-                      style: TextStyle(
-                        color: AppColors.lightTextColor,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Row(
-                  children: [
-                    Container(
-                      height: 12,
-                      width: 12,
-                      child: Utility.imageLoader(
-                        baseUrl: AppStrings.subjectImage,
-                        url: widget.discussion.subject.image,
-                        placeholder: AppAssets.subjectPlaceholder,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      widget.discussion.subject.name,
-                      style: TextStyle(
-                        color: AppColors.appColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
   }
 }

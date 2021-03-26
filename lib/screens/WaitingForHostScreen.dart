@@ -22,9 +22,11 @@ import 'LiveQuizPlayScreen.dart';
 class WaitingForHostScreen extends StatefulWidget {
   LiveQuizWelcomeResponse liveQuizWelcomeResponse;
   IO.Socket socket;
+  int seconds;
   WaitingForHostScreen({
     @required this.liveQuizWelcomeResponse,
     @required this.socket,
+    @required this.seconds,
   });
   @override
   _WaitingForHostScreenState createState() => _WaitingForHostScreenState();
@@ -142,6 +144,7 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
                 room: widget.liveQuizWelcomeResponse.room,
                 isCustomQuiz: isCustomQuiz,
                 socket: socket,
+                seconds: widget.seconds,
               ),
             ),
           );

@@ -194,6 +194,7 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                   userId: Utility.getCustomer().id,
                 ),
                 socket: socket,
+                seconds: 30,
               ),
             ),
           );

@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fullmarks/models/CommentResponse.dart';
 import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/DiscussionResponse.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
@@ -11,7 +16,12 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:fullmarks/widgets/CommentsItemView.dart';
 import 'package:fullmarks/widgets/DiscussionItemView.dart';
+import 'package:http/http.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'AddCommentScreen.dart';
@@ -36,6 +46,12 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
   List<DiscussionDetails> discussions = List();
   int page = 0;
   bool stop = false;
+  File _image;
+  final _picker = ImagePicker();
+  bool _isLoadingComments = false;
+  List<CommentDetails> comments = List();
+  int selectedPostToViewComment = -1;
+  bool isShowMoreComments = false;
 
   @override
   void initState() {
@@ -141,6 +157,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
     page = 0;
     discussions.clear();
     stop = false;
+    selectedPostToViewComment = -1;
     _notify();
     _getDiscussions();
   }
@@ -359,113 +376,524 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
     );
   }
 
-  Widget itemView(int index) {
-    return DiscussionItemView(
-      customer: customer,
-      discussion: discussions[index],
-      isLast: (discussions.length - 1) == index,
-      isDetails: false,
-      onUpArrowTap: () async {
-        //delay to give ripple effect
-        await Future.delayed(Duration(milliseconds: AppStrings.delay));
-        controller.animateTo(
-          0,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.ease,
-        );
-      },
-      onItemTap: () async {
-        //delay to give ripple effect
-        await Future.delayed(Duration(milliseconds: AppStrings.delay));
-        var data = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DiscussionDetailsScreen(
-              discussion: discussions[index],
+  _onPicTap(int index) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) {
+        return CupertinoActionSheet(
+          title: Text("Select Post Picture"),
+          message: Text("Select from"),
+          actions: [
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                _getImage(ImageSource.camera, index);
+              },
+              child: Text("Camera"),
             ),
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                _getImage(ImageSource.gallery, index);
+              },
+              child: Text("Gallery"),
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Cancel"),
           ),
         );
-        try {
-          DiscussionDetails discussion = data;
-          if (discussion != null) {
-            discussions[index] = discussion;
-            _notify();
-          }
-        } catch (e) {}
-        try {
-          bool isRefresh = data;
-          if (isRefresh != null) {
-            refresh();
-          }
-        } catch (e) {}
       },
-      onAddComment: () async {
-        bool isComment = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AddCommentScreen(
-              isEdit: false,
-              discussion: discussions[index],
-              comment: null,
-            ),
+    );
+  }
+
+  _getImage(ImageSource source, int index) async {
+    _picker.getImage(source: source).then((value) {
+      if (value != null) {
+        _image = File(value.path);
+        _notify();
+        _cropImage(index);
+      } else {
+        print('No image selected.');
+      }
+      _notify();
+    }).catchError((onError) {
+      print(onError);
+    });
+  }
+
+  Future<Null> _cropImage(int index) async {
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: _image.path,
+        aspectRatioPresets: [CropAspectRatioPreset.square],
+        compressQuality: 80,
+        cropStyle: CropStyle.circle,
+        androidUiSettings: AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: AppColors.appColor,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        ));
+    if (croppedFile != null) {
+      _image = croppedFile;
+      _notify();
+      addComment(index);
+    }
+  }
+
+  addComment(int index) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //headers
+      var headers = Map<String, String>();
+      headers["Accept"] = "application/json";
+      if (Utility.getCustomer() != null) {
+        headers["Authorization"] = Utility.getCustomer().token;
+      }
+
+      //api request
+      var uri = Uri.parse(AppStrings.addPostsComments);
+      var request = MultipartRequest('POST', uri);
+      request.headers.addAll(headers);
+
+      request.fields["postId"] = discussions[index].id.toString();
+      List question = [
+        {
+          "insert": "​",
+          "attributes": {
+            "embed": {
+              "type": "image",
+              "source": _image.path,
+            }
+          }
+        },
+        {"insert": "\n"}
+      ];
+      request.fields["comment"] = jsonEncode(question);
+
+      if (_image != null) {
+        request.files.add(
+          await MultipartFile.fromPath(
+            'postimages',
+            _image.path,
+            contentType: MediaType('image', _image.path.split(".").last),
+            filename: _image.path.split("/").last,
           ),
         );
-        if (isComment != null) {
-          discussions[index].comments = discussions[index].comments + 1;
+      }
+
+      print(request.fields);
+      print(request.files);
+
+      //api call
+      Response response = await Response.fromStream(await request.send());
+      //hide progress
+      _isLoading = false;
+      _notify();
+      print(response.body);
+      if (response.statusCode == 200) {
+        CommonResponse commonResponse =
+            CommonResponse.fromJson(jsonDecode(response.body));
+        Utility.showToast(context, commonResponse.message);
+        discussions[index].comments++;
+      } else {
+        CommonResponse commonResponse =
+            CommonResponse.fromJson(jsonDecode(response.body));
+        Utility.showToast(context, commonResponse.message);
+      }
+    } else {
+      Utility.showToast(context, AppStrings.noInternet);
+    }
+  }
+
+  _getComments(int index) async {
+    isShowMoreComments = false;
+    _notify();
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoadingComments = true;
+      _notify();
+      //api request
+      var request = Map<String, dynamic>();
+      request["postId"] = discussions[index].id.toString();
+      request["page"] = "1";
+      //api call
+      CommentResponse response = CommentResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.getPostsComments, request: request),
+      );
+      //hide progress
+      _isLoadingComments = false;
+      _notify();
+
+      if (response.code == 200) {
+        if (response.result.length != 0) {
+          if (response.result.length > 5) {
+            isShowMoreComments = true;
+            comments = response.result.sublist(0, 5);
+          } else {
+            isShowMoreComments = false;
+            comments = response.result;
+          }
           _notify();
-        }
-      },
-      onLikeDislike: () async {
-        //delay to give ripple effect
-        await Future.delayed(Duration(milliseconds: AppStrings.delay));
-        if (discussions[index].liked == 1) {
-          disLikePost(index);
         } else {
-          likePost(index);
+          noDataLogic(page);
         }
-      },
-      onEdit: () async {
-        //delay to give ripple effect
-        await Future.delayed(Duration(milliseconds: AppStrings.delay));
-        bool isRefresh = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AddDiscussionScreen(
-              isEdit: true,
-              discussion: discussions[index],
-            ),
-          ),
-        );
-        if (isRefresh != null) {
-          refresh();
-        }
-      },
-      onDelete: () async {
-        //delay to give ripple effect
-        await Future.delayed(Duration(milliseconds: AppStrings.delay));
-        Navigator.pop(context);
-        _deleteDiscussion(index);
-      },
-      onSaveUnsave: () async {
-        //delay to give ripple effect
-        await Future.delayed(Duration(milliseconds: AppStrings.delay));
-        if (discussions[index].save == 0) {
-          savePost(index);
-        } else {
-          unsavePost(index);
-        }
-      },
+      } else {
+        noDataLogic(page);
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(context, AppStrings.noInternet);
+    }
+  }
+
+  Widget itemView(int index) {
+    return Column(
+      children: [
+        DiscussionItemView(
+          onCommentTap: () {
+            if (discussions[index].comments > 0) {
+              if (selectedPostToViewComment == index) {
+                selectedPostToViewComment = -1;
+                comments.clear();
+                _notify();
+              } else {
+                selectedPostToViewComment = index;
+                comments.clear();
+                _notify();
+                _getComments(index);
+              }
+            }
+          },
+          onCameraTap: () {
+            _onPicTap(index);
+          },
+          customer: customer,
+          discussion: discussions[index],
+          isDetails: false,
+          onItemTap: () {
+            onItemTap(index);
+          },
+          onAddComment: () async {
+            bool isComment = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddCommentScreen(
+                  isEdit: false,
+                  discussion: discussions[index],
+                  comment: null,
+                ),
+              ),
+            );
+            if (isComment != null) {
+              discussions[index].comments = discussions[index].comments + 1;
+              _notify();
+              if (selectedPostToViewComment == index) {
+                _getComments(index);
+              }
+            }
+          },
+          onLikeDislike: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
+            if (discussions[index].liked == 1) {
+              disLikePost(index);
+            } else {
+              likePost(index);
+            }
+          },
+          onEdit: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
+            bool isRefresh = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddDiscussionScreen(
+                  isEdit: true,
+                  discussion: discussions[index],
+                ),
+              ),
+            );
+            if (isRefresh != null) {
+              refresh();
+            }
+          },
+          onDelete: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
+            Navigator.pop(context);
+            _deleteDiscussion(index);
+          },
+          onSaveUnsave: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
+            if (discussions[index].save == 0) {
+              savePost(index);
+            } else {
+              unsavePost(index);
+            }
+          },
+          onUserTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OtherProfileScreen(
+                  id: discussions[index].userId.toString(),
+                ),
+              ),
+            );
+          },
+        ),
+        commentsListView(index),
+        showMoreCommentsView(index),
+        (discussions.length - 1) == index
+            ? Container(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Utility.roundShadowButton(
+                  context: context,
+                  assetName: AppAssets.upArrow,
+                  onPressed: () async {
+                    //delay to give ripple effect
+                    await Future.delayed(
+                        Duration(milliseconds: AppStrings.delay));
+                    controller.animateTo(
+                      0,
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.ease,
+                    );
+                  },
+                ),
+              )
+            : Container(),
+      ],
+    );
+  }
+
+  Widget showMoreCommentsView(int postIndex) {
+    return selectedPostToViewComment == postIndex
+        ? isShowMoreComments
+            ? GestureDetector(
+                onTap: () {
+                  onItemTap(postIndex);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
+                  child: Text(
+                    "Show more ...",
+                    style: TextStyle(
+                      color: AppColors.appColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              )
+            : Container()
+        : Container();
+  }
+
+  Widget commentsListView(int postIndex) {
+    return selectedPostToViewComment == postIndex
+        ? Stack(
+            children: [
+              !_isLoadingComments && comments.length == 0
+                  ? Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 16,
+                      ),
+                      child: Utility.emptyView("No Comments"),
+                    )
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(comments.length, (commentIndex) {
+                        return commentsItemView(postIndex, commentIndex);
+                      }),
+                    ),
+              _isLoadingComments ? Utility.progress(context) : Container()
+            ],
+          )
+        : Container();
+  }
+
+  onItemTap(int index) async {
+    //delay to give ripple effect
+    await Future.delayed(Duration(milliseconds: AppStrings.delay));
+    var data = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DiscussionDetailsScreen(
+          discussion: discussions[index],
+        ),
+      ),
+    );
+    if (selectedPostToViewComment == index) {
+      _getComments(index);
+    }
+    try {
+      DiscussionDetails discussion = data;
+      if (discussion != null) {
+        discussions[index] = discussion;
+        _notify();
+      }
+    } catch (e) {}
+    try {
+      bool isRefresh = data;
+      if (isRefresh != null) {
+        refresh();
+      }
+    } catch (e) {}
+  }
+
+  Widget commentsItemView(int postIndex, int commentIndex) {
+    return CommentsItemView(
       onUserTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => OtherProfileScreen(
-              id: discussions[index].userId.toString(),
+              id: discussions[postIndex].userId.toString(),
             ),
           ),
         );
       },
+      customer: customer,
+      discussion: discussions[postIndex],
+      comment: comments[commentIndex],
+      onDeleteTap: () {
+        Utility.showDeleteDialog(
+          context: context,
+          title: "Do you want to delete this Comment?",
+          onDeletePress: () async {
+            //delay to give ripple effect
+            await Future.delayed(Duration(milliseconds: AppStrings.delay));
+            Navigator.pop(context);
+            _deleteComment(postIndex, commentIndex);
+          },
+        );
+      },
+      onEditTap: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        bool isRefresh = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddCommentScreen(
+              isEdit: true,
+              discussion: discussions[postIndex],
+              comment: comments[commentIndex],
+            ),
+          ),
+        );
+        if (isRefresh != null) {
+          _getDiscussions();
+          refresh();
+          if (selectedPostToViewComment == postIndex) {
+            _getComments(postIndex);
+          }
+        }
+      },
+      onLikeDislikeTap: () async {
+        //delay to give ripple effect
+        await Future.delayed(Duration(milliseconds: AppStrings.delay));
+        if (comments[commentIndex].liked == 1) {
+          disLikeComment(commentIndex);
+        } else {
+          likeComment(commentIndex);
+        }
+      },
     );
+  }
+
+  _deleteComment(int postIndex, int commentIndex) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //show progress
+      _isLoading = true;
+      _notify();
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context).deleteCall(
+          url: AppStrings.deletePostsComments +
+              comments[commentIndex].id.toString(),
+        ),
+      );
+
+      Utility.showToast(context, response.message);
+
+      //hide progress
+      _isLoading = false;
+      _notify();
+
+      if (response.code == 200) {
+        comments.removeAt(commentIndex);
+        discussions[postIndex].comments = discussions[postIndex].comments - 1;
+        _notify();
+        _getComments(postIndex);
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(context, AppStrings.noInternet);
+    }
+  }
+
+  likeComment(int index) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      request["commentId"] = comments[index].id.toString();
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.likePostsComments, request: request),
+      );
+
+      if (response.code == 200) {
+        comments[index].likes = comments[index].likes + 1;
+        comments[index].liked = 1;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(context, AppStrings.noInternet);
+    }
+  }
+
+  disLikeComment(int index) async {
+    //check internet connection available or not
+    if (await ApiManager.checkInternet()) {
+      //api request
+      var request = Map<String, dynamic>();
+      request["commentId"] = comments[index].id.toString();
+      //api call
+      CommonResponse response = CommonResponse.fromJson(
+        await ApiManager(context)
+            .postCall(url: AppStrings.dislikePostsComments, request: request),
+      );
+
+      if (response.code == 200) {
+        comments[index].likes = comments[index].likes - 1;
+        comments[index].liked = 0;
+        _notify();
+      }
+    } else {
+      //show message that internet is not available
+      Utility.showToast(context, AppStrings.noInternet);
+    }
   }
 
   _deleteDiscussion(int index) async {

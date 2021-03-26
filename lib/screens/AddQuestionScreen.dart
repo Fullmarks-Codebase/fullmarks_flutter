@@ -502,6 +502,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
                 answerStatus[3] = false;
               }
               answerStatus[index] = data["isAnswer"];
+              _notify();
             }
           },
           child: Container(
@@ -511,24 +512,40 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
             ),
             child: Column(
               children: [
-                widget.isEdit
-                    ? Container(
+                answers[index] == ""
+                    ? widget.isEdit
+                        ? Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            child: SvgPicture.asset(
+                              AppAssets.pencil,
+                              color: bgColor,
+                            ),
+                          )
+                        : SvgPicture.asset(AppAssets.add)
+                    : Container(
                         padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
                         ),
                         child: SvgPicture.asset(
-                          AppAssets.pencil,
+                          AppAssets.checkBlue,
                           color: bgColor,
                         ),
-                      )
-                    : SvgPicture.asset(AppAssets.add),
+                      ),
                 SizedBox(
                   height: 16,
                 ),
                 Text(
-                  widget.isEdit ? "Edit Option" : "Add Option",
+                  answers[index] == ""
+                      ? widget.isEdit
+                          ? "Edit Option"
+                          : "Add Option"
+                      : "Added",
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

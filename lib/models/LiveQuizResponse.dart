@@ -61,12 +61,20 @@ class LiveQuizRoom {
   String room;
   String updatedAt;
   String createdAt;
+  String timeLimit;
 
-  LiveQuizRoom(
-      {this.id, this.userId, this.room, this.updatedAt, this.createdAt});
+  LiveQuizRoom({
+    this.id,
+    this.timeLimit,
+    this.userId,
+    this.room,
+    this.updatedAt,
+    this.createdAt,
+  });
 
   LiveQuizRoom.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    timeLimit = json['timeLimit'].toString();
     userId = json['userId'];
     room = json['room'];
     updatedAt = json['updatedAt'];
@@ -76,6 +84,7 @@ class LiveQuizRoom {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['timeLimit'] = this.timeLimit;
     data['userId'] = this.userId;
     data['room'] = this.room;
     data['updatedAt'] = this.updatedAt;

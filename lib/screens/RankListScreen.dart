@@ -362,6 +362,14 @@ class _RankListScreenState extends State<RankListScreen> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
+          subtitle: Text(
+            quizLeaderboard[index].points.toString() +
+                " point" +
+                (quizLeaderboard[index].points <= 1 ? "" : "s"),
+            style: TextStyle(
+              color: AppColors.appColor,
+            ),
+          ),
           trailing: Text(
             "#" + quizLeaderboard[index].rank.toString(),
             style: TextStyle(

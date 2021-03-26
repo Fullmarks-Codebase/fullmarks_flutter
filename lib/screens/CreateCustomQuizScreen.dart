@@ -356,6 +356,7 @@ class _CreateCustomQuizScreenState extends State<CreateCustomQuizScreen> {
                                             customQuiz:
                                                 customQuizDetails[index],
                                             isCustomQuiz: true,
+                                            seconds: 0,
                                           ),
                                         ),
                                       );

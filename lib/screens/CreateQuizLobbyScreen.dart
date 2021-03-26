@@ -26,10 +26,12 @@ class CreateQuizLobbyScreen extends StatefulWidget {
   SubjectDetails subject;
   CustomQuizDetails customQuiz;
   bool isCustomQuiz;
+  int seconds;
   CreateQuizLobbyScreen({
     @required this.subject,
     @required this.customQuiz,
     @required this.isCustomQuiz,
+    @required this.seconds,
   });
   @override
   _CreateQuizLobbyScreenState createState() => _CreateQuizLobbyScreenState();
@@ -132,6 +134,8 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
       } else {
         request["customMasterId"] = widget.customQuiz.id.toString();
       }
+      request["timeLimit"] = widget.seconds.toString();
+
       //api call
       LiveQuizResponse response = LiveQuizResponse.fromJson(
         await ApiManager(context).postCall(
@@ -335,6 +339,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
                 room: liveQuizDetail.room,
                 isCustomQuiz: widget.isCustomQuiz,
                 socket: socket,
+                seconds: widget.seconds,
               ),
             ),
           );

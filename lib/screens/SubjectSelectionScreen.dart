@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
-import 'package:fullmarks/screens/CreateQuizLobbyScreen.dart';
 import 'package:fullmarks/screens/RandomQuizMatchScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
@@ -10,6 +9,8 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+
+import 'ListQuizChooseTimeScreen.dart';
 
 class SubjectSelectionScreen extends StatefulWidget {
   String title;
@@ -180,10 +181,9 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                 ? RandomQuizMatchScreen(
                     subject: subjects[index],
                   )
-                : CreateQuizLobbyScreen(
+                : ListQuizChooseTimeScreen(
                     subject: subjects[index],
-                    customQuiz: null,
-                    isCustomQuiz: false,
+                    isRandomQuiz: widget.isRandomQuiz,
                   ),
           ),
         );

@@ -57,6 +57,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
             builder: (context) => WaitingForHostScreen(
               liveQuizWelcomeResponse: response,
               socket: socket,
+              seconds: int.tryParse(response.room.timeLimit),
             ),
           ),
         );

@@ -314,13 +314,19 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   void updateSearchQuery(String newQuery) {
     suggestionList = newQuery.isEmpty
         ? friends
-        : friends
-            .where(
-              (p) => p.username.contains(
-                RegExp(newQuery, caseSensitive: false),
-              ),
-            )
-            .toList();
+        : friends.where(
+            (p) {
+              return p.username.contains(
+                    RegExp(newQuery, caseSensitive: false),
+                  ) ||
+                  p.phoneNumber.contains(
+                    RegExp(newQuery, caseSensitive: false),
+                  ) ||
+                  p.email.contains(
+                    RegExp(newQuery, caseSensitive: false),
+                  );
+            },
+          ).toList();
     _notify();
   }
 
@@ -398,6 +404,21 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
+          subtitle: suggestionList.toList()[index].phoneNumber == ""
+              ? suggestionList.toList()[index].email == ""
+                  ? null
+                  : Text(
+                      suggestionList.toList()[index].email,
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    )
+              : Text(
+                  "+91" + suggestionList.toList()[index].phoneNumber,
+                  style: TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
           trailing: SvgPicture.asset(selectedContact.contains(index)
               ? AppAssets.friendCheck
               : AppAssets.friendUncheck),

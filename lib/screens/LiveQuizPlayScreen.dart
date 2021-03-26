@@ -30,12 +30,14 @@ class LiveQuizPlayScreen extends StatefulWidget {
   List<QuestionDetails> questions;
   LiveQuizRoom room;
   IO.Socket socket;
+  int seconds;
   LiveQuizPlayScreen({
     @required this.isRandomQuiz,
     @required this.isCustomQuiz,
     @required this.questions,
     @required this.room,
     @required this.socket,
+    @required this.seconds,
   });
   @override
   _LiveQuizPlayScreenState createState() => _LiveQuizPlayScreenState();
@@ -51,7 +53,6 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   int perQuestionSeconds = 0;
   RewardedVideoAd rewardAd = RewardedVideoAd.instance;
   bool _isLoading = false;
-  int defaultSeconds = 30;
   RandomQuizParticipantsDetails user1;
   RandomQuizParticipantsDetails user2;
   Timer _timerInternet;
@@ -61,10 +62,10 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
 
   getQuestionSeconds() {
     perQuestionSeconds = widget.isRandomQuiz
-        ? defaultSeconds
+        ? widget.seconds
         : widget.isCustomQuiz
             ? widget.questions[currentQuestion].time
-            : defaultSeconds;
+            : widget.seconds;
     _notify();
   }
 

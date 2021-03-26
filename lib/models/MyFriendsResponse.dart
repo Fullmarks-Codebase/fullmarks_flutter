@@ -29,6 +29,7 @@ class MyFriendsResponse {
 
 class MyFriendsDetails {
   String phoneNumber;
+  String email;
   String userProfileImage;
   String username;
   int id;
@@ -36,6 +37,7 @@ class MyFriendsDetails {
 
   MyFriendsDetails(
       {this.phoneNumber,
+      this.email,
       this.userProfileImage,
       this.username,
       this.id,
@@ -43,6 +45,7 @@ class MyFriendsDetails {
 
   MyFriendsDetails.fromJson(Map<String, dynamic> json) {
     phoneNumber = json['phoneNumber'] ?? "";
+    email = json['email'] ?? "";
     userProfileImage = json['userProfileImage'] ?? "";
     username = json['username'] ?? "";
     id = json['id'] ?? 0;
@@ -52,6 +55,7 @@ class MyFriendsDetails {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['phoneNumber'] = this.phoneNumber;
+    data['email'] = this.email;
     data['userProfileImage'] = this.userProfileImage;
     data['username'] = this.username;
     data['id'] = this.id;
