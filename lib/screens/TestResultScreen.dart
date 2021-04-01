@@ -21,6 +21,8 @@ class TestResultScreen extends StatefulWidget {
   SetDetails setDetails;
   ReportDetails reportDetails;
   String title;
+  bool isNormalQuiz;
+  bool isMockTest;
   TestResultScreen({
     @required this.subtopic,
     @required this.setDetails,
@@ -28,6 +30,8 @@ class TestResultScreen extends StatefulWidget {
     @required this.subject,
     @required this.reportDetails,
     @required this.title,
+    @required this.isNormalQuiz,
+    @required this.isMockTest,
   });
   @override
   _TestResultScreenState createState() => _TestResultScreenState();
@@ -36,7 +40,19 @@ class TestResultScreen extends StatefulWidget {
 class _TestResultScreenState extends State<TestResultScreen> {
   @override
   void initState() {
-    AppFirebaseAnalytics.init().logEvent(name: AppStrings.testResultEvent);
+    if (widget.isNormalQuiz) {
+      if (Utility.getCustomer() != null) {
+        AppFirebaseAnalytics.init().logEvent(name: AppStrings.testResultEvent);
+      }
+      if (Utility.getGuest() != null) {
+        AppFirebaseAnalytics.init()
+            .logEvent(name: AppStrings.guestTestResultEvent);
+      }
+    }
+    if (widget.isMockTest) {
+      AppFirebaseAnalytics.init()
+          .logEvent(name: AppStrings.mockTestResultEvent);
+    }
     super.initState();
   }
 
@@ -96,6 +112,8 @@ class _TestResultScreenState extends State<TestResultScreen> {
                         MaterialPageRoute(
                           builder: (BuildContext context) => QuizResultScreen(
                             questionsDetails: widget.questionsDetails,
+                            isMockTest: widget.isMockTest,
+                            isNormalQuiz: widget.isNormalQuiz,
                           ),
                         ),
                       );
@@ -295,10 +313,12 @@ class _TestResultScreenState extends State<TestResultScreen> {
             )
           ],
         ),
-        SizedBox(
-          height: 8,
-        ),
-        widget.title.length == 0 ? timeTakenView() : Container(),
+        widget.reportDetails.timeTaken == "0"
+            ? Container()
+            : SizedBox(
+                height: 16,
+              ),
+        widget.reportDetails.timeTaken == "0" ? Container() : timeTakenView(),
         SizedBox(
           height: 8,
         ),

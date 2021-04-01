@@ -135,53 +135,76 @@ class AppStrings {
   //firebase analytics
   //https://github.com/FirebaseExtended/flutterfire/blob/master/packages/firebase_analytics/firebase_analytics/example/lib/main.dart
   static String splashScreenEvent = "splashScreen";
-  static String introSliderScreenEvent = "introSliderScreen";
-  static String changeGradeScreenEvent = "changeGradeScreen";
-  static String loginScreenEvent = "loginScreen";
+  static String introSliderScreenEvent = "intro_slider_screen";
+  static String changeGradeScreenEvent = "choose_grade_screen";
+  static String loginScreenEvent = "login_screen";
   static String loginWithFacebookEvent = "loginWithFacebook";
   static String loginWithgoogleEvent = "loginWithgoogle";
   static String loginWithPhoneEvent = "loginWithPhone";
-  static String verificationScreenEvent = "verificationScreen";
-  static String homeScreenEvent = "homeScreen";
+  static String verificationScreenEvent = "otp_screen";
+  static String homeScreenEvent = "main_home_screen";
+  static String guestHomeScreenEvent = "guest_home_screen";
   static String guestLoginEvent = "guestLogin";
   static String addCommentEvent = "addCommentScreen";
-  static String addDiscussionEvent = "addDiscussionScreen";
+  static String addDiscussionEvent = "disscusion_forum_add_question_screen";
+  static String editDiscussionEvent = "disscusion_forum_edit_question_screen";
   static String addEditCustomQuizQuestionOptionEvent =
-      "addEditCustomQuizQuestionOptionScreen";
-  static String addFriendEvent = "addFriendScreen";
-  static String addQuestionEvent = "addQuestionScreen";
-  static String addQuizNameEvent = "addQuizNameScreen";
+      "live_quizzes_custom_add_option_screen";
+  static String addFriendEvent = "add_friend_screen";
+  static String addQuestionEvent = "live_quizzes_custom_add_question_screen";
+  static String addQuizNameEvent = "live_quizzes_custom_add_quiz_name_screen";
   static String askingForProgressEvent = "askingForProgressScreen";
-  static String createCustomQuizEvent = "createCustomQuizScreen";
-  static String createNewQuizEvent = "createNewQuizScreen";
-  static String createQuizLobbyEvent = "createQuizLobbyScreen";
-  static String customQuizListEvent = "customQuizListScreen";
-  static String discussionDetailsEvent = "discussionDetailsScreen";
-  static String discussionEvent = "discussionScreen";
+  static String createCustomQuizEvent =
+      "live_quizzes_create_custom_quiz_screen";
+  static String createNewQuizEvent = "live_quizzes_create_new_quiz_screen";
+  static String createQuizLobbyEvent = "live_quizzes_start_quiz_screen";
+  static String customQuizListEvent = "live_quizzes_custom_quiz_home_screen";
+  static String discussionDetailsEvent =
+      "disscusion_forum_view_all_comments_screen";
+  static String discussionEvent = "disscusion_forum_home_screen";
   static String joinQuizDeepLinkEvent = "joinQuizDeepLink";
   static String shareAppEvent = "shareApp";
   static String rateAppEvent = "rateApp";
-  static String instructionsEvent = "instructionsScreen";
-  static String joinQuizEvent = "joinQuizScreen";
-  static String leaderboardEvent = "leaderboardScreen";
-  static String liveQuizPlayEvent = "liveQuizPlayScreen";
-  static String mockTestQuizEvent = "mockTestQuizScreen";
-  static String mockTestEvent = "mockTestScreen";
-  static String myFriendsEvent = "myFriendsScreen";
-  static String myProfileEvent = "myProfileScreen";
+  static String instructionsEvent = "quizzes_instruction_screen";
+  static String guestInstructionsEvent = "guest_instruction_screen";
+  static String joinQuizEvent = "live_quizzes_join_quiz_screen";
+  static String leaderboardEvent = "live_quizzes_leaderboard_rank_screen";
+  static String liveQuizHomeScreenEvent = "live_quizzes_home_screen";
+  static String liveQuizPlayEvent = "live_quizzes_quiz_screen";
+  static String mockTestQuizEvent = "mock_test_screen";
+  static String mockTestEvent = "mock_test_choose_mock_test_screen";
+  static String myFriendsEvent = "my_friend_screen";
+  static String myProfileEvent = "my_profile_screen";
   static String myProgressEvent = "myProgressScreen";
   static String myProgressSubjectEvent = "myProgressSubjectScreen";
-  static String notificationDetailsEvent = "notificationDetailsScreen";
-  static String notificationListEvent = "notificationListScreen";
-  static String otherProfileEvent = "otherProfileScreen";
-  static String quizResultEvent = "quizResultScreen";
-  static String randomQuizMatchEvent = "randomQuizMatchScreen";
-  static String setsEvent = "setsScreen";
-  static String subjectSelectionEvent = "subjectSelectionScreen";
-  static String subTopicEvent = "subTopicScreen";
-  static String testResultEvent = "testResultScreen";
-  static String testEvent = "testScreen";
+  static String notificationDetailsEvent = "view_notification_screen";
+  static String notificationListEvent = "notification_home_screen";
+  static String otherProfileEvent = "disscusion_forum_view_profile_screen";
+  static String quizResultEvent = "quizzes_quiz_solution_screen";
+  static String randomQuizMatchEvent =
+      "live_quizzes_random_searching_player_screen";
+  static String setsEvent = "quizzes_choose_set_screen";
+  static String guestSetsEvent = "guest_choose_set_screen";
+  static String subjectSelectionEvent = "live_quizzes_choose_by_subject_screen";
+  static String setTimeScreenEvent = "live_quizzes_set_time_limit_screen";
+  static String subTopicEvent = "quizzes_choose_subtopic_screen";
+  static String guestSubTopicEvent = "guest_choose_subtopic_screen";
+  static String testResultEvent = "quizzes_quiz_summary_screen";
+  static String guestTestResultEvent = "guest_quiz_summary_screen";
+  static String mockTestResultEvent = "mock_test_summary_screen";
+  static String testEvent = "quizzes_quiz_screen";
+  static String guestTestEvent = "guest_quiz_screen";
   static String waitingForHostEvent = "waitingForHostScreen";
+  static String mockResultEvent = "mock_test_solution_screen";
+  static String rankListEvent = "live_quizzes_rank_list_screen";
+  static String randomQuizEvent = "live_quizzes_random_quiz_screen";
+  static String randomQuizRankEvent = "live_quizzes_random_rank_list_screen";
+  static String randomQuizChooseSubjectEvent =
+      "live_quizzes_random_choose_subject_screen";
+  static String cusomQuizSetTimeEvent =
+      "live_quizzes_custom_time_limit_question_screen";
+  static String startAddQuestionEvent =
+      "live_quizzes_custom_start_add_question_screen";
 
   //socket events
   //live quuiz

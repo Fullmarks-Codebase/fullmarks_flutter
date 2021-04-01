@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/main.dart';
 import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/FriendRequestResponse.dart';
@@ -10,6 +11,8 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+
+import 'AddFriendScreen.dart';
 
 class MyFriendsScreen extends StatefulWidget {
   @override
@@ -41,14 +44,48 @@ class _MyFriendsScreenState extends State<MyFriendsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        body: Stack(
+    return Scaffold(
+      body: Stack(
+        children: [
+          Utility.setSvgFullScreen(context, AppAssets.commonBg),
+          body(),
+          _isLoading ? Utility.progress(context) : Container()
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppColors.appColor,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddFriendScreen(
+                buttonStr: "Send Request",
+                title: "Add a Friend",
+                roomId: null,
+              ),
+            ),
+          );
+        },
+        label: Row(
           children: [
-            Utility.setSvgFullScreen(context, AppAssets.commonBg),
-            body(),
-            _isLoading ? Utility.progress(context) : Container()
+            SvgPicture.asset(
+              AppAssets.addFriend,
+              color: Colors.white,
+              height: 15,
+              width: 15,
+            ),
+            SizedBox(
+              width: 8,
+            ),
+            Text(
+              "Add Friends",
+              style: TextStyle(
+                color: AppColors.whiteColor,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            )
           ],
         ),
       ),

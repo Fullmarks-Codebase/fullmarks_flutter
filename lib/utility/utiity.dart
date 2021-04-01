@@ -394,6 +394,8 @@ class Utility {
     Color textColor = Colors.black,
     String homeassetName,
     Function onHomePressed,
+    Widget sufixWidget,
+    bool isTitleCenter = true,
   }) {
     if (homeassetName == null) {
       homeassetName = AppAssets.home;
@@ -437,7 +439,8 @@ class Utility {
                 padding: EdgeInsets.only(
                   bottom: 16,
                 ),
-                alignment: Alignment.center,
+                alignment:
+                    isTitleCenter ? Alignment.center : Alignment.centerRight,
                 child: Text(
                   text,
                   style: TextStyle(
@@ -455,6 +458,7 @@ class Utility {
               assetName: isHome ? homeassetName : null,
               onPressed: isHome ? onHomePressed : null,
             ),
+            sufixWidget == null ? Container() : sufixWidget,
             SizedBox(
               width: 8,
             ),
@@ -1208,7 +1212,7 @@ class Utility {
     String secondsStr = (seconds % 60).toString().padLeft(2, '0');
     String minutesStr = (minutes % 60).toString().padLeft(2, '0');
     String hoursStr = (hours % 60).toString().padLeft(2, '0');
-    return "$hoursStr:$minutesStr:$secondsStr";
+    return "$hoursStr.$minutesStr.$secondsStr";
   }
 
   static bool isValidEmail(String email) {

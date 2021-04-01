@@ -13,12 +13,17 @@ import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/models/RandomQuizParticipantsResponse.dart';
 import 'package:fullmarks/models/ReportsResponse.dart';
 import 'package:fullmarks/models/UserResponse.dart';
+import 'package:fullmarks/notus/src/document.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:fullmarks/widgets/CustomAttrDelegate.dart';
+import 'package:fullmarks/widgets/CustomImageDelegate.dart';
+import 'package:fullmarks/zefyr/src/widgets/view.dart';
+import 'package:quill_delta/quill_delta.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'HomeScreen.dart';
@@ -72,13 +77,11 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
   @override
   void initState() {
     super.initState();
-    AppFirebaseAnalytics.init().logEvent(
-      name: AppStrings.liveQuizPlayEvent,
-      parameters: {
-        "isRandomQuiz": widget.isRandomQuiz,
-        "isCustomQuiz": widget.isCustomQuiz,
-      },
-    );
+    if (widget.isRandomQuiz) {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.randomQuizEvent);
+    } else {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.liveQuizPlayEvent);
+    }
     socket = widget.socket;
     getQuestionSeconds();
     startTimer();
@@ -502,19 +505,28 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
         left: 16,
       ),
       child: widget.isCustomQuiz
-          ? Scrollbar(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Math.tex(
-                  widget.questions[currentQuestion].question,
-                  textStyle: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          ? ZefyrView(
+              document: NotusDocument.fromDelta(
+                Delta.fromJson(
+                    json.decode(widget.questions[currentQuestion].question)
+                        as List),
               ),
+              imageDelegate: CustomImageDelegate(AppStrings.customQuestion),
+              attrDelegate: CustomAttrDelegate(),
             )
+          // Scrollbar(
+          //     child: SingleChildScrollView(
+          //       scrollDirection: Axis.horizontal,
+          //       child: Math.tex(
+          //         widget.questions[currentQuestion].question,
+          //         textStyle: TextStyle(
+          //           color: Colors.black,
+          //           fontSize: 20,
+          //           fontWeight: FontWeight.bold,
+          //         ),
+          //       ),
+          //     ),
+          //   )
           : Text(
               widget.questions[currentQuestion].question,
               style: TextStyle(
@@ -615,31 +627,67 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             widget.isCustomQuiz
-                ? Scrollbar(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Math.tex(
+                ? Row(
+                    children: [
+                      Text(
                         answerIndex == 0
-                            ? "(A) \\ " +
-                                widget.questions[currentQuestion].ansOne
+                            ? "(A) "
                             : answerIndex == 1
-                                ? "(B) \\ " +
-                                    widget.questions[currentQuestion].ansTwo
+                                ? "(B) "
                                 : answerIndex == 2
-                                    ? "(C) \\ " +
-                                        widget
-                                            .questions[currentQuestion].ansThree
-                                    : "(D) \\ " +
-                                        widget
-                                            .questions[currentQuestion].ansFour,
-                        textStyle: TextStyle(
+                                    ? "(C) "
+                                    : "(D) ",
+                        style: TextStyle(
                           color: getAnswerTextColor(answerIndex),
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
                       ),
-                    ),
+                      Expanded(
+                        child: ZefyrView(
+                          document: NotusDocument.fromDelta(
+                            Delta.fromJson(json.decode(answerIndex == 0
+                                ? widget.questions[currentQuestion].ansOne
+                                : answerIndex == 1
+                                    ? widget.questions[currentQuestion].ansTwo
+                                    : answerIndex == 2
+                                        ? widget
+                                            .questions[currentQuestion].ansThree
+                                        : widget.questions[currentQuestion]
+                                            .ansFour) as List),
+                          ),
+                          imageDelegate:
+                              CustomImageDelegate(AppStrings.customAnswers),
+                          attrDelegate: CustomAttrDelegate(),
+                        ),
+                      ),
+                    ],
                   )
+                // Scrollbar(
+                //     child: SingleChildScrollView(
+                //       scrollDirection: Axis.horizontal,
+                //       child: Math.tex(
+                //         answerIndex == 0
+                //             ? "(A) \\ " +
+                //                 widget.questions[currentQuestion].ansOne
+                //             : answerIndex == 1
+                //                 ? "(B) \\ " +
+                //                     widget.questions[currentQuestion].ansTwo
+                //                 : answerIndex == 2
+                //                     ? "(C) \\ " +
+                //                         widget
+                //                             .questions[currentQuestion].ansThree
+                //                     : "(D) \\ " +
+                //                         widget
+                //                             .questions[currentQuestion].ansFour,
+                // textStyle: TextStyle(
+                //   color: getAnswerTextColor(answerIndex),
+                //   fontWeight: FontWeight.bold,
+                //   fontSize: 18,
+                // ),
+                //       ),
+                //     ),
+                //   )
                 : Text(
                     answerIndex == 0
                         ? "(A) " + widget.questions[currentQuestion].ansOne

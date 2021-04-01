@@ -32,7 +32,13 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
 
   @override
   void initState() {
-    AppFirebaseAnalytics.init().logEvent(name: AppStrings.instructionsEvent);
+    if (Utility.getCustomer() != null) {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.instructionsEvent);
+    }
+    if (Utility.getGuest() != null) {
+      AppFirebaseAnalytics.init()
+          .logEvent(name: AppStrings.guestInstructionsEvent);
+    }
     _getQuestions();
     super.initState();
   }

@@ -37,15 +37,16 @@ class MockTestDetails {
   int submitted;
   int questionCount;
 
-  MockTestDetails(
-      {this.id,
-      this.name,
-      this.time,
-      this.createdAt,
-      this.updatedAt,
-      this.classId,
-      this.submitted,
-      this.questionCount});
+  MockTestDetails({
+    this.id,
+    this.name,
+    this.time,
+    this.createdAt,
+    this.updatedAt,
+    this.classId,
+    this.submitted,
+    this.questionCount,
+  });
 
   MockTestDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;

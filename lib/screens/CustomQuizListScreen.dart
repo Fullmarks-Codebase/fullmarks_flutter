@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_math/flutter_math.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,6 +7,7 @@ import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/CustomQuestionResponse.dart';
 import 'package:fullmarks/models/CustomQuizResponse.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/notus/src/document.dart';
 import 'package:fullmarks/screens/AddQuestionScreen.dart';
 import 'package:fullmarks/screens/PreviewQuestionScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
@@ -13,6 +16,10 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:fullmarks/widgets/CustomAttrDelegate.dart';
+import 'package:fullmarks/widgets/CustomImageDelegate.dart';
+import 'package:fullmarks/zefyr/src/widgets/view.dart';
+import 'package:quill_delta/quill_delta.dart';
 
 class CustomQuizListScreen extends StatefulWidget {
   CustomQuizDetails quiz;
@@ -266,19 +273,28 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
               ? Container(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   alignment: Alignment.centerLeft,
-                  child: Scrollbar(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Math.tex(
-                        questionsDetails[index].question,
-                        textStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                  child: ZefyrView(
+                    document: NotusDocument.fromDelta(
+                      Delta.fromJson(json
+                          .decode(questionsDetails[index].question) as List),
                     ),
+                    imageDelegate:
+                        CustomImageDelegate(AppStrings.customQuestion),
+                    attrDelegate: CustomAttrDelegate(),
                   ),
+                  // child: Scrollbar(
+                  // child: SingleChildScrollView(
+                  // scrollDirection: Axis.horizontal,
+                  // child: Math.tex(
+                  //   questionsDetails[index].question,
+                  //   textStyle: TextStyle(
+                  //     color: Colors.black,
+                  //     fontSize: 16,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  // ),
+                  // ),
+                  // ),
                 )
               : Container(),
           SizedBox(

@@ -31,10 +31,14 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
 
   @override
   void initState() {
-    AppFirebaseAnalytics.init().logEvent(name: AppStrings.subTopicEvent);
     customer = Utility.getCustomer();
     _getSubtopic();
-    if (customer != null) _getSubjectProgress();
+    if (customer != null) {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.subTopicEvent);
+      _getSubjectProgress();
+    } else {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.guestSubTopicEvent);
+    }
     _notify();
     super.initState();
   }

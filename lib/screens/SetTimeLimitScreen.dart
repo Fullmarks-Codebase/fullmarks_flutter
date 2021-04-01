@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -15,6 +16,13 @@ class SetTimeLimitScreen extends StatefulWidget {
 }
 
 class _SetTimeLimitScreenState extends State<SetTimeLimitScreen> {
+  @override
+  void initState() {
+    AppFirebaseAnalytics.init()
+        .logEvent(name: AppStrings.cusomQuizSetTimeEvent);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/CustomQuizResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -18,6 +19,13 @@ class StartAddQuestionScreen extends StatefulWidget {
 }
 
 class _StartAddQuestionScreenState extends State<StartAddQuestionScreen> {
+  @override
+  void initState() {
+    AppFirebaseAnalytics.init()
+        .logEvent(name: AppStrings.startAddQuestionEvent);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

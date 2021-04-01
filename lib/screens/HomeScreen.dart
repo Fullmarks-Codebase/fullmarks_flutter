@@ -55,7 +55,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    AppFirebaseAnalytics.init().logEvent(name: AppStrings.homeScreenEvent);
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
@@ -63,11 +62,16 @@ class _HomeScreenState extends State<HomeScreen> {
     controller = ScrollController();
     initDeepLink();
     _getUser();
-    if (guest != null) guestLogin();
+    if (guest != null) {
+      guestLogin();
+      AppFirebaseAnalytics.init()
+          .logEvent(name: AppStrings.guestHomeScreenEvent);
+    }
     _getSubjects();
     if (customer != null) {
       _getOverallProgress();
       _getNotificationCount();
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.homeScreenEvent);
     }
     _notify();
     super.initState();
@@ -504,7 +508,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Utility.drawerItemView(
                 assetName: AppAssets.drawerMyBuddies,
-                text: "My Buddies",
+                text: "My Friends",
                 onTap: () async {
                   //delay to give ripple effect
                   await Future.delayed(

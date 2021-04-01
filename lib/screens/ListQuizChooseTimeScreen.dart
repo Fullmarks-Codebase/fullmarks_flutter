@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/SubjectsResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
@@ -22,6 +23,12 @@ class ListQuizChooseTimeScreen extends StatefulWidget {
 
 class _ListQuizChooseTimeScreenState extends State<ListQuizChooseTimeScreen> {
   String seconds = "0";
+
+  @override
+  void initState() {
+    AppFirebaseAnalytics.init().logEvent(name: AppStrings.setTimeScreenEvent);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

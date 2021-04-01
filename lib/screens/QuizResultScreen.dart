@@ -8,8 +8,12 @@ import 'package:fullmarks/utility/Utiity.dart';
 
 class QuizResultScreen extends StatefulWidget {
   List<QuestionDetails> questionsDetails;
+  bool isNormalQuiz;
+  bool isMockTest;
   QuizResultScreen({
     @required this.questionsDetails,
+    @required this.isNormalQuiz,
+    @required this.isMockTest,
   });
   @override
   _QuizResultScreenState createState() => _QuizResultScreenState();
@@ -20,7 +24,12 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
 
   @override
   void initState() {
-    AppFirebaseAnalytics.init().logEvent(name: AppStrings.quizResultEvent);
+    if (widget.isNormalQuiz) {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.quizResultEvent);
+    }
+    if (widget.isMockTest) {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.mockResultEvent);
+    }
     controller = ScrollController();
     super.initState();
   }

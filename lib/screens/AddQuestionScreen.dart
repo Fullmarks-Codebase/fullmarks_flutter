@@ -7,8 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/CustomQuizResponse.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
-import 'package:fullmarks/screens/AddEditCustomQuizQuestionOptionScreen.dart';
-import 'package:fullmarks/screens/EquationEditorScreen.dart';
+import 'package:fullmarks/screens/AddQuestionOptionEditorScreen.dart';
 import 'package:fullmarks/screens/SetTimeLimitScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
@@ -17,8 +16,9 @@ import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:http/http.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:http_parser/http_parser.dart';
+
+import 'AddEditCustomQuizQuestionOptionScreen.dart';
 
 class AddQuestionScreen extends StatefulWidget {
   CustomQuizDetails quizDetails;
@@ -36,12 +36,15 @@ class AddQuestionScreen extends StatefulWidget {
 class _AddQuestionScreenState extends State<AddQuestionScreen> {
   TextEditingController questionController = TextEditingController();
   String questionSeconds = "30";
-  File question_image;
+  List<File> questionImages = [];
+  List<File> answerOneImages = [];
+  List<File> answerTwoImages = [];
+  List<File> answerThreeImages = [];
+  List<File> answerFourImages = [];
   List<String> answers = ["", "", "", ""];
   List<bool> answerStatus = [false, false, false, false];
-  List<File> answerFileImages = [null, null, null, null];
-  List<String> answerImages = ["", "", "", ""];
   bool _isLoading = false;
+  List<String> deletedImages = [];
 
   @override
   void initState() {
@@ -58,11 +61,6 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
       answerStatus[1] = widget.questionDetails.ansTwoStatus;
       answerStatus[2] = widget.questionDetails.ansThreeStatus;
       answerStatus[3] = widget.questionDetails.ansFourStatus;
-
-      answerImages[0] = widget.questionDetails.ansOneImage;
-      answerImages[1] = widget.questionDetails.ansTwoImage;
-      answerImages[2] = widget.questionDetails.ansThreeImage;
-      answerImages[3] = widget.questionDetails.ansFourImage;
     }
     super.initState();
   }
@@ -91,17 +89,13 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
   Widget body() {
     return Column(
       children: [
-        Stack(
-          alignment: Alignment.centerRight,
-          children: [
-            Utility.appbar(
-              context,
-              text: (widget.isEdit ? "Edit" : "Add") + " Question",
-              isHome: false,
-              textColor: Colors.white,
-            ),
-            timerView(),
-          ],
+        Utility.appbar(
+          context,
+          text: (widget.isEdit ? "Edit" : "Add") + " Question",
+          isHome: false,
+          textColor: Colors.white,
+          isTitleCenter: false,
+          sufixWidget: timerView(),
         ),
         Expanded(
           child: _isLoading
@@ -109,7 +103,6 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
               : ListView(
                   padding: EdgeInsets.only(top: 16),
                   children: [
-                    addImageView(),
                     addQuestionView(),
                   ],
                 ),
@@ -131,16 +124,27 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
         children: [
           GestureDetector(
             onTap: () async {
-              String equation = await Navigator.push(
+              var data = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EquationEditorScreen(
-                    expression: questionController.text,
+                  builder: (context) => AddQuestionOptionEditorScreen(
+                    string: questionController.text,
+                    title: (widget.isEdit ? "Add " : "Edit ") + "Question",
+                    isEdit: widget.isEdit,
+                    isQuestion: true,
                   ),
                 ),
               );
-              if (equation != null) {
-                questionController.text = equation;
+              if (data != null) {
+                if (data["text"] != null) {
+                  questionController.text = data["text"].toString();
+                }
+                if (data["images"] != null) {
+                  questionImages = data["images"];
+                }
+                if (data["deleteImages"] != null) {
+                  deletedImages.addAll(data["deleteImages"]);
+                }
                 _notify();
               }
             },
@@ -164,7 +168,7 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
                   ),
                   filled: true,
                   fillColor: Colors.white,
-                  hintText: "Type the Question...",
+                  hintText: "Tap to add/edit Question",
                 ),
               ),
             ),
@@ -210,188 +214,6 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
             text: widget.isEdit ? "Save" : "Add",
           )
         ],
-      ),
-    );
-  }
-
-  _onImageTap() {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) {
-        return CupertinoActionSheet(
-          title: Text("Select Profile Picture"),
-          message: Text("Select from"),
-          actions: [
-            CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.pop(context);
-                _getImage(ImageSource.camera);
-              },
-              child: Text("Camera"),
-            ),
-            CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.pop(context);
-                _getImage(ImageSource.gallery);
-              },
-              child: Text("Gallery"),
-            ),
-          ],
-          cancelButton: CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text("Cancel"),
-          ),
-        );
-      },
-    );
-  }
-
-  _getImage(ImageSource source) async {
-    ImagePicker().getImage(source: source).then((value) {
-      if (value != null) {
-        question_image = File(value.path);
-        _notify();
-      } else {
-        print('No image selected.');
-      }
-      _notify();
-    }).catchError((onError) {
-      print(onError);
-    });
-  }
-
-  Widget questionImageView() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      height: 200,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Utility.imageLoader(
-          baseUrl: AppStrings.customQuestion,
-          url: widget.questionDetails.questionImage,
-          placeholder: AppAssets.imagePlaceholder,
-        ),
-      ),
-    );
-  }
-
-  deleteImage() async {
-    //check internet connection available or not
-    if (await ApiManager.checkInternet()) {
-      //show progress
-      _isLoading = true;
-      _notify();
-      //api request
-      var request = Map<String, dynamic>();
-      request["id"] = widget.questionDetails.id.toString();
-      request["image_field"] = "question_image";
-      //api call
-      CommonResponse response = CommonResponse.fromJson(
-        await ApiManager(context)
-            .postCall(url: AppStrings.deleteImage, request: request),
-      );
-      //hide progress
-      _isLoading = false;
-      _notify();
-
-      Utility.showToast(context, response.message);
-
-      if (response.code == 200) {
-        Navigator.pop(context);
-      }
-    } else {
-      //show message that internet is not available
-      Utility.showToast(context, AppStrings.noInternet);
-    }
-  }
-
-  showEditDeleteImageDialog() {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) {
-        return CupertinoActionSheet(
-          title: Text("Do you want edit or delete this image?"),
-          message: Text("Select from"),
-          actions: [
-            CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.pop(context);
-                _onImageTap();
-              },
-              child: Text("Edit"),
-            ),
-            CupertinoActionSheetAction(
-              onPressed: () {
-                Navigator.pop(context);
-                deleteImage();
-              },
-              child: Text("Delete"),
-            ),
-          ],
-          cancelButton: CupertinoActionSheetAction(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text("Cancel"),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget addImageView() {
-    return GestureDetector(
-      onTap: () {
-        if (widget.isEdit) {
-          showEditDeleteImageDialog();
-        } else {
-          _onImageTap();
-        }
-      },
-      child: Container(
-        height: 200,
-        margin: EdgeInsets.symmetric(
-          horizontal: 16,
-        ),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: AppColors.greyColor12,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            question_image == null
-                ? widget.isEdit
-                    ? widget.questionDetails.questionImage.length == 0
-                        ? Container()
-                        : questionImageView()
-                    : SvgPicture.asset(AppAssets.addImage)
-                : Image.file(
-                    question_image,
-                  ),
-            widget.isEdit
-                ? Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white,
-                      ),
-                      color: Colors.black12,
-                    ),
-                    child: SvgPicture.asset(
-                      AppAssets.pencil,
-                      color: Colors.white,
-                    ),
-                  )
-                : Container()
-          ],
-        ),
       ),
     );
   }
@@ -483,9 +305,6 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
                   isEdit: widget.isEdit,
                   isAnswer: answerStatus[index],
                   option: answers[index],
-                  optionFileImage: answerFileImages[index],
-                  optionImage: answerImages[index],
-                  image_field: image_field,
                   questionid: widget.questionDetails != null
                       ? widget.questionDetails.id.toString()
                       : "",
@@ -494,7 +313,15 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
             );
             if (data != null) {
               answers[index] = data["option"];
-              answerFileImages[index] = data["optionFileImage"];
+              if (index == 0) {
+                answerOneImages = data["images"];
+              } else if (index == 1) {
+                answerTwoImages = data["images"];
+              } else if (index == 2) {
+                answerThreeImages = data["images"];
+              } else if (index == 3) {
+                answerFourImages = data["images"];
+              }
               if (data["isAnswer"]) {
                 answerStatus[0] = false;
                 answerStatus[1] = false;
@@ -562,31 +389,16 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
   }
 
   addEditTap() {
-    if (!widget.isEdit &&
-        question_image == null &&
-        questionController.text.trim().length == 0) {
-      Utility.showToast(
-          context, "Please select question image or type question");
-    } else if (!widget.isEdit &&
-        answerFileImages[0] == null &&
-        answers[0].length == 0) {
-      Utility.showToast(
-          context, "Please select option 1 image or type option 1");
-    } else if (!widget.isEdit &&
-        answerFileImages[1] == null &&
-        answers[1].length == 0) {
-      Utility.showToast(
-          context, "Please select option 2 image or type option 2");
-    } else if (!widget.isEdit &&
-        answerFileImages[2] == null &&
-        answers[2].length == 0) {
-      Utility.showToast(
-          context, "Please select option 3 image or type option 3");
-    } else if (!widget.isEdit &&
-        answerFileImages[3] == null &&
-        answers[3].length == 0) {
-      Utility.showToast(
-          context, "Please select option 4 image or type option 4");
+    if (!widget.isEdit && questionController.text.trim().length == 0) {
+      Utility.showToast(context, "Please add question");
+    } else if (!widget.isEdit && answers[0].length == 0) {
+      Utility.showToast(context, "Please add option 1");
+    } else if (!widget.isEdit && answers[1].length == 0) {
+      Utility.showToast(context, "Please add option 2");
+    } else if (!widget.isEdit && answers[2].length == 0) {
+      Utility.showToast(context, "Please add option 3");
+    } else if (!widget.isEdit && answers[3].length == 0) {
+      Utility.showToast(context, "Please add option 4");
     } else if (!answerStatus[0] &&
         !answerStatus[1] &&
         !answerStatus[2] &&
@@ -618,6 +430,14 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
       request.headers.addAll(headers);
       if (widget.isEdit) {
         request.fields["id"] = widget.questionDetails.id.toString();
+        if (widget.isEdit) {
+          if (deletedImages.length > 0) {
+            await Future.forEach(deletedImages, (String element) {
+              int index = deletedImages.indexOf(element);
+              request.fields["deleteImages[$index]"] = element;
+            });
+          }
+        }
       } else {
         request.fields["customMasterId"] = widget.quizDetails.id.toString();
       }
@@ -635,56 +455,126 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
 
       request.fields["time"] = questionSeconds;
 
-      if (question_image != null) {
-        request.files.add(
-          await MultipartFile.fromPath(
-            'question_image',
-            question_image.path,
-            contentType:
-                MediaType('image', question_image.path.split(".").last),
-          ),
-        );
+      if (questionImages.length != 0) {
+        await Future.forEach(questionImages, (File element) async {
+          int index = questionImages.indexOf(element);
+          request.files.add(
+            await MultipartFile.fromPath(
+              'question_image[$index]',
+              element.path,
+              contentType: MediaType('image', element.path.split(".").last),
+              filename: element.path.split("/").last,
+            ),
+          );
+        });
       }
-      if (answerFileImages[0] != null) {
-        request.files.add(
-          await MultipartFile.fromPath(
-            'ans_one_image',
-            answerFileImages[0].path,
-            contentType:
-                MediaType('image', answerFileImages[0].path.split(".").last),
-          ),
-        );
+
+      if (answerOneImages.length != 0) {
+        await Future.forEach(answerOneImages, (File element) async {
+          int index = answerOneImages.indexOf(element);
+          request.files.add(
+            await MultipartFile.fromPath(
+              'ans_one_image[$index]',
+              element.path,
+              contentType: MediaType('image', element.path.split(".").last),
+              filename: element.path.split("/").last,
+            ),
+          );
+        });
       }
-      if (answerFileImages[1] != null) {
-        request.files.add(
-          await MultipartFile.fromPath(
-            'ans_two_image',
-            answerFileImages[1].path,
-            contentType:
-                MediaType('image', answerFileImages[1].path.split(".").last),
-          ),
-        );
+
+      if (answerTwoImages.length != 0) {
+        await Future.forEach(answerTwoImages, (File element) async {
+          int index = answerTwoImages.indexOf(element);
+          request.files.add(
+            await MultipartFile.fromPath(
+              'ans_two_image[$index]',
+              element.path,
+              contentType: MediaType('image', element.path.split(".").last),
+              filename: element.path.split("/").last,
+            ),
+          );
+        });
       }
-      if (answerFileImages[2] != null) {
-        request.files.add(
-          await MultipartFile.fromPath(
-            'ans_three_image',
-            answerFileImages[2].path,
-            contentType:
-                MediaType('image', answerFileImages[2].path.split(".").last),
-          ),
-        );
+
+      if (answerThreeImages.length != 0) {
+        await Future.forEach(answerThreeImages, (File element) async {
+          int index = answerThreeImages.indexOf(element);
+          request.files.add(
+            await MultipartFile.fromPath(
+              'ans_three_image[$index]',
+              element.path,
+              contentType: MediaType('image', element.path.split(".").last),
+              filename: element.path.split("/").last,
+            ),
+          );
+        });
       }
-      if (answerFileImages[3] != null) {
-        request.files.add(
-          await MultipartFile.fromPath(
-            'ans_four_image',
-            answerFileImages[3].path,
-            contentType:
-                MediaType('image', answerFileImages[3].path.split(".").last),
-          ),
-        );
+
+      if (answerFourImages.length != 0) {
+        await Future.forEach(answerFourImages, (File element) async {
+          int index = answerFourImages.indexOf(element);
+          request.files.add(
+            await MultipartFile.fromPath(
+              'ans_four_image[$index]',
+              element.path,
+              contentType: MediaType('image', element.path.split(".").last),
+              filename: element.path.split("/").last,
+            ),
+          );
+        });
       }
+
+      // if (question_image != null) {
+      //   request.files.add(
+      //     await MultipartFile.fromPath(
+      //       'question_image',
+      //       question_image.path,
+      //       contentType:
+      //           MediaType('image', question_image.path.split(".").last),
+      //     ),
+      //   );
+      // }
+      // if (answerFileImages[0] != null) {
+      //   request.files.add(
+      //     await MultipartFile.fromPath(
+      //       'ans_one_image',
+      //       answerFileImages[0].path,
+      //       contentType:
+      //           MediaType('image', answerFileImages[0].path.split(".").last),
+      //     ),
+      //   );
+      // }
+      // if (answerFileImages[1] != null) {
+      //   request.files.add(
+      //     await MultipartFile.fromPath(
+      //       'ans_two_image',
+      //       answerFileImages[1].path,
+      //       contentType:
+      //           MediaType('image', answerFileImages[1].path.split(".").last),
+      //     ),
+      //   );
+      // }
+      // if (answerFileImages[2] != null) {
+      //   request.files.add(
+      //     await MultipartFile.fromPath(
+      //       'ans_three_image',
+      //       answerFileImages[2].path,
+      //       contentType:
+      //           MediaType('image', answerFileImages[2].path.split(".").last),
+      //     ),
+      //   );
+      // }
+      // if (answerFileImages[3] != null) {
+      //   request.files.add(
+      //     await MultipartFile.fromPath(
+      //       'ans_four_image',
+      //       answerFileImages[3].path,
+      //       contentType:
+      //           MediaType('image', answerFileImages[3].path.split(".").last),
+      //     ),
+      //   );
+      // }
 
       //api call
       Response response = await Response.fromStream(await request.send());

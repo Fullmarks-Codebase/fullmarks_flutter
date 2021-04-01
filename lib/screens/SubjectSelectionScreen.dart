@@ -30,8 +30,13 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
 
   @override
   void initState() {
-    AppFirebaseAnalytics.init()
-        .logEvent(name: AppStrings.subjectSelectionEvent);
+    if (widget.isRandomQuiz) {
+      AppFirebaseAnalytics.init()
+          .logEvent(name: AppStrings.randomQuizChooseSubjectEvent);
+    } else {
+      AppFirebaseAnalytics.init()
+          .logEvent(name: AppStrings.subjectSelectionEvent);
+    }
     _getUser();
     _getSubjects();
     super.initState();

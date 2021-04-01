@@ -17,6 +17,7 @@ import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 
 import 'TestResultScreen.dart';
+import 'TestScreen.dart';
 
 class MockTestQuizScreen extends StatefulWidget {
   MockTestDetails mockTest;
@@ -37,11 +38,24 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
   Timer _timer;
   int _start = 0;
 
+  //for time taken
+  Timer timer;
+  int milliseconds;
+  final List<ValueChanged<ElapsedTime>> timerListeners =
+      <ValueChanged<ElapsedTime>>[];
+  final Stopwatch stopwatch = Stopwatch();
+  final int timerMillisecondsRefreshRate = 30;
+  int seconds = 0;
+
   @override
   void initState() {
     AppFirebaseAnalytics.init().logEvent(name: AppStrings.mockTestQuizEvent);
     questionController = PageController();
     _getQuestions();
+    timer = Timer.periodic(
+        Duration(milliseconds: timerMillisecondsRefreshRate), callback);
+    timerListeners.add(onTick);
+    stopwatch.start();
     rewardAd.load(adUnitId: AppStrings.adUnitId).then((value) {
       print("Reward ad load");
       print(value);
@@ -55,6 +69,35 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
       }
     };
     super.initState();
+  }
+
+  void onTick(ElapsedTime elapsed) {
+    if (elapsed.seconds != seconds) {
+      if (mounted)
+        setState(() {
+          seconds = elapsed.seconds;
+        });
+      //individual question time taken in seconds
+      questionsDetails[currentQuestion].timeTaken =
+          questionsDetails[currentQuestion].timeTaken + 1;
+    }
+  }
+
+  void callback(Timer timer) {
+    if (milliseconds != stopwatch.elapsedMilliseconds) {
+      milliseconds = stopwatch.elapsedMilliseconds;
+      final int seconds = (milliseconds / 1000).truncate();
+      final int minutes = (seconds / 60).truncate();
+      final int hours = (minutes / 60).truncate();
+      final ElapsedTime elapsedTime = ElapsedTime(
+        seconds: seconds,
+        minutes: minutes,
+        hours: hours,
+      );
+      for (final listener in timerListeners) {
+        listener(elapsedTime);
+      }
+    }
   }
 
   _getQuestions() async {
@@ -136,6 +179,10 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
 
   @override
   void dispose() {
+    try {
+      timer?.cancel();
+      timer = null;
+    } catch (e) {}
     try {
       _timer.cancel();
     } catch (e) {}
@@ -432,7 +479,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
             ),
             padding: EdgeInsets.symmetric(
               horizontal: 8,
-              vertical: 16,
+              vertical: 12,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -474,7 +521,10 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                 top: 3,
               ),
               child: SvgPicture.asset(
-                  isPopOpen ? AppAssets.arrowDown : AppAssets.grid),
+                isPopOpen ? AppAssets.arrowDown : AppAssets.grid,
+                height: 45,
+                width: 45,
+              ),
             ),
           ),
         ),
@@ -649,6 +699,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                     text: "Prev",
                     assetName: AppAssets.previousArrow,
                     isPrefix: true,
+                    height: 50,
                   ),
           ),
           SizedBox(
@@ -684,6 +735,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                   ? AppAssets.submit
                   : AppAssets.nextArrow,
               isSufix: true,
+              height: 50,
             ),
           ),
         ],
@@ -755,6 +807,8 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
               reportDetails:
                   Utility.getCustomer() == null ? null : response.result,
               title: widget.mockTest.name,
+              isMockTest: true,
+              isNormalQuiz: false,
             ),
           ),
         );

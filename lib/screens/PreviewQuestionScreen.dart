@@ -1,11 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_math/flutter_math.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/notus/src/document.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:fullmarks/widgets/CustomAttrDelegate.dart';
+import 'package:fullmarks/widgets/CustomImageDelegate.dart';
+import 'package:fullmarks/zefyr/src/widgets/view.dart';
+import 'package:quill_delta/quill_delta.dart';
 
 class PreviewQuestionScreen extends StatefulWidget {
   QuestionDetails questionDetails;
@@ -77,20 +84,29 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
                         left: 16,
                         top: 16,
                       ),
-                      child: Scrollbar(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Math.tex(
-                            widget.questionDetails.question,
-                            textStyle: TextStyle(
-                              color: AppColors.appColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                      child: ZefyrView(
+                        document: NotusDocument.fromDelta(
+                          Delta.fromJson(json
+                              .decode(widget.questionDetails.question) as List),
                         ),
+                        imageDelegate:
+                            CustomImageDelegate(AppStrings.customQuestion),
+                        attrDelegate: CustomAttrDelegate(),
+                      )
+                      // child: Scrollbar(
+                      //   child: SingleChildScrollView(
+                      //     scrollDirection: Axis.horizontal,
+                      //     child: Math.tex(
+                      //       widget.questionDetails.question,
+                      //       textStyle: TextStyle(
+                      //         color: AppColors.appColor,
+                      //         fontSize: 18,
+                      //         fontWeight: FontWeight.bold,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                       ),
-                    ),
               widget.questionDetails.question.length == 0
                   ? SizedBox(
                       height: 16,
@@ -142,18 +158,17 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Scrollbar(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Math.tex(
+          Row(
+            children: [
+              Text(
                 index == 0
-                    ? "(A) \\ " + widget.questionDetails.ansOne
+                    ? "(A) "
                     : index == 1
-                        ? "(B) \\ " + widget.questionDetails.ansTwo
+                        ? "(B) "
                         : index == 2
-                            ? "(C) \\ " + widget.questionDetails.ansThree
-                            : "(D) \\ " + widget.questionDetails.ansFour,
-                textStyle: TextStyle(
+                            ? "(C) "
+                            : "(D) ",
+                style: TextStyle(
                   color: Utility.getQuestionCorrectAnswer(
                               widget.questionDetails) ==
                           index
@@ -163,8 +178,46 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
                   fontSize: 18,
                 ),
               ),
-            ),
+              Expanded(
+                child: ZefyrView(
+                  document: NotusDocument.fromDelta(
+                    Delta.fromJson(json.decode(index == 0
+                        ? widget.questionDetails.ansOne
+                        : index == 1
+                            ? widget.questionDetails.ansTwo
+                            : index == 2
+                                ? widget.questionDetails.ansThree
+                                : widget.questionDetails.ansFour) as List),
+                  ),
+                  imageDelegate: CustomImageDelegate(AppStrings.customAnswers),
+                  attrDelegate: CustomAttrDelegate(),
+                ),
+              ),
+            ],
           ),
+          // Scrollbar(
+          //   child: SingleChildScrollView(
+          //     scrollDirection: Axis.horizontal,
+          //     child: Math.tex(
+          //       index == 0
+          //           ? "(A) \\ " + widget.questionDetails.ansOne
+          //           : index == 1
+          //               ? "(B) \\ " + widget.questionDetails.ansTwo
+          //               : index == 2
+          //                   ? "(C) \\ " + widget.questionDetails.ansThree
+          //                   : "(D) \\ " + widget.questionDetails.ansFour,
+          // textStyle: TextStyle(
+          //   color: Utility.getQuestionCorrectAnswer(
+          //               widget.questionDetails) ==
+          //           index
+          //       ? Colors.white
+          //       : Colors.black,
+          //   fontWeight: FontWeight.bold,
+          //   fontSize: 18,
+          // ),
+          //     ),
+          //   ),
+          // ),
           (index == 0
                   ? widget.questionDetails.ansOneImage == ""
                   : index == 1

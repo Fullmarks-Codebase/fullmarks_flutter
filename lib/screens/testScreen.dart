@@ -50,7 +50,12 @@ class _TestScreenState extends State<TestScreen> {
 
   @override
   void initState() {
-    AppFirebaseAnalytics.init().logEvent(name: AppStrings.testEvent);
+    if (Utility.getCustomer() != null) {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.testEvent);
+    }
+    if (Utility.getGuest() != null) {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.guestTestEvent);
+    }
     questionsNumberController = ScrollController();
     questionController = PageController();
     timer = Timer.periodic(
@@ -471,6 +476,8 @@ class _TestScreenState extends State<TestScreen> {
               reportDetails:
                   Utility.getCustomer() == null ? null : response.result,
               title: "",
+              isMockTest: false,
+              isNormalQuiz: true,
             ),
           ),
         );

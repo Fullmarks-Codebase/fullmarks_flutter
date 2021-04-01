@@ -41,9 +41,14 @@ class _SetsScreenState extends State<SetsScreen> {
 
   @override
   void initState() {
-    AppFirebaseAnalytics.init().logEvent(name: AppStrings.setsEvent);
     customer = Utility.getCustomer();
     guest = Utility.getGuest();
+    if (customer != null) {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.setsEvent);
+    }
+    if (guest != null) {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.guestSetsEvent);
+    }
     _getSets();
     _notify();
     super.initState();
@@ -252,6 +257,8 @@ class _SetsScreenState extends State<SetsScreen> {
               reportDetails:
                   Utility.getCustomer() == null ? null : response.result,
               title: "",
+              isMockTest: false,
+              isNormalQuiz: true,
             ),
           ),
         );

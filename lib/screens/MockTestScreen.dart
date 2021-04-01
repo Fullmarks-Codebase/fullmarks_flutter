@@ -172,6 +172,8 @@ class _MockTestScreenState extends State<MockTestScreen> {
               reportDetails:
                   Utility.getCustomer() == null ? null : response.result,
               title: mocktests[index].name,
+              isMockTest: true,
+              isNormalQuiz: false,
             ),
           ),
         );
@@ -197,15 +199,16 @@ class _MockTestScreenState extends State<MockTestScreen> {
           } else {
             Utility.showStartQuizDialog(
               context: context,
-              onStartPress: () {
+              onStartPress: () async {
                 Navigator.pop(context);
-                Navigator.of(context).push(
+                await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) => MockTestQuizScreen(
                       mockTest: mocktests[index],
                     ),
                   ),
                 );
+                _getMocktest();
               },
             );
           }

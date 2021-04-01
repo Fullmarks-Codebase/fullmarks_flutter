@@ -11,6 +11,7 @@ import 'package:fullmarks/screens/HomeScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
+import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -46,6 +47,12 @@ class _RankListScreenState extends State<RankListScreen> {
 
   @override
   void initState() {
+    if (widget.isRandomQuiz) {
+      AppFirebaseAnalytics.init()
+          .logEvent(name: AppStrings.randomQuizRankEvent);
+    } else {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.rankListEvent);
+    }
     socket = widget.socket;
     socket.emit(AppStrings.submit);
 

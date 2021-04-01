@@ -42,7 +42,12 @@ class _AddDiscussionScreenState extends State<AddDiscussionScreen> {
 
   @override
   void initState() {
-    AppFirebaseAnalytics.init().logEvent(name: AppStrings.addDiscussionEvent);
+    if (widget.isEdit) {
+      AppFirebaseAnalytics.init()
+          .logEvent(name: AppStrings.editDiscussionEvent);
+    } else {
+      AppFirebaseAnalytics.init().logEvent(name: AppStrings.addDiscussionEvent);
+    }
     _getSubjects();
 
     if (widget.isEdit) {
