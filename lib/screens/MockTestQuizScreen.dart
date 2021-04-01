@@ -119,7 +119,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
       _notify();
 
       if (response.code == 200) {
-        questionsDetails = response.result;
+        questionsDetails = response.result.questions;
         _start = widget.mockTest.time;
         startTimer();
         _notify();

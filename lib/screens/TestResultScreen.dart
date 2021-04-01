@@ -309,8 +309,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
                       ? Container()
                       : Utility.averageView(
                           assetName: AppAssets.totalMarks,
-                          title: "Total Marks = " +
-                              getTotalMarks(totalMarks).toString(),
+                          title: "Total Marks = " + getTotalMarks(totalMarks),
                         ),
                 ],
               ),
@@ -330,12 +329,13 @@ class _TestResultScreenState extends State<TestResultScreen> {
     );
   }
 
-  double getTotalMarks(int totalMarks) {
+  String getTotalMarks(int totalMarks) {
     try {
-      return totalMarks /
-          (widget.questionsDetails.length * widget.correctMarks);
+      return (totalMarks /
+              (widget.questionsDetails.length * widget.correctMarks))
+          .toStringAsFixed(1);
     } catch (e) {
-      return 0;
+      return "0";
     }
   }
 
