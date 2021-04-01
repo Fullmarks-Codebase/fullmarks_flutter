@@ -174,6 +174,8 @@ class _MockTestScreenState extends State<MockTestScreen> {
               title: mocktests[index].name,
               isMockTest: true,
               isNormalQuiz: false,
+              correctMarks: mocktests[index].correct_marks,
+              incorrectMarks: mocktests[index].incorrect_marks,
             ),
           ),
         );

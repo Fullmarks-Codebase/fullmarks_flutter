@@ -288,7 +288,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
-                      "+3.0",
+                      "+" + widget.mockTest.correct_marks.toString(),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -309,7 +309,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
-                      "-1.0",
+                      widget.mockTest.incorrect_marks.toString(),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -809,6 +809,8 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
               title: widget.mockTest.name,
               isMockTest: true,
               isNormalQuiz: false,
+              correctMarks: widget.mockTest.correct_marks,
+              incorrectMarks: widget.mockTest.incorrect_marks,
             ),
           ),
         );

@@ -478,6 +478,8 @@ class _TestScreenState extends State<TestScreen> {
               title: "",
               isMockTest: false,
               isNormalQuiz: true,
+              correctMarks: 0,
+              incorrectMarks: 0,
             ),
           ),
         );

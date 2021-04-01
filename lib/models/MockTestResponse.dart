@@ -36,6 +36,8 @@ class MockTestDetails {
   int classId;
   int submitted;
   int questionCount;
+  int correct_marks;
+  int incorrect_marks;
 
   MockTestDetails({
     this.id,
@@ -46,6 +48,8 @@ class MockTestDetails {
     this.classId,
     this.submitted,
     this.questionCount,
+    this.correct_marks,
+    this.incorrect_marks,
   });
 
   MockTestDetails.fromJson(Map<String, dynamic> json) {
@@ -57,6 +61,8 @@ class MockTestDetails {
     classId = json['classId'] ?? 0;
     submitted = json['submitted'] ?? 0;
     questionCount = json['question_count'] ?? 0;
+    correct_marks = json['correct_marks'] ?? 1;
+    incorrect_marks = json['incorrect_marks'] ?? -1;
   }
 
   Map<String, dynamic> toJson() {
@@ -69,6 +75,8 @@ class MockTestDetails {
     data['classId'] = this.classId;
     data['submitted'] = this.submitted;
     data['question_count'] = this.questionCount;
+    data['correct_marks'] = this.correct_marks;
+    data['incorrect_marks'] = this.incorrect_marks;
     return data;
   }
 }

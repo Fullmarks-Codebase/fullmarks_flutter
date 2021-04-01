@@ -23,6 +23,8 @@ class TestResultScreen extends StatefulWidget {
   String title;
   bool isNormalQuiz;
   bool isMockTest;
+  int correctMarks;
+  int incorrectMarks;
   TestResultScreen({
     @required this.subtopic,
     @required this.setDetails,
@@ -32,6 +34,8 @@ class TestResultScreen extends StatefulWidget {
     @required this.title,
     @required this.isNormalQuiz,
     @required this.isMockTest,
+    @required this.correctMarks,
+    @required this.incorrectMarks,
   });
   @override
   _TestResultScreenState createState() => _TestResultScreenState();
@@ -168,8 +172,10 @@ class _TestResultScreenState extends State<TestResultScreen> {
   Widget progressView() {
     int totalMarks = 0;
     if (widget.title.length > 0) {
-      int correct = int.tryParse(widget.reportDetails.correct) * 3;
-      int incorrect = int.tryParse(widget.reportDetails.incorrect) * -1;
+      int correct =
+          int.tryParse(widget.reportDetails.correct) * widget.correctMarks;
+      int incorrect =
+          int.tryParse(widget.reportDetails.incorrect) * widget.incorrectMarks;
       totalMarks = correct + incorrect;
     }
     return Column(
@@ -304,9 +310,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
                       : Utility.averageView(
                           assetName: AppAssets.totalMarks,
                           title: "Total Marks = " +
-                              totalMarks.toString() +
-                              " / " +
-                              (widget.questionsDetails.length * 3).toString(),
+                              getTotalMarks(totalMarks).toString(),
                         ),
                 ],
               ),
@@ -324,6 +328,15 @@ class _TestResultScreenState extends State<TestResultScreen> {
         ),
       ],
     );
+  }
+
+  double getTotalMarks(int totalMarks) {
+    try {
+      return totalMarks /
+          (widget.questionsDetails.length * widget.correctMarks);
+    } catch (e) {
+      return 0;
+    }
   }
 
   Widget timeTakenView() {
