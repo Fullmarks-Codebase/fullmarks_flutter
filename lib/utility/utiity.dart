@@ -511,16 +511,14 @@ class Utility {
         SizedBox(
           width: 8,
         ),
-        Expanded(
-          child: Text(
-            title,
-            style: TextStyle(
-              color: textColor,
-              fontSize: fontSize,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+        Text(
+          title,
+          style: TextStyle(
+            color: textColor,
+            fontSize: fontSize,
           ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

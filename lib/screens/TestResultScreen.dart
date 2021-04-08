@@ -23,8 +23,8 @@ class TestResultScreen extends StatefulWidget {
   String title;
   bool isNormalQuiz;
   bool isMockTest;
-  int correctMarks;
-  int incorrectMarks;
+  double correctMarks;
+  double incorrectMarks;
   TestResultScreen({
     @required this.subtopic,
     @required this.setDetails,
@@ -170,12 +170,12 @@ class _TestResultScreenState extends State<TestResultScreen> {
   }
 
   Widget progressView() {
-    int totalMarks = 0;
+    double totalMarks = 0;
     if (widget.title.length > 0) {
-      int correct =
-          int.tryParse(widget.reportDetails.correct) * widget.correctMarks;
-      int incorrect =
-          int.tryParse(widget.reportDetails.incorrect) * widget.incorrectMarks;
+      double correct =
+          double.tryParse(widget.reportDetails.correct) * widget.correctMarks;
+      double incorrect = double.tryParse(widget.reportDetails.incorrect) *
+          widget.incorrectMarks;
       totalMarks = correct + incorrect;
     }
     return Column(
@@ -309,7 +309,8 @@ class _TestResultScreenState extends State<TestResultScreen> {
                       ? Container()
                       : Utility.averageView(
                           assetName: AppAssets.totalMarks,
-                          title: "Total Marks = " + getTotalMarks(totalMarks),
+                          title: "Total Marks = " + totalMarks.toString(),
+                          // title: "Total Marks = " + getTotalMarks(totalMarks),
                         ),
                 ],
               ),
@@ -329,15 +330,15 @@ class _TestResultScreenState extends State<TestResultScreen> {
     );
   }
 
-  String getTotalMarks(int totalMarks) {
-    try {
-      return (totalMarks /
-              (widget.questionsDetails.length * widget.correctMarks))
-          .toStringAsFixed(1);
-    } catch (e) {
-      return "0";
-    }
-  }
+  // String getTotalMarks(double totalMarks) {
+  //   try {
+  //     return (totalMarks /
+  //             (widget.questionsDetails.length * widget.correctMarks))
+  //         .toStringAsFixed(1);
+  //   } catch (e) {
+  //     return "0";
+  //   }
+  // }
 
   Widget timeTakenView() {
     return Text.rich(

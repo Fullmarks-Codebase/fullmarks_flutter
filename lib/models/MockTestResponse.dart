@@ -36,8 +36,8 @@ class MockTestDetails {
   int classId;
   int submitted;
   int questionCount;
-  int correct_marks;
-  int incorrect_marks;
+  double correct_marks;
+  double incorrect_marks;
 
   MockTestDetails({
     this.id,
@@ -61,8 +61,8 @@ class MockTestDetails {
     classId = json['classId'] ?? 0;
     submitted = json['submitted'] ?? 0;
     questionCount = json['question_count'] ?? 0;
-    correct_marks = json['correct_marks'] ?? 1;
-    incorrect_marks = json['incorrect_marks'] ?? -1;
+    correct_marks = double.tryParse(json['correct_marks'].toString()) ?? 1;
+    incorrect_marks = double.tryParse(json['incorrect_marks'].toString()) ?? -1;
   }
 
   Map<String, dynamic> toJson() {

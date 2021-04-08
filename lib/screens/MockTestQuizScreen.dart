@@ -574,6 +574,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Utility.correctIncorrectView(
                         color: AppColors.wrongBorderColor,
@@ -631,21 +632,29 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                         childAspectRatio: 1,
                       ),
                       itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          alignment: Alignment.center,
-                          decoration:
-                              questionsDetails[index].selectedAnswer != -1
-                                  ? Utility.attemptedDecoration()
-                                  : index == currentQuestion
-                                      ? Utility.activeDecoration()
-                                      : Utility.notAttemptedDecoration(),
-                          child: Text(
-                            (index + 1).toString(),
-                            style: TextStyle(
-                              color: index == currentQuestion
-                                  ? AppColors.wrongBorderColor
-                                  : Colors.white,
-                              fontWeight: FontWeight.bold,
+                        return GestureDetector(
+                          onTap: () {
+                            questionAnimateTo(index);
+                            isPopOpen = false;
+                            _notify();
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration:
+                                questionsDetails[index].selectedAnswer != -1
+                                    ? Utility.attemptedDecoration()
+                                    : index == currentQuestion
+                                        ? Utility.activeDecoration()
+                                        : Utility.notAttemptedDecoration(),
+                            child: Text(
+                              (index + 1).toString(),
+                              style: TextStyle(
+                                color: index == currentQuestion
+                                    ? AppColors.wrongBorderColor
+                                    : Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         );
