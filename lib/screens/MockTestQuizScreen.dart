@@ -376,8 +376,13 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
         onPressed: () async {
           //delay to give ripple effect
           await Future.delayed(Duration(milliseconds: AppStrings.delay));
-          questionsDetails[questionIndex].selectedAnswer = answerIndex;
-          _notify();
+          if (questionsDetails[questionIndex].selectedAnswer == answerIndex) {
+            questionsDetails[questionIndex].selectedAnswer = -1;
+            _notify();
+          } else {
+            questionsDetails[questionIndex].selectedAnswer = answerIndex;
+            _notify();
+          }
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
