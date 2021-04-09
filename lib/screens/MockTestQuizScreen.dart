@@ -21,8 +21,10 @@ import 'TestScreen.dart';
 
 class MockTestQuizScreen extends StatefulWidget {
   MockTestDetails mockTest;
+  bool isReattempt;
   MockTestQuizScreen({
     @required this.mockTest,
+    @required this.isReattempt,
   });
   @override
   _MockTestQuizScreenState createState() => _MockTestQuizScreenState();
@@ -773,6 +775,74 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
   }
 
   submitQuestions() async {
+    if (widget.isReattempt) {
+      int correctAnswers = 0;
+      int timeTaken = 0;
+      int incorrect = 0;
+      int skipped = 0;
+
+      List<MockQuestionReportRequest> questionReportsAnswersList = List();
+
+      await Future.forEach(questionsDetails, (QuestionDetails element) {
+        if (element.selectedAnswer == -1) {
+          skipped = skipped + 1;
+        } else if (Utility.getQuestionCorrectAnswer(element) ==
+            element.selectedAnswer) {
+          correctAnswers = correctAnswers + 1;
+        } else {
+          incorrect = incorrect + 1;
+        }
+        timeTaken = timeTaken + element.timeTaken;
+        questionReportsAnswersList.add(
+          MockQuestionReportRequest(
+            mockId: widget.mockTest.id.toString(),
+            userId: Utility.getCustomer().id.toString(),
+            questionId: element.id.toString(),
+            correctAnswer: Utility.getQuestionCorrectAnswer(element).toString(),
+            timeTaken: element.timeTaken.toString(),
+            userAnswer: element.selectedAnswer.toString(),
+          ),
+        );
+      });
+
+      int totalMarks = questionReportsAnswersList.length;
+      double accuracy = (correctAnswers / totalMarks) * 100;
+      double avgTime = (timeTaken / totalMarks);
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (BuildContext context) => TestResultScreen(
+            questionsDetails: questionsDetails,
+            subtopic: null,
+            subject: null,
+            setDetails: null,
+            reportDetails: Utility.getCustomer() == null
+                ? null
+                : ReportDetails(
+                    accuracy: accuracy.toStringAsFixed(2),
+                    avgTime: Utility.secondsToHms(avgTime),
+                    correct: totalMarks.toString(),
+                    incorrect: incorrect.toString(),
+                    reportDetail: [],
+                    skipped: skipped.toString(),
+                    timeTaken: timeTaken.toString(),
+                    totalMarks: totalMarks.toString(),
+                  ),
+            title: widget.mockTest.name,
+            isMockTest: true,
+            isNormalQuiz: false,
+            correctMarks: widget.mockTest.correct_marks,
+            incorrectMarks: widget.mockTest.incorrect_marks,
+            mockTest: widget.mockTest,
+          ),
+        ),
+      );
+    } else {
+      submitQuestionsApiCall();
+    }
+  }
+
+  submitQuestionsApiCall() async {
     //check internet connection available or not
     if (await ApiManager.checkInternet()) {
       //show progress
@@ -825,6 +895,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
               isNormalQuiz: false,
               correctMarks: widget.mockTest.correct_marks,
               incorrectMarks: widget.mockTest.incorrect_marks,
+              mockTest: widget.mockTest,
             ),
           ),
         );

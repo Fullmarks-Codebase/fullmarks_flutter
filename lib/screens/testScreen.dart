@@ -22,11 +22,13 @@ class TestScreen extends StatefulWidget {
   SubjectDetails subject;
   SetDetails setDetails;
   List<QuestionDetails> questionsDetails;
+  bool isReattempt;
   TestScreen({
     @required this.subtopic,
     @required this.subject,
     @required this.setDetails,
     @required this.questionsDetails,
+    @required this.isReattempt,
   });
   @override
   _TestScreenState createState() => _TestScreenState();
@@ -422,6 +424,85 @@ class _TestScreenState extends State<TestScreen> {
   }
 
   submitQuestions() async {
+    if (widget.isReattempt) {
+      //avg accuracy
+//submitReport.total_marks = answers.length;
+//
+// submitReport.accuracy = (
+//   (submitReport.correct / answers.length) *
+//   100
+// )
+
+//avg time/question
+//submitReport.time_taken / answers.length
+//
+
+      int correctAnswers = 0;
+      int timeTaken = 0;
+      int incorrect = 0;
+      int skipped = 0;
+
+      List<QuestionReportAnswers> questionReportsAnswersList = List();
+
+      await Future.forEach(widget.questionsDetails, (QuestionDetails element) {
+        if (element.selectedAnswer == -1) {
+          skipped = skipped + 1;
+        } else if (Utility.getQuestionCorrectAnswer(element) ==
+            element.selectedAnswer) {
+          correctAnswers = correctAnswers + 1;
+        } else {
+          incorrect = incorrect + 1;
+        }
+        timeTaken = timeTaken + element.timeTaken;
+        questionReportsAnswersList.add(
+          QuestionReportAnswers(
+            userId: Utility.getCustomer().id.toString(),
+            questionId: element.id.toString(),
+            correctAnswer: Utility.getQuestionCorrectAnswer(element).toString(),
+            timeTaken: element.timeTaken.toString(),
+            userAnswer: element.selectedAnswer.toString(),
+          ),
+        );
+      });
+
+      int totalMarks = questionReportsAnswersList.length;
+      double accuracy = (correctAnswers / totalMarks) * 100;
+      double avgTime = (timeTaken / totalMarks);
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (BuildContext context) => TestResultScreen(
+            questionsDetails: widget.questionsDetails,
+            subtopic: widget.subtopic,
+            subject: widget.subject,
+            setDetails: widget.setDetails,
+            reportDetails: Utility.getCustomer() == null
+                ? null
+                : ReportDetails(
+                    accuracy: accuracy.toStringAsFixed(2),
+                    avgTime: Utility.secondsToHms(avgTime),
+                    correct: totalMarks.toString(),
+                    incorrect: incorrect.toString(),
+                    reportDetail: [],
+                    skipped: skipped.toString(),
+                    timeTaken: timeTaken.toString(),
+                    totalMarks: totalMarks.toString(),
+                  ),
+            title: "",
+            isMockTest: false,
+            isNormalQuiz: true,
+            correctMarks: 0,
+            incorrectMarks: 0,
+            mockTest: null,
+          ),
+        ),
+      );
+    } else {
+      submitQuestionsApiCall();
+    }
+  }
+
+  submitQuestionsApiCall() async {
     //check internet connection available or not
     if (await ApiManager.checkInternet()) {
       //show progress
@@ -480,6 +561,7 @@ class _TestScreenState extends State<TestScreen> {
               isNormalQuiz: true,
               correctMarks: 0,
               incorrectMarks: 0,
+              mockTest: null,
             ),
           ),
         );

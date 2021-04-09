@@ -176,6 +176,7 @@ class _MockTestScreenState extends State<MockTestScreen> {
               isNormalQuiz: false,
               correctMarks: mocktests[index].correct_marks,
               incorrectMarks: mocktests[index].incorrect_marks,
+              mockTest: mocktests[index],
             ),
           ),
         );
@@ -207,6 +208,7 @@ class _MockTestScreenState extends State<MockTestScreen> {
                   MaterialPageRoute(
                     builder: (BuildContext context) => MockTestQuizScreen(
                       mockTest: mocktests[index],
+                      isReattempt: false,
                     ),
                   ),
                 );

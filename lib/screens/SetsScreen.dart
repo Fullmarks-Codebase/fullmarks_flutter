@@ -261,6 +261,7 @@ class _SetsScreenState extends State<SetsScreen> {
               isNormalQuiz: true,
               correctMarks: 0,
               incorrectMarks: 0,
+              mockTest: null,
             ),
           ),
         );

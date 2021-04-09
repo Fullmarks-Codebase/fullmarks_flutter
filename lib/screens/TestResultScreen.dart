@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fullmarks/models/MockTestResponse.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
 import 'package:fullmarks/models/ReportsResponse.dart';
 import 'package:fullmarks/models/SetsResponse.dart';
@@ -13,6 +14,8 @@ import 'package:fullmarks/utility/Utiity.dart';
 
 import 'AskingForProgressScreen.dart';
 import 'HomeScreen.dart';
+import 'MockTestQuizScreen.dart';
+import 'TestScreen.dart';
 
 class TestResultScreen extends StatefulWidget {
   List<QuestionDetails> questionsDetails;
@@ -25,6 +28,7 @@ class TestResultScreen extends StatefulWidget {
   bool isMockTest;
   double correctMarks;
   double incorrectMarks;
+  MockTestDetails mockTest;
   TestResultScreen({
     @required this.subtopic,
     @required this.setDetails,
@@ -36,6 +40,7 @@ class TestResultScreen extends StatefulWidget {
     @required this.isMockTest,
     @required this.correctMarks,
     @required this.incorrectMarks,
+    @required this.mockTest,
   });
   @override
   _TestResultScreenState createState() => _TestResultScreenState();
@@ -124,6 +129,47 @@ class _TestResultScreenState extends State<TestResultScreen> {
                     }
                   },
                   text: "View Solution",
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Utility.button(
+                  context,
+                  onPressed: () async {
+                    //delay to give ripple effect
+                    await Future.delayed(
+                        Duration(milliseconds: AppStrings.delay));
+                    await Future.forEach(widget.questionsDetails,
+                        (QuestionDetails element) {
+                      element.selectedAnswer = -1;
+                      _notify();
+                    });
+                    if (widget.isMockTest) {
+                      await Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => MockTestQuizScreen(
+                            mockTest: widget.mockTest,
+                            isReattempt: true,
+                          ),
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => TestScreen(
+                            subtopic: widget.subtopic,
+                            subject: widget.subject,
+                            setDetails: widget.setDetails,
+                            questionsDetails: widget.questionsDetails,
+                            isReattempt: true,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  text: "Reattempt",
+                  textcolor: AppColors.appColor,
+                  borderColor: AppColors.appColor,
                 ),
                 SizedBox(
                   height: 16,

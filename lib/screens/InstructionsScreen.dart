@@ -313,6 +313,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
                         subject: widget.subject,
                         setDetails: widget.setDetails,
                         questionsDetails: questionsDetails,
+                        isReattempt: false,
                       ),
                     ),
                   );

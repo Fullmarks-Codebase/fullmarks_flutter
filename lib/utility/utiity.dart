@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_math/flutter_math.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fullmarks/models/GuestUserResponse.dart';
@@ -16,7 +17,7 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'dart:math' as math;
 import 'AppAssets.dart';
 import 'AppColors.dart';
 
@@ -1211,6 +1212,20 @@ class Utility {
     String minutesStr = (minutes % 60).toString().padLeft(2, '0');
     String hoursStr = (hours % 60).toString().padLeft(2, '0');
     return "$hoursStr.$minutesStr.$secondsStr";
+  }
+
+  static String secondsToHms(double secs) {
+    int hours = (secs / (60 * 60)).floor();
+
+    double divisorForMinutes = secs % (60 * 60);
+    int minutes = (divisorForMinutes / 60).floor();
+
+    double divisorForSeconds = divisorForMinutes % 60;
+    int seconds = (divisorForSeconds).ceil();
+
+    String hDisplay =
+        hours > 0 ? (hours.toString() + (hours == 1 ? "h " : "h ")) : "";
+    return hDisplay + minutes.toString() + "m " + seconds.toString() + "s";
   }
 
   static bool isValidEmail(String email) {
