@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fullmarks/models/DiscussionResponse.dart';
+import 'package:fullmarks/models/UserResponse.dart';
 import 'package:fullmarks/utility/AppAssets.dart';
 import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
@@ -8,9 +9,13 @@ import 'package:fullmarks/utility/Utiity.dart';
 class UserView extends StatefulWidget {
   Function onUserTap;
   DiscussionDetails discussion;
+  Customer customer;
+  String createdAt;
   UserView({
     @required this.onUserTap,
     @required this.discussion,
+    @required this.customer,
+    @required this.createdAt,
   });
   @override
   _UserViewState createState() => _UserViewState();
@@ -36,7 +41,7 @@ class _UserViewState extends State<UserView> {
                 right: 16,
               ),
               child: Utility.getUserImage(
-                url: widget.discussion.user.thumbnail,
+                url: widget.customer.thumbnail,
               ),
             ),
             Expanded(
@@ -47,9 +52,9 @@ class _UserViewState extends State<UserView> {
                     children: [
                       Expanded(
                         child: Text(
-                          widget.discussion.user.username.trim().length == 0
-                              ? "User" + widget.discussion.user.id.toString()
-                              : widget.discussion.user.username,
+                          widget.customer.username.trim().length == 0
+                              ? "User" + widget.customer.id.toString()
+                              : widget.customer.username,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -60,8 +65,7 @@ class _UserViewState extends State<UserView> {
                         ),
                       ),
                       Text(
-                        Utility.convertDate(
-                            widget.discussion.createdAt.substring(0, 10)),
+                        Utility.convertDate(widget.createdAt.substring(0, 10)),
                         style: TextStyle(
                           color: AppColors.lightTextColor,
                         ),

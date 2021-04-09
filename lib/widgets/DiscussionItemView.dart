@@ -63,6 +63,8 @@ class _DiscussionItemViewState extends State<DiscussionItemView> {
             UserView(
               onUserTap: widget.onUserTap,
               discussion: widget.discussion,
+              createdAt: widget.discussion.createdAt,
+              customer: widget.discussion.user,
             ),
             questionView(),
             utilityView(),

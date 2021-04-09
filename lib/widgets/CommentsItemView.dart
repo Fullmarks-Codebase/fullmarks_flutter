@@ -56,6 +56,8 @@ class _CommentsItemViewState extends State<CommentsItemView> {
                 UserView(
                   onUserTap: widget.onUserTap,
                   discussion: widget.discussion,
+                  customer: widget.comment.user,
+                  createdAt: widget.comment.createdAt,
                 ),
                 Container(
                   margin: EdgeInsets.only(
