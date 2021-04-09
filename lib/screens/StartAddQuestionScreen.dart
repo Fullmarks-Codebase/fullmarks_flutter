@@ -52,7 +52,7 @@ class _StartAddQuestionScreenState extends State<StartAddQuestionScreen> {
       children: [
         Utility.appbar(
           context,
-          text: "Quiz Name",
+          text: widget.customQuiz.name,
           isHome: false,
           textColor: Colors.white,
         ),
