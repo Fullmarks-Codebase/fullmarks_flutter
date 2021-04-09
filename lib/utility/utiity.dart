@@ -1219,13 +1219,25 @@ class Utility {
         .hasMatch(email);
   }
 
-  static String getLiveQuizLink(String roomId) {
-    return AppStrings.commonShareText +
+  static String getLiveQuizLink(
+      String roomId, String className, String subjectName) {
+    String txt = AppStrings.heyAppNameStr +
+        "\n\n" +
+        "Room ID : " +
+        roomId +
+        (className == null ? "" : "\nClass : ") +
+        (className == null ? "" : className) +
+        (subjectName == null ? "" : "\nSubject : ") +
+        (subjectName == null ? "" : subjectName) +
+        "\n\n" +
+        AppStrings.alreadyApp +
         "https://fullmarks.app/" +
         AppStrings.joinLiveQuizDeepLinkKey +
         "/" +
         roomId +
         " to join my LIVE quiz !";
+    print(txt);
+    return txt;
   }
 
   static Widget horizontalItemView({

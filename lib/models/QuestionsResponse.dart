@@ -1,3 +1,7 @@
+import 'package:fullmarks/models/SubjectsResponse.dart';
+
+import 'ClassResponse.dart';
+
 class QuestionsResponse {
   int code;
   String message;
@@ -57,6 +61,9 @@ class QuestionDetails {
   int customMasterId;
   int time;
   int mockId;
+  ClassDetails classGrades;
+  SubjectDetails subject;
+  CustomMaster customMaster;
 
   QuestionDetails({
     this.id,
@@ -88,6 +95,9 @@ class QuestionDetails {
     this.time,
     this.customMasterId,
     this.mockId,
+    this.classGrades,
+    this.subject,
+    this.customMaster,
   });
 
   QuestionDetails.fromJson(Map<String, dynamic> json) {
@@ -120,6 +130,21 @@ class QuestionDetails {
     time = json['time'] ?? 0;
     customMasterId = json['customMasterId'] ?? 0;
     mockId = json['mockId'];
+    try {
+      classGrades = json['class'] != null
+          ? new ClassDetails.fromJson(json['class'])
+          : null;
+    } catch (e) {}
+    try {
+      subject = json['subject'] != null
+          ? new SubjectDetails.fromJson(json['subject'])
+          : null;
+    } catch (e) {}
+    try {
+      customMaster = json['customMaster'] != null
+          ? new CustomMaster.fromJson(json['customMaster'])
+          : null;
+    } catch (e) {}
   }
 
   Map<String, dynamic> toJson() {
@@ -153,6 +178,64 @@ class QuestionDetails {
     data['time'] = this.time;
     data['customMasterId'] = this.customMasterId;
     data['mockId'] = this.mockId;
+    if (this.classGrades != null) {
+      data['class'] = this.classGrades.toJson();
+    }
+    if (this.subject != null) {
+      data['subject'] = this.subject.toJson();
+    }
+    if (this.customMaster != null) {
+      data['customMaster'] = this.customMaster.toJson();
+    }
+    return data;
+  }
+}
+
+class CustomMaster {
+  int id;
+  String name;
+  int createdBy;
+  String createdAt;
+  String updatedAt;
+  int classId;
+  int userId;
+  ClassDetails classDetails;
+
+  CustomMaster({
+    this.id,
+    this.name,
+    this.createdBy,
+    this.createdAt,
+    this.updatedAt,
+    this.classId,
+    this.userId,
+    this.classDetails,
+  });
+
+  CustomMaster.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    createdBy = json['createdBy'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+    classId = json['classId'];
+    userId = json['userId'];
+    classDetails =
+        json['class'] != null ? new ClassDetails.fromJson(json['class']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id ?? 0;
+    data['name'] = this.name ?? "";
+    data['createdBy'] = this.createdBy ?? 0;
+    data['createdAt'] = this.createdAt ?? "";
+    data['updatedAt'] = this.updatedAt ?? "";
+    data['classId'] = this.classId ?? 0;
+    data['userId'] = this.userId ?? 0;
+    if (this.classDetails != null) {
+      data['class'] = this.classDetails.toJson();
+    }
     return data;
   }
 }

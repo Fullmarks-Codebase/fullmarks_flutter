@@ -111,8 +111,10 @@ class AppStrings {
   // static String appstore =
   //     "https://apps.apple.com/in/app/apple-store/id375380948"; //change this
   static String deepLinkURL = "https://fullmarks.app";
-  static String commonShareText =
-      "Hey, Checkout “Fullmarks – Learn CBSE, Math, English, Science”, download the app – $playStore \n\nIf you already have the app, click here - ";
+  static String heyAppNameStr =
+      "Hey, Checkout “Fullmarks – Learn CBSE, Math, English, Science”, download the app – $playStore";
+  static String alreadyApp = "If you already have the app, click here - ";
+  static String commonShareText = heyAppNameStr + "\n\n" + alreadyApp;
   static String shareAppText = "$commonShareText $deepLinkURL";
   static String addFriendText =
       "$commonShareText $deepLinkURL/friends to become my friend";

@@ -50,6 +50,7 @@ class _JoinQuizScreenState extends State<JoinQuizScreen> {
       LiveQuizWelcomeResponse response =
           LiveQuizWelcomeResponse.fromJson(json.decode(jsonEncode(data)));
       Utility.showToast(context, response.message);
+      print(jsonEncode(response.questions[0].customQuestion));
       if (context != null) {
         Navigator.pushReplacement(
           context,

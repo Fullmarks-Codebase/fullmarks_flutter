@@ -566,8 +566,11 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
                       child: SvgPicture.asset(AppAssets.share),
                     ),
                     onTap: () {
-                      Share.share(
-                          Utility.getLiveQuizLink(liveQuizDetail.room.room));
+                      Share.share(Utility.getLiveQuizLink(
+                        liveQuizDetail.room.room,
+                        customer.classGrades.name,
+                        widget.subject.name,
+                      ));
                     },
                   ),
                 ),

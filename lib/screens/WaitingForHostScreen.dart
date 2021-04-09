@@ -225,8 +225,20 @@ class _WaitingForHostScreenState extends State<WaitingForHostScreen> {
           textColor: Colors.white,
           homeassetName: AppAssets.share,
           onHomePressed: () {
-            Share.share(Utility.getLiveQuizLink(
-                widget.liveQuizWelcomeResponse.room.room));
+            Share.share(
+              Utility.getLiveQuizLink(
+                widget.liveQuizWelcomeResponse.room.room,
+                widget.liveQuizWelcomeResponse.questions[0].fixQuestion != null
+                    ? widget.liveQuizWelcomeResponse.questions[0].fixQuestion
+                        .classGrades.name
+                    : widget.liveQuizWelcomeResponse.questions[0].customQuestion
+                        .customMaster.classDetails.name,
+                widget.liveQuizWelcomeResponse.questions[0].fixQuestion != null
+                    ? widget.liveQuizWelcomeResponse.questions[0].fixQuestion
+                        .subject.name
+                    : null,
+              ),
+            );
           },
           onBackPressed: _onBackPressed,
         ),
