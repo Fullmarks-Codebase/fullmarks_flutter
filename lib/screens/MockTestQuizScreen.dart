@@ -465,8 +465,17 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
       margin: EdgeInsets.only(
         top: 16,
       ),
-      child: Image.asset(
-        AppAssets.imagePlaceholder,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        height: 200,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Utility.imageLoader(
+            baseUrl: AppStrings.questionImage,
+            url: questionsDetails[currentQuestion].questionImage,
+            placeholder: AppAssets.imagePlaceholder,
+          ),
+        ),
       ),
     );
   }
