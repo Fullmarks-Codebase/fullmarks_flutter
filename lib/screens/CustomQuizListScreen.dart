@@ -281,6 +281,10 @@ class _CustomQuizListScreenState extends State<CustomQuizListScreen> {
                     imageDelegate:
                         CustomImageDelegate(AppStrings.customQuestion),
                     attrDelegate: CustomAttrDelegate(),
+                    textStyle: TextStyle(
+                      color: AppColors.blackColor,
+                      fontSize: 18,
+                    ),
                   ),
                   // child: Scrollbar(
                   // child: SingleChildScrollView(

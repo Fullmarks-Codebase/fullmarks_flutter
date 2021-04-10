@@ -21,12 +21,14 @@ class ZefyrView extends StatefulWidget {
   final NotusDocument document;
   final ZefyrImageDelegate imageDelegate;
   final ZefyrAttrDelegate attrDelegate;
+  final TextStyle textStyle;
 
   const ZefyrView({
     Key key,
     @required this.document,
     this.imageDelegate,
     this.attrDelegate,
+    this.textStyle,
   }) : super(key: key);
 
   @override
@@ -43,7 +45,9 @@ class ZefyrViewState extends State<ZefyrView> {
   void initState() {
     super.initState();
     _scope = ZefyrScope.view(
-        imageDelegate: widget.imageDelegate, attrDelegate: widget.attrDelegate);
+      imageDelegate: widget.imageDelegate,
+      attrDelegate: widget.attrDelegate,
+    );
   }
 
   @override
@@ -94,11 +98,20 @@ class ZefyrViewState extends State<ZefyrView> {
   Widget _defaultChildBuilder(BuildContext context, Node node) {
     if (node is LineNode) {
       if (node.hasEmbed) {
-        return ZefyrLine(node: node);
+        return ZefyrLine(
+          node: node,
+          style: widget.textStyle,
+        );
       } else if (node.style.contains(NotusAttribute.heading)) {
-        return ZefyrHeading(node: node);
+        return ZefyrHeading(
+          node: node,
+          blockStyle: widget.textStyle,
+        );
       }
-      return ZefyrParagraph(node: node);
+      return ZefyrParagraph(
+        node: node,
+        blockStyle: widget.textStyle,
+      );
     }
 
     final BlockNode block = node;

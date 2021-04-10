@@ -513,17 +513,21 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
               ),
               imageDelegate: CustomImageDelegate(AppStrings.customQuestion),
               attrDelegate: CustomAttrDelegate(),
+              textStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+              ),
             )
           // Scrollbar(
           //     child: SingleChildScrollView(
           //       scrollDirection: Axis.horizontal,
           //       child: Math.tex(
           //         widget.questions[currentQuestion].question,
-          //         textStyle: TextStyle(
-          //           color: Colors.black,
-          //           fontSize: 20,
-          //           fontWeight: FontWeight.bold,
-          //         ),
+          // textStyle: TextStyle(
+          //   color: Colors.black,
+          //   fontSize: 20,
+          //   fontWeight: FontWeight.bold,
+          // ),
           //       ),
           //     ),
           //   )
@@ -659,6 +663,10 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
                           imageDelegate:
                               CustomImageDelegate(AppStrings.customAnswers),
                           attrDelegate: CustomAttrDelegate(),
+                          textStyle: TextStyle(
+                            color: getAnswerTextColor(answerIndex),
+                            fontSize: 18,
+                          ),
                         ),
                       ),
                     ],

@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fullmarks/models/CommonResponse.dart';
 import 'package:fullmarks/models/CustomQuizResponse.dart';
 import 'package:fullmarks/models/QuestionsResponse.dart';
+import 'package:fullmarks/notus/src/document.dart';
 import 'package:fullmarks/screens/AddQuestionOptionEditorScreen.dart';
 import 'package:fullmarks/screens/SetTimeLimitScreen.dart';
 import 'package:fullmarks/utility/ApiManager.dart';
@@ -15,8 +16,12 @@ import 'package:fullmarks/utility/AppColors.dart';
 import 'package:fullmarks/utility/AppFirebaseAnalytics.dart';
 import 'package:fullmarks/utility/AppStrings.dart';
 import 'package:fullmarks/utility/Utiity.dart';
+import 'package:fullmarks/widgets/CustomAttrDelegate.dart';
+import 'package:fullmarks/widgets/CustomImageDelegate.dart';
+import 'package:fullmarks/zefyr/src/widgets/view.dart';
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:quill_delta/quill_delta.dart';
 
 import 'AddEditCustomQuizQuestionOptionScreen.dart';
 
@@ -148,30 +153,60 @@ class _AddQuestionScreenState extends State<AddQuestionScreen> {
                 _notify();
               }
             },
-            child: AbsorbPointer(
-              child: TextField(
-                controller: questionController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(
-                      color: AppColors.appColor,
-                      width: 2,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(
-                      color: AppColors.appColor,
-                      width: 2,
-                    ),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "Tap to add/edit Question",
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: questionController.text.isEmpty ? 16 : 8,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: AppColors.appColor,
+                  width: 2,
                 ),
               ),
+              alignment: Alignment.centerLeft,
+              child: questionController.text.isEmpty
+                  ? Text(
+                      "Tap to add/edit Question",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    )
+                  : ZefyrView(
+                      document: NotusDocument.fromDelta(
+                        Delta.fromJson(
+                            json.decode(questionController.text) as List),
+                      ),
+                      imageDelegate:
+                          CustomImageDelegate(AppStrings.customQuestion),
+                      attrDelegate: CustomAttrDelegate(),
+                    ),
             ),
+            // child: AbsorbPointer(
+            //   child: TextField(
+            //     controller: questionController,
+            //     decoration: InputDecoration(
+            // border: OutlineInputBorder(
+            //   borderRadius: BorderRadius.circular(8),
+            //   borderSide: BorderSide(
+            //     color: AppColors.appColor,
+            //     width: 2,
+            //   ),
+            // ),
+            //       enabledBorder: OutlineInputBorder(
+            //         borderRadius: BorderRadius.circular(8),
+            //         borderSide: BorderSide(
+            //           color: AppColors.appColor,
+            //           width: 2,
+            //         ),
+            //       ),
+            //       filled: true,
+            //       fillColor: Colors.white,
+            //       hintText: "Tap to add/edit Question",
+            //     ),
+            //   ),
+            // ),
           ),
           SizedBox(
             height: 16,

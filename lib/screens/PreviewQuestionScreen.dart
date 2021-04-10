@@ -92,17 +92,21 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
                         imageDelegate:
                             CustomImageDelegate(AppStrings.customQuestion),
                         attrDelegate: CustomAttrDelegate(),
+                        textStyle: TextStyle(
+                          color: AppColors.appColor,
+                          fontSize: 18,
+                        ),
                       )
                       // child: Scrollbar(
                       //   child: SingleChildScrollView(
                       //     scrollDirection: Axis.horizontal,
                       //     child: Math.tex(
                       //       widget.questionDetails.question,
-                      //       textStyle: TextStyle(
-                      //         color: AppColors.appColor,
-                      //         fontSize: 18,
-                      //         fontWeight: FontWeight.bold,
-                      //       ),
+                      // textStyle: TextStyle(
+                      //   color: AppColors.appColor,
+                      //   fontSize: 18,
+                      //   fontWeight: FontWeight.bold,
+                      // ),
                       //     ),
                       //   ),
                       // ),
@@ -191,6 +195,14 @@ class _PreviewQuestionScreenState extends State<PreviewQuestionScreen> {
                   ),
                   imageDelegate: CustomImageDelegate(AppStrings.customAnswers),
                   attrDelegate: CustomAttrDelegate(),
+                  textStyle: TextStyle(
+                    color: Utility.getQuestionCorrectAnswer(
+                                widget.questionDetails) ==
+                            index
+                        ? Colors.white
+                        : Colors.black,
+                    fontSize: 18,
+                  ),
                 ),
               ),
             ],
