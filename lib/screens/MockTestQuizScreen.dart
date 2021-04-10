@@ -795,11 +795,14 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
       await Future.forEach(questionsDetails, (QuestionDetails element) {
         if (element.selectedAnswer == -1) {
           skipped = skipped + 1;
-        } else if (Utility.getQuestionCorrectAnswer(element) ==
-            element.selectedAnswer) {
-          correctAnswers = correctAnswers + 1;
         } else {
-          incorrect = incorrect + 1;
+          if (element.selectedAnswer > -1 &&
+              Utility.getQuestionCorrectAnswer(element) ==
+                  element.selectedAnswer) {
+            correctAnswers = correctAnswers + 1;
+          } else {
+            incorrect = incorrect + 1;
+          }
         }
         timeTaken = timeTaken + element.timeTaken;
         questionReportsAnswersList.add(
@@ -830,7 +833,7 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
                 : ReportDetails(
                     accuracy: accuracy.toStringAsFixed(2),
                     avgTime: Utility.secondsToHms(avgTime),
-                    correct: totalMarks.toString(),
+                    correct: correctAnswers.toString(),
                     incorrect: incorrect.toString(),
                     reportDetail: [],
                     skipped: skipped.toString(),

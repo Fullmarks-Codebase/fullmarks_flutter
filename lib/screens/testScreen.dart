@@ -481,7 +481,7 @@ class _TestScreenState extends State<TestScreen> {
                 : ReportDetails(
                     accuracy: accuracy.toStringAsFixed(2),
                     avgTime: Utility.secondsToHms(avgTime),
-                    correct: totalMarks.toString(),
+                    correct: correctAnswers.toString(),
                     incorrect: incorrect.toString(),
                     reportDetail: [],
                     skipped: skipped.toString(),

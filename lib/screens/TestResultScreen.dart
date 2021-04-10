@@ -139,11 +139,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
                     //delay to give ripple effect
                     await Future.delayed(
                         Duration(milliseconds: AppStrings.delay));
-                    await Future.forEach(widget.questionsDetails,
-                        (QuestionDetails element) {
-                      element.selectedAnswer = -1;
-                      _notify();
-                    });
+
                     if (widget.isMockTest) {
                       await Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
@@ -154,6 +150,12 @@ class _TestResultScreenState extends State<TestResultScreen> {
                         ),
                       );
                     } else {
+                      await Future.forEach(widget.questionsDetails,
+                          (QuestionDetails element) {
+                        element.selectedAnswer = -1;
+                        _notify();
+                      });
+
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (BuildContext context) => TestScreen(
