@@ -132,14 +132,13 @@ class _TestScreenState extends State<TestScreen> {
   }
 
   Future<bool> _onBackPressed() {
-    return Utility.showSubmitQuizDialog(
+    return Utility.quitLiveQuizDialog(
           context: context,
-          onSubmitPress: () async {
-            stopwatch.stop();
+          onPressed: () async {
             //delay to give ripple effect
             await Future.delayed(Duration(milliseconds: AppStrings.delay));
             Navigator.pop(context);
-            showRewardAd();
+            Navigator.pop(context);
           },
         ) ??
         false;
@@ -148,24 +147,26 @@ class _TestScreenState extends State<TestScreen> {
   Widget body() {
     return Column(
       children: [
-        Utility.appbar(context,
-            text: widget.subject.name +
-                " / " +
-                widget.subtopic.name +
-                " / " +
-                widget.setDetails.name,
-            isHome: false, onBackPressed: () {
-          Utility.showSubmitQuizDialog(
-            context: context,
-            onSubmitPress: () async {
-              stopwatch.stop();
-              //delay to give ripple effect
-              await Future.delayed(Duration(milliseconds: AppStrings.delay));
-              Navigator.pop(context);
-              showRewardAd();
-            },
-          );
-        }),
+        Utility.appbar(
+          context,
+          text: widget.subject.name +
+              " / " +
+              widget.subtopic.name +
+              " / " +
+              widget.setDetails.name,
+          isHome: false,
+          onBackPressed: () {
+            Utility.quitLiveQuizDialog(
+              context: context,
+              onPressed: () async {
+                //delay to give ripple effect
+                await Future.delayed(Duration(milliseconds: AppStrings.delay));
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            );
+          },
+        ),
         timeElapsedView(),
         questionNumberView(),
         Expanded(

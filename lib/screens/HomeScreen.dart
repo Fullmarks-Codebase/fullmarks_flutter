@@ -987,8 +987,8 @@ class _HomeScreenState extends State<HomeScreen> {
             height: (MediaQuery.of(context).size.width / 2),
             child: Utility.pieChart(
               values: [
-                double.tryParse(overallReportDetails.incorrect),
                 double.tryParse(overallReportDetails.correct),
+                double.tryParse(overallReportDetails.incorrect),
                 double.tryParse(overallReportDetails.skipped)
               ],
             ),
@@ -1014,7 +1014,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 12,
               ),
               Utility.correctIncorrectView(
-                color: AppColors.myProgressCorrectcolor,
+                isCorrect: true,
+                title: "Correct: " + overallReportDetails.correct.toString(),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Utility.correctIncorrectView(
+                isIncorrect: true,
                 title:
                     "Incorrect: " + overallReportDetails.incorrect.toString(),
               ),
@@ -1022,14 +1029,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 8,
               ),
               Utility.correctIncorrectView(
-                color: AppColors.myProgressIncorrectcolor,
-                title: "Correct: " + overallReportDetails.correct.toString(),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Utility.correctIncorrectView(
-                color: AppColors.wrongBorderColor,
+                isSkipped: true,
                 title: "Skipped: " + overallReportDetails.skipped.toString(),
               ),
               SizedBox(

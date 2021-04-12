@@ -166,14 +166,13 @@ class _MockTestQuizScreenState extends State<MockTestQuizScreen> {
   }
 
   Future<bool> _onBackPressed() {
-    return Utility.showSubmitQuizDialog(
+    return Utility.quitLiveQuizDialog(
           context: context,
-          onSubmitPress: () async {
-            _timer.cancel();
+          onPressed: () async {
             //delay to give ripple effect
             await Future.delayed(Duration(milliseconds: AppStrings.delay));
             Navigator.pop(context);
-            showRewardAd();
+            Navigator.pop(context);
           },
         ) ??
         false;

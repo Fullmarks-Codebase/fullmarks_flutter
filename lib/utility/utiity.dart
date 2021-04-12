@@ -494,11 +494,26 @@ class Utility {
   }
 
   static Widget correctIncorrectView({
-    @required Color color,
+    Color color,
+    bool isCorrect = false,
+    bool isIncorrect = false,
+    bool isSkipped = false,
     @required String title,
     double fontSize = 16,
     Color textColor = Colors.white,
   }) {
+    if (color == null) {
+      color = Colors.transparent;
+      if (isCorrect) {
+        color = AppColors.myProgressCorrectcolor;
+      }
+      if (isIncorrect) {
+        color = AppColors.wrongBorderColor;
+      }
+      if (isSkipped) {
+        color = AppColors.myProgressIncorrectcolor;
+      }
+    }
     return Row(
       children: [
         Container(
@@ -540,13 +555,13 @@ class Utility {
             );
           case 1:
             return PieChartSectionData(
-              color: AppColors.myProgressIncorrectcolor,
+              color: AppColors.wrongBorderColor,
               value: values[1],
               showTitle: false,
             );
           case 2:
             return PieChartSectionData(
-              color: AppColors.wrongBorderColor,
+              color: AppColors.myProgressIncorrectcolor,
               value: values[2],
               showTitle: false,
             );
@@ -792,7 +807,7 @@ class Utility {
                       ),
                       Expanded(
                         child: Text(
-                          "Buddies : " + buddies,
+                          "Friends : " + buddies,
                           style: TextStyle(
                             color: Colors.black,
                           ),

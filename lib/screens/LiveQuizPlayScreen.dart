@@ -214,12 +214,13 @@ class _LiveQuizPlayScreenState extends State<LiveQuizPlayScreen> {
               {"userObj": Utility.getCustomer()},
             );
             socket.destroy();
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (BuildContext context) => HomeScreen(),
-              ),
-              (Route<dynamic> route) => false,
-            );
+            Navigator.pop(context);
+            // Navigator.of(context).pushAndRemoveUntil(
+            //   MaterialPageRoute(
+            //     builder: (BuildContext context) => HomeScreen(),
+            //   ),
+            //   (Route<dynamic> route) => false,
+            // );
           },
         ) ??
         false;

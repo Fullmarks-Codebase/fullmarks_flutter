@@ -339,8 +339,8 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                 ),
                 Utility.pieChart(
                   values: [
-                    double.tryParse(subjectReportDetails.incorrect),
                     double.tryParse(subjectReportDetails.correct),
+                    double.tryParse(subjectReportDetails.incorrect),
                     double.tryParse(subjectReportDetails.skipped),
                   ],
                 ),
@@ -368,21 +368,21 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                 height: 12,
               ),
               Utility.correctIncorrectView(
-                color: AppColors.myProgressCorrectcolor,
-                title: "Incorrect: " + subjectReportDetails.incorrect,
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Utility.correctIncorrectView(
-                color: AppColors.myProgressIncorrectcolor,
+                isCorrect: true,
                 title: "Correct: " + subjectReportDetails.correct,
               ),
               SizedBox(
                 height: 8,
               ),
               Utility.correctIncorrectView(
-                color: AppColors.wrongBorderColor,
+                isIncorrect: true,
+                title: "Incorrect: " + subjectReportDetails.incorrect,
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Utility.correctIncorrectView(
+                isSkipped: true,
                 title: "Skipped: " + subjectReportDetails.skipped,
               ),
               SizedBox(

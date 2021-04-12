@@ -43,13 +43,18 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     AppFirebaseAnalytics.init().logEvent(name: AppStrings.myProfileEvent);
     customer = Utility.getCustomer();
     _notify();
+    init();
+    _getUser();
+    super.initState();
+  }
+
+  init() {
     _phoneController.text = customer.phoneNumber;
     _usernameController.text = customer.username == "" ? "" : customer.username;
     _emailController.text = customer.email == "" ? "" : customer.email;
     maleFemale = customer.gender;
     dob = customer.dob == "" ? "" : customer.dob.substring(0, 10);
-    _getUser();
-    super.initState();
+    _notify();
   }
 
   _getUser() async {
@@ -78,6 +83,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               AppStrings.userPreference, jsonEncode(tempCustomer.toJson()));
           customer = Utility.getCustomer();
           _notify();
+          init();
         }
       }
     } else {
@@ -355,6 +361,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             AppStrings.userPreference, jsonEncode(tempCustomer.toJson()));
         customer = Utility.getCustomer();
         _notify();
+      } else {
+        init();
       }
     } else {
       //show message that internet is not available

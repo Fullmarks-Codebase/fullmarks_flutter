@@ -200,8 +200,8 @@ class _MyProgressScreenState extends State<MyProgressScreen> {
                 width: (MediaQuery.of(context).size.width / 4.5),
                 child: Utility.pieChart(
                   values: [
-                    double.tryParse(subjectReportDetails[index].incorrect),
                     double.tryParse(subjectReportDetails[index].correct),
+                    double.tryParse(subjectReportDetails[index].incorrect),
                     double.tryParse(subjectReportDetails[index].skipped)
                   ],
                 ),

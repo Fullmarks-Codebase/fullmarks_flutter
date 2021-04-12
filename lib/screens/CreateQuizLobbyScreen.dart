@@ -569,7 +569,7 @@ class _CreateQuizLobbyScreenState extends State<CreateQuizLobbyScreen> {
                       Share.share(Utility.getLiveQuizLink(
                         liveQuizDetail.room.room,
                         customer.classGrades.name,
-                        widget.subject.name,
+                        widget.subject == null ? null : widget.subject.name,
                       ));
                     },
                   ),

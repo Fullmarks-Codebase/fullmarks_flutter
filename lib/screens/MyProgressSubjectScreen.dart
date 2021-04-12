@@ -188,9 +188,9 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
                           height: MediaQuery.of(context).size.width / 4,
                           child: Utility.pieChart(
                             values: [
+                              double.tryParse(setReportDetails[index].correct),
                               double.tryParse(
                                   setReportDetails[index].incorrect),
-                              double.tryParse(setReportDetails[index].correct),
                               double.tryParse(setReportDetails[index].skipped),
                             ],
                           ),
@@ -203,16 +203,7 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Utility.correctIncorrectView(
-                              color: AppColors.myProgressCorrectcolor,
-                              title: "Incorrect: " +
-                                  setReportDetails[index].incorrect,
-                              fontSize: 14,
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Utility.correctIncorrectView(
-                              color: AppColors.myProgressIncorrectcolor,
+                              isCorrect: true,
                               title:
                                   "Correct: " + setReportDetails[index].correct,
                               fontSize: 14,
@@ -221,7 +212,16 @@ class _MyProgressSubjectScreenState extends State<MyProgressSubjectScreen> {
                               height: 8,
                             ),
                             Utility.correctIncorrectView(
-                              color: AppColors.wrongBorderColor,
+                              isIncorrect: true,
+                              title: "Incorrect: " +
+                                  setReportDetails[index].incorrect,
+                              fontSize: 14,
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Utility.correctIncorrectView(
+                              isSkipped: true,
                               title:
                                   "Skipped: " + setReportDetails[index].skipped,
                               fontSize: 14,

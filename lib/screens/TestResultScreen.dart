@@ -275,8 +275,8 @@ class _TestResultScreenState extends State<TestResultScreen> {
                           ),
                     Utility.pieChart(
                       values: [
-                        double.tryParse(widget.reportDetails.incorrect),
                         double.tryParse(widget.reportDetails.correct),
+                        double.tryParse(widget.reportDetails.incorrect),
                         double.tryParse(widget.reportDetails.skipped),
                       ],
                     ),
@@ -304,15 +304,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
                     height: 12,
                   ),
                   Utility.correctIncorrectView(
-                    color: AppColors.myProgressCorrectcolor,
-                    title: "Incorrect: " +
-                        widget.reportDetails.incorrect.toString(),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Utility.correctIncorrectView(
-                    color: AppColors.myProgressIncorrectcolor,
+                    isCorrect: true,
                     title:
                         "Correct: " + widget.reportDetails.correct.toString(),
                   ),
@@ -320,7 +312,15 @@ class _TestResultScreenState extends State<TestResultScreen> {
                     height: 8,
                   ),
                   Utility.correctIncorrectView(
-                    color: AppColors.wrongBorderColor,
+                    isIncorrect: true,
+                    title: "Incorrect: " +
+                        widget.reportDetails.incorrect.toString(),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Utility.correctIncorrectView(
+                    isSkipped: true,
                     title:
                         "Skipped: " + widget.reportDetails.skipped.toString(),
                   ),
