@@ -24,17 +24,17 @@ class UserView extends StatefulWidget {
 class _UserViewState extends State<UserView> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onUserTap,
-      child: Container(
-        color: Colors.transparent,
-        padding: EdgeInsets.only(
-          right: 16,
-          left: 16,
-        ),
-        child: Row(
-          children: [
-            Container(
+    return Container(
+      padding: EdgeInsets.only(
+        right: 16,
+        left: 16,
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: widget.onUserTap,
+            child: Container(
+              color: Colors.transparent,
               margin: EdgeInsets.only(
                 top: 16,
                 bottom: 16,
@@ -44,13 +44,17 @@ class _UserViewState extends State<UserView> {
                 url: widget.customer.thumbnail,
               ),
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: widget.onUserTap,
+                      child: Container(
+                        color: Colors.transparent,
                         child: Text(
                           widget.customer.username.trim().length == 0
                               ? "User" + widget.customer.id.toString()
@@ -64,46 +68,47 @@ class _UserViewState extends State<UserView> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      Text(
-                        Utility.convertDate(widget.createdAt.substring(0, 10)),
-                        style: TextStyle(
-                          color: AppColors.lightTextColor,
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        height: 12,
-                        width: 12,
-                        child: Utility.imageLoader(
-                          baseUrl: AppStrings.subjectImage,
-                          url: widget.discussion.subject.image,
-                          placeholder: AppAssets.subjectPlaceholder,
-                          fit: BoxFit.contain,
-                        ),
+                    ),
+                    Spacer(),
+                    Text(
+                      Utility.convertDate(widget.createdAt.substring(0, 10)),
+                      style: TextStyle(
+                        color: AppColors.lightTextColor,
                       ),
-                      SizedBox(
-                        width: 4,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                Row(
+                  children: [
+                    Container(
+                      height: 12,
+                      width: 12,
+                      child: Utility.imageLoader(
+                        baseUrl: AppStrings.subjectImage,
+                        url: widget.discussion.subject.image,
+                        placeholder: AppAssets.subjectPlaceholder,
+                        fit: BoxFit.contain,
                       ),
-                      Text(
-                        widget.discussion.subject.name,
-                        style: TextStyle(
-                          color: AppColors.appColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      widget.discussion.subject.name,
+                      style: TextStyle(
+                        color: AppColors.appColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
