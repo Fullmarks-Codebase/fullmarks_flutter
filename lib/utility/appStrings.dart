@@ -1,9 +1,8 @@
 import 'dart:io';
 
 class AppStrings {
-  // static String baseUrl = "http://e-fullmarks.in/";
-  static String baseUrl = "http://104.131.14.251:3001/";
-  // static String baseUrl = "http://b8f869735c11.ngrok.io/";
+  static String baseUrl = "http://e-fullmarks.in/";
+  // static String baseUrl = "http://104.131.14.251:3001/";
   //customer (user)
   static String login = baseUrl + "app/customer/checkin";
   static String customer = baseUrl + "customer/getSingleCustomer";
