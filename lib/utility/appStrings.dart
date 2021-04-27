@@ -76,9 +76,8 @@ class AppStrings {
   static String mockMyReport = baseUrl + "mock/myReport";
 
   //image base url
-  static String imageBaseUrl = baseUrl;
-  // static String imageBaseUrl =
-  //     "https://e-fullmarks.s3.us-east-2.amazonaws.com/";
+  static String imageBaseUrl =
+      "https://e-fullmarks.s3.us-east-2.amazonaws.com/";
   static String customQuestion =
       imageBaseUrl + "images/user_questions/question/";
   static String customAnswers = imageBaseUrl + "images/user_questions/answers/";
