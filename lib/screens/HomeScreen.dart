@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -573,19 +574,21 @@ class _HomeScreenState extends State<HomeScreen> {
     final InAppReview inAppReview = InAppReview.instance;
 
     if (await inAppReview.isAvailable()) {
-      inAppReview.requestReview().then((value) {
-        print("requestReview done");
-      }).catchError((onError) {
-        print("onError");
-        print(onError);
-      });
-    } else {
-      inAppReview.openStoreListing().then((value) {
-        print("openStoreListing done");
-      }).catchError((onError) {
-        print("onError");
-        print(onError);
-      });
+      if (Platform.isAndroid) {
+        inAppReview.openStoreListing().then((value) {
+          print("*** openStoreListing done");
+        }).catchError((onError) {
+          print("onError");
+          print(onError);
+        });
+      } else {
+        inAppReview.requestReview().then((value) {
+          print("*** requestReview done");
+        }).catchError((onError) {
+          print("onError");
+          print(onError);
+        });
+      }
     }
     // Utility.launchURL(AppStrings.playStore);
     // Platform.isAndroid ? AppStrings.playStore : AppStrings.appstore);
