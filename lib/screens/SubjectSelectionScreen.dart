@@ -202,7 +202,6 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                 baseUrl: AppStrings.subjectImage,
                 url: subjects[index].image,
                 placeholder: AppAssets.subjectPlaceholder,
-                fit: BoxFit.contain,
               ),
             ),
             SizedBox(

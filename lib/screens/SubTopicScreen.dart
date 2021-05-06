@@ -334,7 +334,6 @@ class _SubTopicScreenState extends State<SubTopicScreen> {
                     baseUrl: AppStrings.subjectImage,
                     url: widget.subject.image,
                     placeholder: AppAssets.subjectPlaceholder,
-                    fit: BoxFit.contain,
                   ),
                 ),
                 Utility.pieChart(

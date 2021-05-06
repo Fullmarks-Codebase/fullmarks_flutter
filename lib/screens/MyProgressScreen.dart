@@ -176,7 +176,6 @@ class _MyProgressScreenState extends State<MyProgressScreen> {
                         baseUrl: AppStrings.subjectImage,
                         url: subjectReportDetails[index].subject.image,
                         placeholder: AppAssets.subjectPlaceholder,
-                        fit: BoxFit.contain,
                       ),
                     ),
                     SizedBox(

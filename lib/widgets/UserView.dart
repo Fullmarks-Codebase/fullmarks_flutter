@@ -90,7 +90,7 @@ class _UserViewState extends State<UserView> {
                         baseUrl: AppStrings.subjectImage,
                         url: widget.discussion.subject.image,
                         placeholder: AppAssets.subjectPlaceholder,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     SizedBox(

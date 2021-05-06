@@ -63,6 +63,7 @@ class CustomImageDelegate implements ZefyrImageDelegate<ImageSource> {
           baseUrl: imageBaseUrl,
           url: key,
           placeholder: AppAssets.imagePlaceholder,
+          fit: BoxFit.cover,
         ),
       );
     }

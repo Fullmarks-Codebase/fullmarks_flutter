@@ -85,6 +85,8 @@ Future<void> main() async {
 
 /*
 
+Flutter version - 1.22.4
+
 Home (subject) -> SubTopicScreen -> SetsScreen -> InstructionsScreen -> TestScreen -> TestResultScreen -> QuizResultScreen (done)
 
 NotificationListScreen -> NotificationDetailsScreen  (done)

@@ -77,7 +77,7 @@ class Utility {
     @required String baseUrl,
     @required String url,
     @required String placeholder,
-    BoxFit fit = BoxFit.cover,
+    BoxFit fit = BoxFit.contain,
     Color placeholderColor,
   }) {
     return (url == "null" || url == null || url.trim() == "")

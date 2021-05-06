@@ -467,7 +467,6 @@ class _RandomQuizMatchScreenState extends State<RandomQuizMatchScreen>
                     baseUrl: AppStrings.subjectImage,
                     url: widget.subject.image,
                     placeholder: AppAssets.subjectPlaceholder,
-                    fit: BoxFit.contain,
                     placeholderColor: Colors.white,
                   ),
                 ),

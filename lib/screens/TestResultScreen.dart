@@ -270,7 +270,6 @@ class _TestResultScreenState extends State<TestResultScreen> {
                               baseUrl: AppStrings.subjectImage,
                               url: widget.subject.image,
                               placeholder: AppAssets.subjectPlaceholder,
-                              fit: BoxFit.contain,
                             ),
                           ),
                     Utility.pieChart(

@@ -867,7 +867,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 baseUrl: AppStrings.subjectImage,
                 url: subjects[index].image,
                 placeholder: AppAssets.subjectPlaceholder,
-                fit: BoxFit.contain,
               ),
             ),
             SizedBox(
