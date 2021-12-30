@@ -87,6 +87,9 @@ Future<void> main() async {
 
 Flutter version - 1.22.4
 
+test socket
+https://amritb.github.io/socketio-client-tool/v1/
+
 Home (subject) -> SubTopicScreen -> SetsScreen -> InstructionsScreen -> TestScreen -> TestResultScreen -> QuizResultScreen (done)
 
 NotificationListScreen -> NotificationDetailsScreen  (done)
